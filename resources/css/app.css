@@ -1,0 +1,159 @@
+@import 'bootstrap/dist/css/bootstrap.min.css';
+
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    color: #1e1e1e;
+    line-height: 1.5;
+    background-color: #dad6c9;
+}
+
+.hero {
+    text-align: center;
+    padding: 40px 20px;
+    background: #fff;
+}
+
+.hero h1 {
+    font-size: 2.5rem;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+.hero p {
+    font-size: 1.25rem;
+    color: #858585;
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+.plans {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+    padding: 40px 20px;
+}
+
+.card {
+    background: #fff;
+    border-radius: 15px;
+    padding: 20px;
+    width: 100%;
+    max-width: 400px;
+    position: relative;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.card.popular {
+    border: 2px solid #083630;
+}
+
+.badge {
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #083630;
+    color: #fff;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 0.9rem;
+}
+
+.card h2 {
+    font-size: 1.5rem;
+    font-weight: 500;
+    margin: 20px 0 10px;
+}
+
+.price {
+    color: #858585;
+    font-size: 1.25rem;
+}
+
+.price span {
+    color: #1e1e1e;
+    font-weight: 500;
+    font-size: 1.5rem;
+}
+
+.card p:not(.price) {
+    color: #858585;
+    margin: 10px 0;
+}
+
+button {
+    background: #fb4d17;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    width: 100%;
+    margin: 15px 0;
+}
+
+button:hover {
+    background: #e04312;
+}
+
+ul {
+    list-style: none;
+    color: #858585;
+    font-size: 0.9rem;
+}
+
+ul li {
+    margin: 8px 0;
+    position: relative;
+    padding-left: 25px;
+}
+
+ul li:before {
+    content: '';
+    width: 10px;
+    height: 10px;
+    background: #083630;
+    border-radius: 50%;
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+footer {
+    text-align: center;
+    padding: 20px;
+    color: #858585;
+    font-size: 0.9rem;
+    background: #fff;
+}
+
+@media (max-width: 768px) {
+    .hero h1 { font-size: 2rem; }
+    .hero p { font-size: 1rem; }
+    .card { max-width: 100%; }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
