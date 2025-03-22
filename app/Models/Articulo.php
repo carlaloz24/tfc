@@ -15,7 +15,7 @@ class Articulo extends Model
         'fecha_publicacion',
     ];
 
-    protected $casts = [
+    protected $casts = [ //esto mejora el manejo de fechas
         'fecha_publicacion' => 'datetime',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
@@ -25,6 +25,7 @@ class Articulo extends Model
     {
         return $this->belongsTo(Usuario::class, 'id_usuario');
     }
+
 
     public function comentarios()
     {
