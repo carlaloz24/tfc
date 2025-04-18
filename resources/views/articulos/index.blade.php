@@ -17,7 +17,7 @@
                             @if ($articulo->imagen)
                                 <img src="{{ asset('storage/' . $articulo->imagen) }}" alt="{{ $articulo->titulo }}" class="card-img">
                             @else
-                                <img src="{{ asset('images/placeholder.jpg') }}" alt="Placeholder" class="card-img">
+                                <p>Sin imagen</p>
                             @endif
                             <h2>{{ $articulo->titulo }}</h2>
                             <p class="subtitle">{{ Str::limit($articulo->contenido, 100) }}</p>

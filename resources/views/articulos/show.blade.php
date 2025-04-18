@@ -6,7 +6,9 @@
         <p><strong>Publicado el:</strong> {{ $articulo->fecha_publicacion }}</p>
         <div>{!! nl2br(e($articulo->contenido)) !!}</div>
         @if ($articulo->imagen)
-            <img src="{{ Storage::url($articulo->imagen) }}" alt="{{ $articulo->titulo }}" class="img-fluid">
+            <img src="{{ asset('storage/' . $articulo->imagen) }}" alt="{{ $articulo->titulo }}" class="card-img">
+        @else
+            <p>Sin imagen</p>
         @endif
     </div>
 @endsection

@@ -3,6 +3,7 @@ namespace App\Http\Controllers;
 use App\Models\Articulo;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 
 class ArticuloController extends Controller
 {
@@ -28,7 +29,7 @@ class ArticuloController extends Controller
         $request->validate([
             'titulo' => 'required|string|max:255',
             'contenido' => 'required|string',
-            'imagen' => 'nullable|image|max:2048',
+            'imagen' => 'nullable|image|mimes:jpg,png,jpeg|max:2048',
         ]);
 
         $articulo = new Articulo();
@@ -39,7 +40,8 @@ class ArticuloController extends Controller
         $articulo->fecha_publicacion = now();
 
         if ($request->hasFile('imagen')) {
-            $articulo->imagen = $request->file('imagen')->store('public/articulos');
+            $path = $request->file('imagen')->store('articulos', 'public');
+            $articulo->imagen = 'articulos/' . basename($path);
         }
 
         $articulo->save();
@@ -64,7 +66,7 @@ class ArticuloController extends Controller
         $request->validate([
             'titulo' => 'required|string|max:255',
             'contenido' => 'required|string',
-            'imagen' => 'nullable|image|max:2048',
+            'imagen' => 'nullable|image|mimes:jpg,png,jpeg|max:2048',
         ]);
 
         $articulo = Articulo::findOrFail($id);
@@ -73,7 +75,8 @@ class ArticuloController extends Controller
         $articulo->contenido = $request->contenido;
 
         if ($request->hasFile('imagen')) {
-            $articulo->imagen = $request->file('imagen')->store('public/articulos');
+            $path = $request->file('imagen')->store('articulos', 'public');
+            $articulo->imagen = 'articulos/' . basename($path);
         }
 
         $articulo->save();
