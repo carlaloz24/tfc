@@ -21,7 +21,7 @@
                             @endif
                             <h2>{{ $articulo->titulo }}</h2>
                             <p class="subtitle">{{ Str::limit($articulo->contenido, 100) }}</p>
-                            <small>Publicado: {{ $articulo->fecha_publicacion->format('d/m/Y') }}</small>
+                            <small>{{ $articulo->fecha_publicacion->format('d F Y') }}</small>
                         </div>
                     </a>
                 @endforeach
