@@ -45,33 +45,7 @@ class ArticuloController extends Controller
 
         $articulo->save();
 
-        return redirect()->route('admin.dashboard')->with('success', 'Artículo creado.');
-    }
-
-    public function update(Request $request, $id)
-    {
-        $request->validate([
-            'titulo' => 'required|string|max:255',
-            'contenido' => 'required|string',
-            'imagen' => 'nullable|image|mimes:jpg,png,jpeg|max:2048',
-        ]);
-
-        $articulo = Articulo::findOrFail($id);
-        $articulo->titulo = $request->titulo;
-        $articulo->slug = Str::slug($request->titulo);
-        $articulo->contenido = $request->contenido;
-
-        if ($request->hasFile('imagen')) {
-            if ($articulo->imagen) {
-                Storage::disk('public')->delete($articulo->imagen);
-            }
-            $path = $request->file('imagen')->store('articulos', 'public');
-            $articulo->imagen = $path;
-        }
-
-        $articulo->save();
-
-        return redirect()->route('admin.dashboard')->with('success', 'Artículo actualizado.');
+        return redirect()->route('admin.articulos.index')->with('success', 'Artículo creado.');
     }
 
     public function destroy($id)
@@ -81,7 +55,37 @@ class ArticuloController extends Controller
             Storage::disk('public')->delete($articulo->imagen);
         }
         $articulo->delete();
-        return redirect()->route('admin.dashboard')->with('success', 'Artículo eliminado.');
+        return redirect()->route('admin.articulos.index')->with('success', 'Artículo eliminado.');
+    }
+
+    public function update(Request $request, Articulo $articulo)
+    {
+        $request->validate([
+            'titulo' => 'required|string|max:255',
+            'contenido' => 'required|string',
+            'imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+
+        $data = $request->only(['titulo', 'contenido']);
+
+        // Manejar la imagen
+        if ($request->has('borrar_imagen') && $articulo->imagen) {
+            Storage::delete($articulo->imagen);
+            $data['imagen'] = null;
+        }
+
+        if ($request->hasFile('imagen')) {
+            // Borrar la imagen anterior si existe
+            if ($articulo->imagen) {
+                Storage::delete($articulo->imagen);
+            }
+            $path = $request->file('imagen')->store('public/articulos');
+            $data['imagen'] = $path;
+        }
+
+        $articulo->update($data);
+
+        return redirect()->route('admin.articulos.index')->with('success', 'Artículo actualizado correctamente');
     }
 
     public function show($slug)

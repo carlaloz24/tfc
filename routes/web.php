@@ -27,14 +27,15 @@ Route::middleware('auth')->group(function () {
 });
 
 // Rutas de administración (protegidas por auth y admin)
-Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
-    Route::get('/dashboard', [ArticuloController::class, 'adminIndex'])->name('admin.dashboard');
-    Route::get('/articles/create', [ArticuloController::class, 'create'])->name('articles.create');
-    Route::post('/articles', [ArticuloController::class, 'store'])->name('articles.store');
-    Route::get('/articles/{articulo}/edit', [ArticuloController::class, 'edit'])->name('articles.edit');
-    Route::put('/articles/{articulo}', [ArticuloController::class, 'update'])->name('articles.update');
-    Route::delete('/articles/{articulo}', [ArticuloController::class, 'destroy'])->name('admin.articulos.destroy');
-});
-
+    // Rutas de administración (protegidas por auth y admin)
+    Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
+        Route::get('/dashboard', [ArticuloController::class, 'adminIndex'])->name('admin.dashboard');
+        Route::get('/articulos', [ArticuloController::class, 'adminIndex'])->name('admin.articulos.index'); // Nueva ruta
+        Route::get('/articles/create', [ArticuloController::class, 'create'])->name('articles.create');
+        Route::post('/articles', [ArticuloController::class, 'store'])->name('articles.store');
+        Route::get('/articles/{articulo}/edit', [ArticuloController::class, 'edit'])->name('articles.edit');
+        Route::put('/articles/{articulo}', [ArticuloController::class, 'update'])->name('articles.update');
+        Route::delete('/articles/{articulo}', [ArticuloController::class, 'destroy'])->name('admin.articulos.destroy');
+    });
 // Rutas dinámicas (al final)
 Route::get('/articulos/{slug}', [ArticuloController::class, 'show'])->name('articulos.show');
