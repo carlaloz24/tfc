@@ -3,8 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TFC - @yield('title', 'Inicio')</title>
+    <title>Barfco - @yield('title', 'Inicio')</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @yield('styles')
@@ -12,7 +14,7 @@
 <body>
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container px-3 py-4 mx-auto" style="max-width: 1000px;">
-        <a class="navbar-brand" href="{{ route('home') }}">TFC</a>
+        <a class="navbar-brand" href="{{ route('home') }}">Barfco</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -22,6 +24,11 @@
                 <li class="nav-item"><a class="nav-link" href="{{ route('calculadora') }}">Calculadora</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ route('planes') }}">Planes</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ route('articulos.index') }}">Blog</a></li>
+                @auth
+                    @if (Auth::user()->is_admin)
+                        <li class="nav-item"><a class="nav-link" href="{{ route('admin.dashboard') }}">Admin</a></li>
+                    @endif
+                @endauth
             </ul>
             <ul class="navbar-nav">
                 @auth
@@ -45,7 +52,7 @@
 </div>
 <footer class="bg-light py-3 mt-4">
     <div class="container text-center">
-        <p>© 2025 TFC. Todos los derechos reservados.</p>
+        <p>© {{ date('Y') }} Barfco. Todos los derechos reservados.</p>
     </div>
 </footer>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

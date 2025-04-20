@@ -29,7 +29,7 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: #ffffff;
+    background-color: #efeeeb;
     border-radius: 20px;
     z-index: 1;
     transform: none;
@@ -38,7 +38,7 @@ body {
 .hero {
     text-align: center;
     padding: 40px 20px;
-    background: #fff;
+    background: #efeeeb;
     position: relative;
     z-index: 2;
 }
@@ -67,7 +67,7 @@ body {
 }
 
 .card {
-    background: #fff;
+    background: #efeeeb;
     border-radius: 15px;
     padding: 20px;
     width: 100%;
@@ -118,17 +118,17 @@ body {
 .card-container {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 5px; /* 5px entre artículos */
+    gap: 5px;
     padding: 20px 0;
-    margin: 0 auto; /* Centra el contenedor */
-    width: calc(100% - 40px); /* 20px margen a cada lado */
-    max-width: 1240px; /* Limita el ancho total */
+    margin: 0 auto;
+    width: calc(100% - 40px);
+    max-width: 1240px;
     position: relative;
     z-index: 2;
 }
 
 .card-articulos {
-    background: rgba(255, 255, 255, 0.9);
+    background: rgba(239, 238, 235, 0.9);
     border: none;
     border-radius: 15px;
     padding: 10px;
@@ -150,7 +150,6 @@ body {
     margin-left: auto;
     margin-right: auto;
 }
-
 
 .card-articulos h2 {
     font-size: 1.5rem;
@@ -197,7 +196,6 @@ body {
     margin-top: 10px;
     margin-left: 10px;
 }
-
 
 .card:first-child {
     margin-top: 55px;
@@ -328,7 +326,7 @@ footer {
     padding: 20px;
     color: #858585;
     font-size: 0.9rem;
-    background: #fff;
+    background: #efeeeb;
     position: relative;
     z-index: 2;
 }
@@ -343,7 +341,7 @@ footer {
 .plans-table {
     width: 100%;
     border-collapse: collapse;
-    background: #fff;
+    background: #efeeeb;
     border-radius: 15px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     overflow: hidden;
@@ -402,7 +400,7 @@ footer {
     border: 1px solid #d3d3d3;
     padding: 10px;
     font-size: 1rem;
-    background-color: #fff;
+    background-color: #efeeeb;
 }
 
 .form-calculadora label {
@@ -410,10 +408,416 @@ footer {
     color: #1e1e1e;
 }
 
+/* Estilos para el menú principal */
+.navbar {
+    background-color: #efeeeb;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.navbar-brand {
+    font-weight: 600;
+    color: #1e1e1e;
+}
+
+.nav-link {
+    color: #1e1e1e;
+    font-weight: 500;
+    padding: 8px 15px;
+    transition: color 0.3s;
+}
+
+.nav-link:hover {
+    color: #083630;
+}
+
+.nav-btn-login {
+    background-color: #efeeeb;
+    color: #1e1e1e;
+    border: 1px solid #d3d3d3;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-weight: 500;
+    text-decoration: none;
+    margin-left: 10px;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.nav-btn-login:hover {
+    background-color: #dad6c9;
+    color: #1e1e1e;
+}
+
+.nav-btn-register {
+    background-color: #fb4d17;
+    color: #fff;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-weight: 500;
+    text-decoration: none;
+    margin-left: 10px;
+    transition: background-color 0.3s;
+}
+
+.nav-btn-register:hover {
+    background-color: #e04312;
+}
+
+/* Estilos para el login */
+/* Estilos para el login */
+.login-content {
+    text-align: center;
+    padding: 60px 20px;
+    background: transparent;
+    position: relative;
+    z-index: 2;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 100%;
+    max-width: none;
+}
+
+.login-container {
+    max-width: 600px;
+    width: 100%;
+    margin: 20px auto;
+    background: rgba(239, 238, 235, 0.9);
+    border-radius: 15px;
+    padding: 30px 25px;
+    position: relative;
+    z-index: 2;
+    box-shadow: none;
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+}
+
+.form-label {
+    font-weight: 500;
+    color: #1e1e1e;
+    font-size: 0.9rem;
+    margin-bottom: 8px;
+}
+
+.form-control {
+    border: none;
+    background-color: #f3f3f3;
+    border-radius: 30px;
+    padding: 12px 15px;
+    font-size: 1rem;
+    color: #1e1e1e;
+}
+
+.form-control::placeholder {
+    color: #858585;
+    opacity: 1;
+}
+
+.form-control:focus {
+    outline: none;
+    border: 1px solid #083630;
+    box-shadow: 0 0 5px rgba(8, 54, 48, 0.3);
+}
+
+.error-message {
+    color: #721c24;
+    font-size: 0.85rem;
+    margin-top: 5px;
+    text-align: left;
+}
+
+.btn-login {
+    background: #fb4d17;
+    color: #fff;
+    border: none;
+    padding: 12px;
+    border-radius: 30px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    width: 100%;
+    margin: 10px 0;
+}
+
+.btn-login:hover {
+    background: #e04312;
+}
+
+.login-links {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.link-secondary {
+    color: #858585;
+    font-size: 0.9rem;
+    text-decoration: none;
+}
+
+.link-secondary:hover {
+    color: #083630;
+    text-decoration: underline;
+}
+
+.alert-danger {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+    border-radius: 10px;
+    padding: 10px;
+    margin-bottom: 15px;
+    font-size: 0.85rem;
+    text-align: center;
+}
+
+
+/* Estilos para el registro */
+.alert-success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+    border-radius: 10px;
+    padding: 10px;
+    margin-bottom: 15px;
+    font-size: 0.85rem;
+    text-align: center;
+}
+
+/* Estilos para el dashboard de administrador */
+.admin-content {
+    text-align: center;
+    padding: 60px 20px;
+    background: transparent;
+    position: relative;
+    z-index: 2;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 100%;
+    max-width: none;
+}
+
+.admin-container {
+    max-width: 1200px;
+    width: 100%;
+    margin: 20px auto;
+    background: rgba(239, 238, 235, 0.9);
+    border-radius: 15px;
+    padding: 30px 25px;
+    position: relative;
+    z-index: 2;
+    box-shadow: none;
+    text-align: left;
+}
+.btn-admin-create {
+    display: inline-block;
+    background: #fb4d17;
+    color: #fff;
+    border: none;
+    padding: 10px 15px; /* Ajustado para igualar altura con .btn-admin-cancel */
+    border-radius: 20px; /* Igualado con .btn-admin-cancel */
+    font-size: 0.9rem; /* Igualado con .btn-admin-cancel */
+    font-weight: 500;
+    text-decoration: none;
+    line-height: 1.5; /* Añadido para alineación vertical */
+    transition: background-color 0.3s;
+    margin-bottom: 30px;
+}
+.btn-admin-create:hover {
+    background: #e04312;
+    text-decoration: none;
+}
+
+.article-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.article-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #ffffff;
+    border: 1px solid #d3d3d3;
+    border-radius: 15px;
+    padding: 15px 20px;
+    transition: background-color 0.3s;
+}
+
+.article-card:hover {
+    background: #f3f3f3;
+}
+
+.article-info {
+    flex-grow: 1;
+    text-align: left;
+}
+
+.article-info h3 {
+    font-size: 1.25rem;
+    font-weight: 500;
+    color: #1e1e1e;
+    margin: 0 0 5px 0;
+}
+
+.article-date {
+    font-size: 0.9rem;
+    color: #858585;
+    margin: 0;
+}
+
+.article-actions {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.action-icon {
+    font-size: 1.4rem;
+    color: #1a5f7a;
+    text-decoration: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+    transition: color 0.3s;
+}
+
+.action-icon:hover {
+    color: #fb4d17;
+}
+
+.action-delete {
+    color: #d32f2f;
+}
+
+.action-delete:hover {
+    color: #e04312;
+}
+
+.no-articles {
+    font-size: 1rem;
+    color: #858585;
+    text-align: center;
+    margin-top: 20px;
+}
+
+/* Estilos para el formulario de crear artículo */
+.admin-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.form-control textarea {
+    background: #f3f3f3;
+    border: none;
+    border-radius: 20px;
+    padding: 15px 20px;
+    font-size: 0.9rem;
+    color: #1e1e1e;
+    resize: vertical;
+    min-height: 120px;
+}
+
+.form-control textarea:focus {
+    outline: none;
+    border: 2px solid #083630;
+}
+
+.form-control textarea::placeholder {
+    color: #858585;
+}
+
+.file-input {
+    background: #f3f3f3;
+    border: none;
+    border-radius: 30px;
+    padding: 10px 20px;
+    font-size: 0.9rem;
+    color: #1e1e1e;
+    cursor: pointer;
+}
+
+.file-input:focus {
+    outline: none;
+    border: 2px solid #083630;
+}
+
+.form-actions {
+    display: flex;
+    gap: 15px;
+    justify-content: flex-start;
+    align-items: center; /* Añadido para alinear verticalmente */
+}
+.btn-admin-create {
+    display: inline-block;
+    background: #fb4d17;
+    color: #fff;
+    border: none;
+    padding: 12px 15px;
+    border-radius: 30px;
+    font-size: 1rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: background-color 0.3s;
+}
+
+.btn-admin-create:hover {
+    background: #e04312;
+    text-decoration: none;
+}
+.btn-admin-cancel {
+    display: inline-block;
+    background: #858585;
+    color: #fff;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 50px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-decoration: none;
+    line-height: 1.5; /* Añadido para alineación vertical */
+    transition: background-color 0.3s;
+    height: 50px;
+    text-align: center;
+
+}
+
+.btn-admin-cancel:hover {
+    background: #6b6b6b;
+    text-decoration: none;
+}
+/*----------------------------------------------------------------------------*/
 @media (max-width: 768px) {
-    .hero h1 { font-size: 2rem; }
-    .hero p { font-size: 1rem; }
-    .card { max-width: 100%; }
+    .hero h1 {
+        font-size: 2rem;
+    }
+    .hero p {
+        font-size: 1rem;
+    }
+    .card {
+        max-width: 100%;
+    }
     .card-container {
         grid-template-columns: 1fr;
     }
@@ -425,5 +829,25 @@ footer {
     .plans-table td {
         font-size: 14px;
         padding: 10px;
+    }
+    .login-content {
+        padding: 40px 15px;
+    }
+    .login-container {
+        max-width: 550px;
+        margin: 20px 10px;
+        padding: 20px;
+        box-shadow: none;
+    }
+    .form-control {
+        padding: 10px 12px;
+    }
+    .btn-login {
+        padding: 10px;
+    }
+    .nav-btn-login, .nav-btn-register {
+        padding: 6px 15px;
+        font-size: 0.9rem;
+        margin-left: 5px;
     }
 }
