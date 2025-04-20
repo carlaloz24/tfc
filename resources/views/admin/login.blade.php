@@ -1,15 +1,15 @@
 @extends('layouts.app')
-@section('title', 'Iniciar Sesión')
+@section('title', 'Login Administrador')
 @section('content')
     <div class="container mt-5">
-        <h1>Iniciar Sesión</h1>
+        <h1>Login Administrador</h1>
         @if (session('error'))
             <div class="alert alert-danger">{{ session('error') }}</div>
         @endif
         @if ($errors->has('correo'))
             <div class="alert alert-danger">{{ $errors->first('correo') }}</div>
         @endif
-        <form method="POST" action="{{ route('login') }}">
+        <form method="POST" action="{{ route('admin.login') }}">
             @csrf
             <div class="mb-3">
                 <label for="correo" class="form-label">Correo</label>
@@ -22,8 +22,7 @@
                 @error('contraseña') <span class="text-danger">{{ $message }}</span> @enderror
             </div>
             <button type="submit" class="btn btn-primary">Iniciar Sesión</button>
-            <a href="{{ route('register') }}" class="btn btn-secondary">Registrarse</a>
-            <a href="{{ route('admin.login') }}" class="btn btn-secondary">Login Administrador</a>
+            <a href="{{ route('login') }}" class="btn btn-secondary">Login Público</a>
         </form>
     </div>
 @endsection

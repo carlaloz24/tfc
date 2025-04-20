@@ -17,20 +17,24 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
 Route::post('/register', [RegisterController::class, 'register']);
 
+// Ruta para login de administrador
+Route::get('/admin/login', [LoginController::class, 'showAdminLoginForm'])->name('admin.login');
+Route::post('/admin/login', [LoginController::class, 'adminLogin']);
+
 // Rutas protegidas por autenticación
 Route::middleware('auth')->group(function () {
     Route::get('/perfil', fn () => view('perfil'))->name('perfil');
 });
 
-// Rutas de administración (solo auth)
-Route::middleware(['auth'])->group(function () {
-    Route::get('/admin/articulos', [ArticuloController::class, 'adminIndex'])->name('admin.articulos.index');
-    Route::get('/articulos/create', [ArticuloController::class, 'create'])->name('articulos.create');
-    Route::post('/articulos', [ArticuloController::class, 'store'])->name('articulos.store');
-    Route::get('/admin/articulos/{articulo}/edit', [ArticuloController::class, 'edit'])->name('admin.articulos.edit');
-    Route::put('/admin/articulos/{articulo}', [ArticuloController::class, 'update'])->name('admin.articulos.update');
-    Route::delete('/admin/articulos/{articulo}', [ArticuloController::class, 'destroy'])->name('admin.articulos.destroy');
+// Rutas de administración (protegidas por auth y admin)
+Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
+    Route::get('/dashboard', [ArticuloController::class, 'adminIndex'])->name('admin.dashboard');
+    Route::get('/articles/create', [ArticuloController::class, 'create'])->name('articles.create');
+    Route::post('/articles', [ArticuloController::class, 'store'])->name('articles.store');
+    Route::get('/articles/{articulo}/edit', [ArticuloController::class, 'edit'])->name('articles.edit');
+    Route::put('/articles/{articulo}', [ArticuloController::class, 'update'])->name('articles.update');
+    Route::delete('/articles/{articulo}', [ArticuloController::class, 'destroy'])->name('admin.articulos.destroy');
 });
 
 // Rutas dinámicas (al final)
-Route::get('/articulos/{articulo}', [ArticuloController::class, 'show'])->name('articulos.show');
+Route::get('/articulos/{slug}', [ArticuloController::class, 'show'])->name('articulos.show');

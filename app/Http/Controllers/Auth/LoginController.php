@@ -1,16 +1,29 @@
 <?php
 namespace App\Http\Controllers\Auth;
+
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
-use App\Models\User;
 
 class LoginController extends Controller
 {
     public function showLoginForm()
     {
-        return view('auth.login');
+        if (Auth::check()) {
+            if (Auth::user()->is_admin) {
+                return redirect()->route('admin.dashboard');
+            }
+            return redirect()->intended('/');
+        }
+        return view('auth.login'); // Login público
+    }
+
+    public function showAdminLoginForm()
+    {
+        if (Auth::check()) {
+            return redirect()->route('admin.dashboard');
+        }
+        return view('admin.login'); // Login de admin
     }
 
     public function login(Request $request)
@@ -20,22 +33,55 @@ class LoginController extends Controller
             'contraseña' => 'required',
         ]);
 
-        // Depuración: Verifica si el usuario existe
-        $user = User::where('correo', $request->correo)->first();
-        if ($user) {
-            // Verifica manualmente la contraseña
-            if (Hash::check($request->contraseña, $user->contraseña)) {
-                Auth::login($user, $request->filled('remember'));
-                \Log::info('Login exitoso para: ' . $request->correo);
-                return redirect()->intended('/');
-            } else {
-                \Log::error('Contraseña incorrecta para: ' . $request->correo);
+        $credentials = [
+            'correo' => $request->correo,
+            'password' => $request->contraseña,
+        ];
+
+        if (Auth::attempt($credentials)) {
+            $user = Auth::user();
+            if ($user->is_admin) {
+                Auth::logout(); // Cierra la sesión si es admin
+                return back()->withErrors([
+                    'correo' => 'Los administradores deben usar el login de administrador.',
+                ])->onlyInput('correo');
             }
-        } else {
-            \Log::error('Usuario no encontrado: ' . $request->correo);
+            $request->session()->regenerate();
+            return redirect()->intended('/');
         }
 
-        return back()->withErrors(['correo' => 'Credenciales incorrectas.']);
+        return back()->withErrors([
+            'correo' => 'Las credenciales no coinciden.',
+        ])->onlyInput('correo');
+    }
+
+    public function adminLogin(Request $request)
+    {
+        $request->validate([
+            'correo' => 'required|email',
+            'contraseña' => 'required',
+        ]);
+
+        $credentials = [
+            'correo' => $request->correo,
+            'password' => $request->contraseña,
+        ];
+
+        if (Auth::attempt($credentials)) {
+            if (Auth::user()->is_admin) {
+                $request->session()->regenerate();
+                return redirect()->route('admin.dashboard');
+            } else {
+                Auth::logout(); // Cierra la sesión si no es admin
+                return back()->withErrors([
+                    'correo' => 'Solo los administradores pueden iniciar sesión aquí.',
+                ])->onlyInput('correo');
+            }
+        }
+
+        return back()->withErrors([
+            'correo' => 'Las credenciales no coinciden.',
+        ])->onlyInput('correo');
     }
 
     public function logout(Request $request)

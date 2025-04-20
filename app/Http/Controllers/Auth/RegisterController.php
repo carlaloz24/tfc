@@ -1,5 +1,6 @@
 <?php
 namespace App\Http\Controllers\Auth;
+
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -17,20 +18,19 @@ class RegisterController extends Controller
     {
         $request->validate([
             'nombre' => 'required|string|max:255',
-            'correo' => 'required|string|email|max:255|unique:usuarios',
+            'correo' => 'required|email|unique:usuarios,correo',
             'contraseña' => 'required|string|min:8|confirmed',
         ]);
 
-        $user = User::create([
-            'nombre' => $request->nombre,
-            'correo' => $request->correo,
-            'contraseña' => Hash::make($request->contraseña),
-        ]);
-
-        \Log::info('Usuario registrado: ' . $request->correo);
+        $user = new User();
+        $user->nombre = $request->nombre;
+        $user->correo = $request->correo;
+        $user->contraseña = Hash::make($request->contraseña);
+        $user->is_admin = 0;
+        $user->save();
 
         Auth::login($user);
 
-        return redirect('/');
+        return redirect()->route('home')->with('success', 'Registro exitoso.');
     }
 }

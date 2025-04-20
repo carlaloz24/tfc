@@ -10,9 +10,8 @@ class ArticuloController extends Controller
     public function index()
     {
         $articulos = Articulo::all();
-        return view('articulos.index', compact('articulos'));
+        return view('articulos.public_index', compact('articulos'));
     }
-
     public function adminIndex()
     {
         $articulos = Articulo::all();
@@ -41,24 +40,12 @@ class ArticuloController extends Controller
 
         if ($request->hasFile('imagen')) {
             $path = $request->file('imagen')->store('articulos', 'public');
-            $articulo->imagen = 'articulos/' . basename($path);
+            $articulo->imagen = $path;
         }
 
         $articulo->save();
 
-        return redirect()->route('admin.articulos.index')->with('success', 'Artículo creado.');
-    }
-
-    public function show($id)
-    {
-        $articulo = Articulo::findOrFail($id);
-        return view('articulos.show', compact('articulo'));
-    }
-
-    public function edit($id)
-    {
-        $articulo = Articulo::findOrFail($id);
-        return view('articulos.edit', compact('articulo'));
+        return redirect()->route('admin.dashboard')->with('success', 'Artículo creado.');
     }
 
     public function update(Request $request, $id)
@@ -75,19 +62,39 @@ class ArticuloController extends Controller
         $articulo->contenido = $request->contenido;
 
         if ($request->hasFile('imagen')) {
+            if ($articulo->imagen) {
+                Storage::disk('public')->delete($articulo->imagen);
+            }
             $path = $request->file('imagen')->store('articulos', 'public');
-            $articulo->imagen = 'articulos/' . basename($path);
+            $articulo->imagen = $path;
         }
 
         $articulo->save();
 
-        return redirect()->route('admin.articulos.index')->with('success', 'Artículo actualizado.');
+        return redirect()->route('admin.dashboard')->with('success', 'Artículo actualizado.');
     }
 
     public function destroy($id)
     {
         $articulo = Articulo::findOrFail($id);
+        if ($articulo->imagen) {
+            Storage::disk('public')->delete($articulo->imagen);
+        }
         $articulo->delete();
-        return redirect()->route('admin.articulos.index')->with('success', 'Artículo eliminado.');
+        return redirect()->route('admin.dashboard')->with('success', 'Artículo eliminado.');
     }
+
+    public function show($slug)
+    {
+        $articulo = Articulo::where('slug', $slug)->firstOrFail();
+        return view('articulos.show', compact('articulo'));
+    }
+
+    public function edit($id)
+    {
+        $articulo = Articulo::findOrFail($id);
+        return view('articulos.edit', compact('articulo'));
+    }
+
+
 }

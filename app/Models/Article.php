@@ -4,20 +4,18 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Articulo extends Model
+class Article extends Model
 {
     use HasFactory;
 
-    protected $table = 'articulos';
+    protected $table = 'articulos'; // Apunta a la tabla 'articulos'
 
     protected $fillable = [
-        'id_usuario',
         'titulo',
-        'slug',
         'contenido',
         'imagen',
         'fecha_publicacion',
     ];
 
-    protected $dates = ['fecha_publicacion', 'created_at', 'updated_at'];
+    protected $dates = ['fecha_publicacion'];
 }

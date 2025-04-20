@@ -1,31 +1,42 @@
 @extends('layouts.app')
-@section('title', 'Blog')
+@section('title', 'Panel de Administración - Artículos')
 @section('content')
-    <div class="main-container">
-        <div class="second-background"></div>
-        <div class="content">
-            <h1>Blog</h1>
-            <p>Explora nuestros artículos sobre dietas y alimentación canina</p>
-        </div>
-        <div class="card-container">
-            @if ($articulos->isEmpty())
-                <p>No hay artículos que mostrar</p>
-            @else
-                @foreach ($articulos as $articulo)
-                    <a href="{{ route('articulos.show', $articulo) }}" class="card-link">
-                        <div class="card-articulos">
-                            @if ($articulo->imagen)
-                                <img src="{{ asset('storage/' . $articulo->imagen) }}" alt="{{ $articulo->titulo }}" class="card-img">
-                            @else
-                                <p>Sin imagen</p>
-                            @endif
-                            <h2>{{ $articulo->titulo }}</h2>
-                            <p class="subtitle">{{ Str::limit($articulo->contenido, 100) }}</p>
-                            <small>{{ $articulo->fecha_publicacion->format('d F Y') }}</small>
-                        </div>
-                    </a>
-                @endforeach
-            @endif
-        </div>
+    <div class="container mt-5">
+        <h1>Panel de Administración - Artículos</h1>
+        @if (session('success'))
+            <div class="alert alert-success">{{ session('success') }}</div>
+        @endif
+        <a href="{{ route('articles.create') }}" class="btn btn-primary mb-3">Crear Artículo</a>
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Título</th>
+                <th>Fecha</th>
+                <th>Acciones</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach ($articulos as $articulo)
+                <tr>
+                    <td>{{ $articulo->titulo }}</td>
+                    <td>
+                        @if ($articulo->fecha_publicacion)
+                            {{ \Carbon\Carbon::parse($articulo->fecha_publicacion)->format('d/m/Y') }}
+                        @else
+                            Sin fecha
+                        @endif
+                    </td>
+                    <td>
+                        <a href="{{ route('articles.edit', $articulo) }}" class="btn btn-sm btn-warning">Editar</a>
+                        <form action="{{ route('admin.articulos.destroy', $articulo) }}" method="POST" style="display:inline;">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('¿Seguro?')">Eliminar</button>
+                        </form>
+                    </td>
+                </tr>
+            @endforeach
+            </tbody>
+        </table>
     </div>
 @endsection
