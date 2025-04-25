@@ -32,7 +32,7 @@
             </ul>
             <ul class="navbar-nav">
                 @auth
-                    <li class="nav-item"><a class="nav-link" href="{{ route('perfil') }}">Mi Perfil</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('profile.index') }}">Mi Perfil</a></li>
                     <li class="nav-item">
                         <form action="{{ route('logout') }}" method="POST" style="display:inline;">
                             @csrf

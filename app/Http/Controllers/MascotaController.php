@@ -1,41 +1,71 @@
 <?php
 namespace App\Http\Controllers;
 use App\Models\Mascota;
-use App\Models\Usuario;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class MascotaController extends Controller
 {
+    public function index()
+    {
+        $mascotas = Auth::user()->mascotas;
+        return view('mascotas.index', compact('mascotas'));
+    }
+
     public function create()
     {
-        $usuarios = Usuario::all();
-        return view('mascotas.create', compact('usuarios'));
+        return view('mascotas.create');
     }
 
     public function store(Request $request)
     {
         $request->validate([
-            'id_usuario' => 'required|exists:usuarios,id',
             'nombre' => 'required|string|max:255',
-            'raza' => 'nullable|string|max:255',
-            'categoria_edad' => 'required|in:cachorro_menor_4,cachorro_mayor_4,adulto,senior',
-            'peso' => 'required|numeric|min:0|max:999.99',
-            'nivel_actividad' => 'required|in:baja,moderada,alta',
+            'raza' => 'required|string|max:255',
+            'categoria_edad' => 'required|string',
+            'peso' => 'required|numeric|min:0',
+            'nivel_actividad' => 'required|string',
             'esterilizado' => 'required|boolean',
-            'tipo_dieta_preferida' => 'required|in:barf,cocida,mixta_50,mixta_70',
+            'tipo_dieta_preferida' => 'required|string',
         ]);
 
-        $mascota = new Mascota();
-        $mascota->id_usuario = $request->id_usuario;
-        $mascota->nombre = $request->nombre;
-        $mascota->raza = $request->raza;
-        $mascota->categoria_edad = $request->categoria_edad;
-        $mascota->peso = $request->peso;
-        $mascota->nivel_actividad = $request->nivel_actividad;
-        $mascota->esterilizado = $request->esterilizado;
-        $mascota->tipo_dieta_preferida = $request->tipo_dieta_preferida;
-        $mascota->save();
+        Auth::user()->mascotas()->create($request->all());
+        return redirect()->route('profile.index')->with('success', 'Mascota añadida.');
+    }
 
-        return redirect()->route('mascotas.index')->with('success', 'Mascota creada.');
+    public function show(Mascota $mascota)
+    {
+        $this->authorize('view', $mascota);
+        return view('mascotas.show', compact('mascota'));
+    }
+
+    public function edit(Mascota $mascota)
+    {
+        $this->authorize('update', $mascota);
+        return view('mascotas.edit', compact('mascota'));
+    }
+
+    public function update(Request $request, Mascota $mascota)
+    {
+        $this->authorize('update', $mascota);
+        $request->validate([
+            'nombre' => 'required|string|max:255',
+            'raza' => 'required|string|max:255',
+            'categoria_edad' => 'required|string',
+            'peso' => 'required|numeric|min:0',
+            'nivel_actividad' => 'required|string',
+            'esterilizado' => 'required|boolean',
+            'tipo_dieta_preferida' => 'required|string',
+        ]);
+
+        $mascota->update($request->all());
+        return redirect()->route('profile.index')->with('success', 'Mascota actualizada.');
+    }
+
+    public function destroy(Mascota $mascota)
+    {
+        $this->authorize('delete', $mascota);
+        $mascota->delete();
+        return redirect()->route('profile.index')->with('success', 'Mascota eliminada.');
     }
 }

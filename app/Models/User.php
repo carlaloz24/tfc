@@ -1,6 +1,5 @@
 <?php
 namespace App\Models;
-
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -25,5 +24,10 @@ class User extends Authenticatable
     public function getAuthPassword()
     {
         return $this->contraseña;
+    }
+
+    public function mascotas()
+    {
+        return $this->hasMany(Mascota::class, 'id_usuario');
     }
 }
