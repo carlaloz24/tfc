@@ -12,6 +12,22 @@ Route::get('/blog', [ArticuloController::class, 'index'])->name('articulos.index
 Route::get('/calculadora', fn () => view('calculadora'))->name('calculadora');
 Route::get('/planes', fn () => view('planes'))->name('planes');
 
+Route::post('/contact', function () {
+    // Lógica para manejar el formulario
+    return redirect()->back()->with('success', 'Mensaje enviado');
+})->name('contact.submit');
+
+Route::post('/newsletter', function () {
+    // Lógica para manejar la suscripción
+    return redirect()->back()->with('success', '¡Suscrito a la newsletter!');
+})->name('newsletter.subscribe');
+
+// Nueva ruta para Contacto
+Route::get('/contacto', function () {
+    return view('home'); // O la vista correspondiente para la página de contacto
+})->name('contacto');
+
+
 // Rutas de autenticación
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login']);

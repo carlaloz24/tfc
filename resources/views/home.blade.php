@@ -3,12 +3,14 @@
 @section('content')
     <div class="main-container">
         <div class="second-background"></div>
-        <div class="home-content">
-            <div class="row align-items-center" style="min-height: 80vh;">
+        <div class="container-fluid home-content">
+            <div class="row align-items-center">
                 <div class="col-md-6">
                     <div class="home-text">
-                        <h1 class="home-title">Tu Dieta Personalizada</h1>
-                        <p class="home-description">Descubre planes de alimentación adaptados a tus necesidades y objetivos.</p>
+                        <h1 class="home-title">Transforma la calidad de vida de tu mascota</h1>
+                        <p class="home-description">Optimiza la salud de tu perro con planes de alimentación  personalizados,
+                            diseñados para adaptarse perfectamente a sus características y necesidades, garantizando
+                            su bienestar y vitalidad.</p>
                         <div class="home-actions">
                             <a href="{{ route('calculadora') }}" class="btn-home-primary">
                                 Generar dieta gratis
@@ -25,7 +27,81 @@
         </div>
     </div>
 
-    <style>
 
-    </style>
+    <!-- Sección de contacto -->
+    <div class="contact-container">
+        <div class="contact-background"></div>
+        <div class="container-fluid contact-content">
+            <div class="row align-items-start">
+                <div class="col-md-6">
+                    <div class="contact-text">
+                        <h2 class="contact-title">Contáctanos</h2>
+                        <p class="contact-subtitle">Estaremos encantados de resolver tus dudas, no dudes en contactar con nosotros</p>
+                        <ul class="contact-info" style="margin-left:7px;">
+                            <li><span class="contact-label">Email:</span> <a href="mailto:info@barfco.com">info@barfco.com</a></li>
+                            <li><span class="contact-label">Teléfono:</span> <a href="tel:+1234567890">+34 123-456-789</a></li>
+                            <li><span class="contact-label">Dirección:</span> <a href="https://www.google.com/maps/place/Pol%C3%ADgono+Industrial+de+Guarnizo,+39611+El+Astillero,+Cantabria,+Spain" target="_blank">
+                                    Polígono Industrial de Guarnizo, 39611 El Astillero, Cantabria, España</a></li>
+                        </ul>
+                        <div class="contact-social">
+                            <p class="social-title"></p>
+                            <div class="social-icons">
+                                <a href="#" class="social-link"><i class="bi bi-facebook"></i></a>
+                                <a href="#" class="social-link"><i class="bi bi-instagram"></i></a>
+                                <a href="#" class="social-link"><i class="bi bi-twitter"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <form class="contact-form" action="{{ route('contact.submit') }}" method="POST">
+                        @csrf
+                        <div class="form-group">
+                            <label for="name" class="form-label">Nombre</label>
+                            <input type="text" id="name" name="name" class="form-control" placeholder="Tu nombre" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email" class="form-label">Correo electrónico</label>
+                            <input type="email" id="email" name="email" class="form-control" placeholder="Tu correo" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="message" class="form-label">Mensaje</label>
+                            <textarea id="message" name="message" class="form-control" rows="5" placeholder="Escribe tu mensaje" required style="border-radius:10px;"></textarea>
+                        </div>
+                        <button type="submit" class="btn-home-primary">Enviar mensaje</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Nuevo footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-left">
+                <img src="{{ asset('images/logo-barfco.png') }}" alt="Barfco Logo" class="footer-logo">
+                <h3 class="footer-newsletter-title">Suscríbete a la newsletter</h3>
+                <p class="footer-newsletter-text">Recibe por correo los artículos nuevos del blog, ofertas exclusivas y novedades.</p>
+                <form class="footer-newsletter-form" action="{{ route('newsletter.subscribe') }}" method="POST">
+                    @csrf
+                    <div class="newsletter-input-group">
+                        <input type="email" name="email" class="form-control" placeholder="Tu correo electrónico" required>
+                        <button type="submit" class="btn-home-primary">Suscribirse</button>
+                    </div>
+                </form>
+            </div>
+            <div class="footer-right">
+                <h3 class="footer-links-title">Explora</h3>
+                <ul class="footer-links">
+                    <li><a href="{{ route('home') }}">Inicio</a></li>
+                    <li><a href="{{ route('calculadora') }}">Calculadora</a></li>
+                    <li><a href="{{ route('planes') }}">Planes</a></li>
+                    <li><a href="{{ route('contacto') }}">Contacto</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>2025 Todos los derechos reservados Barfco</p>
+        </div>
+    </footer>
 @endsection

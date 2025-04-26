@@ -12,14 +12,14 @@
     @yield('styles')
 </head>
 <body>
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <div class="container px-3 py-4 mx-auto" style="max-width: 1000px;">
+<nav class="navbar navbar-expand-lg">
+    <div class="navbar-container">
         <a class="navbar-brand" href="{{ route('home') }}">Barfco</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav me-auto">
+            <ul class="navbar-nav mx-auto">
                 <li class="nav-item"><a class="nav-link" href="{{ route('home') }}">Inicio</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ route('calculadora') }}">Calculadora</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ route('planes') }}">Planes</a></li>
@@ -30,26 +30,24 @@
                     @endif
                 @endauth
             </ul>
-            <ul class="navbar-nav">
+            <ul class="navbar-nav ms-auto">
                 @auth
-                    <li class="nav-item"><a class="nav-link" href="{{ route('profile.index') }}">Mi Perfil</a></li>
+                    <li class="nav-item"><a class="nav-link btn-home-secondary" href="{{ route('profile.index') }}">Mi Perfil</a></li>
                     <li class="nav-item">
                         <form action="{{ route('logout') }}" method="POST" style="display:inline;">
                             @csrf
-                            <button type="submit" class="nav-link btn btn-link">Cerrar Sesión</button>
+                            <button type="submit" class="nav-link btn-home-primary">Cerrar Sesión</button>
                         </form>
                     </li>
                 @else
-                    <li class="nav-item"><a class="nav-link" href="{{ route('login') }}">Iniciar Sesión</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ route('register') }}">Registrarse</a></li>
+                    <li class="nav-item"><a class="nav-link btn-home-secondary" href="{{ route('login') }}">Iniciar Sesión</a></li>
+                    <li class="nav-item"><a class="nav-link btn-home-primary" href="{{ route('register') }}">Registrarse</a></li>
                 @endauth
             </ul>
         </div>
     </div>
 </nav>
-<div class="container mt-4">
-    @yield('content')
-</div>
+@yield('content')
 <footer class="bg-light py-3 mt-4">
     <div class="container text-center">
         <p>© {{ date('Y') }} Barfco. Todos los derechos reservados.</p>
