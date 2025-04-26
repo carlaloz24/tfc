@@ -27,6 +27,22 @@ Route::get('/contacto', function () {
     return view('home'); // O la vista correspondiente para la página de contacto
 })->name('contacto');
 
+Route::get('/perfil', function () {
+    return view('perfil'); // O la vista correspondiente
+})->name('perfil');
+
+Route::get('/politica-privacidad', function () {
+    return view('politica-privacidad');
+})->name('politica-privacidad');
+
+Route::get('/terminos-uso', function () {
+    return view('terminos-uso');
+})->name('terminos-uso');
+
+Route::get('/aviso-legal', function () {
+    return view('aviso-legal');
+})->name('aviso-legal');
+
 
 // Rutas de autenticación
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');

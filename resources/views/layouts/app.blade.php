@@ -48,9 +48,9 @@
     </div>
 </nav>
 @yield('content')
-<footer class="bg-light py-3 mt-4">
+<footer class="bg-light py-3 mt-4" style="background-color: #dad6c9;">
     <div class="container text-center">
-        <p>© {{ date('Y') }} Barfco. Todos los derechos reservados.</p>
+        <p>© {{ date('Y') }} Barf&Co. Todos los derechos reservados.</p>
     </div>
 </footer>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
