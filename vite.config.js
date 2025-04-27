@@ -7,10 +7,13 @@ export default defineConfig({
             input: [
                 'resources/css/app.css',
                 'resources/js/app.js',
-                'resources/js/calculadora.js',
                 'resources/js/info-gallery.js'
             ],
             refresh: true,
         }),
     ],
+    build: {
+        outDir: 'public/build',
+        manifest: true,
+    }
 });

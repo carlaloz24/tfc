@@ -34,27 +34,23 @@
             <div class="info-gallery">
                 <div class="info-item">
                     <img src="{{ asset('images/dieta-placeholder.png') }}" alt="Historia 1" class="info-image">
+                    <h3 class="info-item-title">Historia 1</h3>
                     <p class="info-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
                 </div>
                 <div class="info-item">
                     <img src="{{ asset('images/dieta-placeholder.png') }}" alt="Historia 2" class="info-image">
+                    <h3 class="info-item-title">Historia 2</h3>
                     <p class="info-text">Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
                 </div>
                 <div class="info-item">
                     <img src="{{ asset('images/dieta-placeholder.png') }}" alt="Historia 3" class="info-image">
+                    <h3 class="info-item-title">Historia 3</h3>
                     <p class="info-text">Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
                 </div>
                 <div class="info-item">
                     <img src="{{ asset('images/dieta-placeholder.png') }}" alt="Historia 4" class="info-image">
+                    <h3 class="info-item-title">Historia 4</h3>
                     <p class="info-text">Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-                </div>
-                <div class="info-item">
-                    <img src="{{ asset('images/dieta-placeholder.png') }}" alt="Historia 5" class="info-image">
-                    <p class="info-text">Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium.</p>
-                </div>
-                <div class="info-item">
-                    <img src="{{ asset('images/dieta-placeholder.png') }}" alt="Historia 6" class="info-image">
-                    <p class="info-text">Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni.</p>
                 </div>
             </div>
         </div>
@@ -112,7 +108,7 @@
             <div class="footer-background"></div>
             <div class="footer-content">
                 <div class="footer-column">
-                    <img src="{{ asset('images/logo-barfco.png') }}" alt="Barfco Logo" class="footer-logo">
+                    <img src="{{ asset('images/dieta-placeholder.png') }}" alt="Barfco Logo" class="footer-logo">
                     <h3 class="footer-newsletter-title">Suscríbete a la newsletter</h3>
                     <p class="footer-newsletter-text">Recibe por correo los artículos nuevos del blog, ofertas exclusivas y novedades.</p>
                     <form class="footer-newsletter-form" action="{{ route('newsletter.subscribe') }}" method="POST">
@@ -156,5 +152,5 @@
     </footer>
 @endsection
 @push('scripts')
-    <script src="{{ asset('js/info-gallery.js') }}"></script>
+    @vite('resources/js/info-gallery.js')
 @endpush
