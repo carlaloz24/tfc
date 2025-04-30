@@ -1,0 +1,132 @@
+.article-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    margin-bottom: 10px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.article-info {
+    flex-grow: 1;
+}
+
+.article-title-link {
+    color: #1e1e1e;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.article-title-link:hover {
+    color: #0d6efd;
+}
+
+.article-date {
+    color: #858585;
+    font-size: 0.9rem;
+}
+
+.article-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.action-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    background-color: #f8f9fa;
+    color: #1e1e1e;
+    text-decoration: none;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.action-icon:hover {
+    background-color: rgba(13, 110, 253, 0.8);
+    color: #fff;
+}
+
+.action-icon.action-delete {
+    background-color: #f8f9fa;
+}
+
+.action-icon.action-delete:hover {
+    background-color: rgba(220, 53, 69, 0.8);
+    color: #fff;
+}
+
+.btn-admin-create {
+    display: inline-block;
+    padding: 10px 20px;
+    margin-bottom: 20px;
+    background-color: #0d6efd;
+    color: #fff;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: background-color 0.3s;
+}
+
+.btn-admin-create:hover {
+    background-color: #0b5ed7;
+}
+
+.btn-admin-cancel {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #6c757d;
+    color: #fff;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: background-color 0.3s;
+}
+
+.btn-admin-cancel:hover {
+    background-color: #5c636a;
+}
+
+.modal-content {
+    border-radius: 10px;
+}
+
+.modal-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.modal-title {
+    font-weight: 600;
+}
+
+.btn-danger {
+    background-color: #dc3545;
+    border-color: #dc3545;
+}
+
+.btn-danger:hover {
+    background-color: #c82333;
+    border-color: #bd2130;
+}
+
+.article-content {
+    line-height: 1.6;
+    font-size: 1rem;
+    color: #1e1e1e;
+}
+
+.article-content p {
+    margin-bottom: 1rem;
+}
+
+.article-content ul, .article-content ol {
+    margin-bottom: 1rem;
+    padding-left: 20px;
+}
+
+.article-content strong {
+    font-weight: 700;
+}

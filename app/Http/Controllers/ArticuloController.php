@@ -67,19 +67,20 @@ class ArticuloController extends Controller
         ]);
 
         $data = $request->only(['titulo', 'contenido']);
+        $data['slug'] = Str::slug($request->titulo);
 
         // Manejar la imagen
         if ($request->has('borrar_imagen') && $articulo->imagen) {
-            Storage::delete($articulo->imagen);
+            Storage::disk('public')->delete($articulo->imagen);
             $data['imagen'] = null;
         }
 
         if ($request->hasFile('imagen')) {
             // Borrar la imagen anterior si existe
             if ($articulo->imagen) {
-                Storage::delete($articulo->imagen);
+                Storage::disk('public')->delete($articulo->imagen);
             }
-            $path = $request->file('imagen')->store('public/articulos');
+            $path = $request->file('imagen')->store('articulos', 'public');
             $data['imagen'] = $path;
         }
 
@@ -99,6 +100,4 @@ class ArticuloController extends Controller
         $articulo = Articulo::findOrFail($id);
         return view('articulos.edit', compact('articulo'));
     }
-
-
 }

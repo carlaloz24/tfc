@@ -10,12 +10,12 @@
                 @if (session('success'))
                     <div class="alert alert-success">{{ session('success') }}</div>
                 @endif
-                <a href="{{ route('articles.create') }}" class="btn-admin-create">Crear Artículo</a>
+                <a href="{{ route('articulos.create') }}" class="btn-admin-create">Crear Artículo</a>
                 <div class="article-list">
                     @forelse ($articulos as $articulo)
                         <div class="article-card">
                             <div class="article-info">
-                                <h3>{{ $articulo->titulo }}</h3>
+                                <h3><a href="{{ route('articulos.show', $articulo->slug) }}" class="article-title-link">{{ $articulo->titulo }}</a></h3>
                                 <p class="article-date">
                                     @if ($articulo->fecha_publicacion)
                                         {{ \Carbon\Carbon::parse($articulo->fecha_publicacion)->format('d/m/Y') }}
@@ -25,15 +25,15 @@
                                 </p>
                             </div>
                             <div class="article-actions">
-                                <a href="{{ route('articles.edit', $articulo) }}" class="action-icon" title="Editar">
-                                    <i class="bi-pen"></i>
+                                <a href="{{ route('articulos.edit', $articulo) }}" class="action-icon" title="Editar">
+                                    <i class="bi bi-pen"></i>
                                 </a>
-                                <form action="{{ route('admin.articulos.destroy', $articulo) }}" method="POST" style="display:inline;">
+                                <button type="button" class="action-icon action-delete" title="Eliminar" data-id="{{ $articulo->id }}" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                                    <i class="bi bi-trash2"></i>
+                                </button>
+                                <form action="{{ route('admin.articulos.destroy', $articulo) }}" method="POST" style="display:none;" id="delete-form-{{ $articulo->id }}">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="action-icon action-delete" title="Eliminar" onclick="return confirm('¿Seguro que quieres eliminar este artículo?')">
-                                        <i class="bi bi-trash2"></i>
-                                    </button>
                                 </form>
                             </div>
                         </div>
@@ -44,4 +44,44 @@
             </div>
         </div>
     </div>
+
+    <!-- Modal de confirmación de eliminación -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel">Confirmar Eliminación</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    ¿Estás seguro de que quieres eliminar este artículo? Esta acción no se puede deshacer.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-danger" id="confirm-delete">Eliminar</button>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
+@push('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            let articleId = null;
+
+            // Capturar el ID del artículo al hacer clic en eliminar
+            document.querySelectorAll('.action-delete').forEach(button => {
+                button.addEventListener('click', () => {
+                    articleId = button.getAttribute('data-id');
+                });
+            });
+
+            // Confirmar eliminación
+            document.getElementById('confirm-delete').addEventListener('click', () => {
+                if (articleId) {
+                    document.getElementById(`delete-form-${articleId}`).submit();
+                }
+            });
+        });
+    </script>
+@endpush
