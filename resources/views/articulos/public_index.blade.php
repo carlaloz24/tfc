@@ -20,7 +20,7 @@
                                 <p>Sin imagen</p>
                             @endif
                             <h2>{{ $articulo->titulo }}</h2>
-                            <p class="subtitle">{{ Str::limit($articulo->contenido, 100) }}</p>
+                            <p class="subtitle">{{ Str::limit(strip_tags($articulo->contenido), 100) }}</p>
                             <small>
                                 Publicado:
                                 @if ($articulo->fecha_publicacion)

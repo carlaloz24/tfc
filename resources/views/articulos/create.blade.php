@@ -51,7 +51,7 @@
         tinymce.init({
             selector: '#contenido',
             plugins: 'advlist autolink lists link image charmap preview anchor searchreplace visualblocks code fullscreen insertdatetime media table code help wordcount',
-            toolbar: 'undo redo | formatselect | bold italic underline | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | code preview',
+            toolbar: 'undo redo | formatselect | bold italic underline | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | code preview',
             menubar: false,
             height: 400,
             content_style: 'body { font-family: Arial, sans-serif; font-size: 16px; }'

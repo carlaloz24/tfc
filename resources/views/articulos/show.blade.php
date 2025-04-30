@@ -1,24 +1,40 @@
 @extends('layouts.app')
-@section('title', $articulo->titulo)
+@section('title', isset($articulo->titulo) ? $articulo->titulo : 'Artículo')
 @section('content')
     <div class="container mt-5">
-        <h1>{{ $articulo->titulo }}</h1>
-        <p>
-            @if ($articulo->fecha_publicacion)
-                {{ \Carbon\Carbon::parse($articulo->fecha_publicacion)->format('d/m/Y') }}
-            @else
-                Sin fecha
-            @endif
-        </p>
-        @if ($articulo->imagen)
-            <img src="{{ Storage::url($articulo->imagen) }}" alt="{{ $articulo->titulo }}" class="img-fluid mb-3" style="max-width: 100%;">
+        @if ($articulo)
+            <div class="article-container">
+                <h1 class="article-title">{{ $articulo->titulo }}</h1>
+                <p class="article-date">
+                    @if ($articulo->fecha_publicacion)
+                        {{ \Carbon\Carbon::parse($articulo->fecha_publicacion)->format('d/m/Y') }}
+                    @else
+                        Sin fecha
+                    @endif
+                </p>
+                <div class="article-content">
+                    {!! $articulo->contenido ?: 'Sin contenido disponible' !!}
+                </div>
+                @if ($articulo->imagen)
+                    <img src="{{ Storage::url($articulo->imagen) }}"
+                         alt="{{ $articulo->titulo }}"
+                         class="article-image img-fluid mt-3">
+                @else
+                    <p class="no-image mt-3">Sin imagen</p>
+                @endif
+                <div class="article-actions mt-3">
+                    <a href="{{ route('articulos.index') }}"
+                       class="btn btn-custom">Volver</a>
+                    @auth
+                        @if (Auth::user()->is_admin)
+                            <a href="{{ route('articulos.edit', $articulo) }}"
+                               class="btn btn-custom">Editar</a>
+                        @endif
+                    @endauth
+                </div>
+            </div>
+        @else
+            <p class="error-message">No se encontró el artículo.</p>
         @endif
-        <div class="article-content">{!! $articulo->contenido !!}</div>
-        <a href="{{ route('articulos.index') }}" class="btn btn-secondary mt-3">Volver al Blog</a>
-        @auth
-            @if (Auth::user()->is_admin)
-                <a href="{{ route('articulos.edit', $articulo) }}" class="btn btn-warning mt-3">Editar</a>
-            @endif
-        @endauth
     </div>
 @endsection

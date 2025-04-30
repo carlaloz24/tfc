@@ -13,30 +13,34 @@
                 <a href="{{ route('articulos.create') }}" class="btn-admin-create">Crear Artículo</a>
                 <div class="article-list">
                     @forelse ($articulos as $articulo)
-                        <div class="article-card">
-                            <div class="article-info">
-                                <h3><a href="{{ route('articulos.show', $articulo->slug) }}" class="article-title-link">{{ $articulo->titulo }}</a></h3>
-                                <p class="article-date">
-                                    @if ($articulo->fecha_publicacion)
-                                        {{ \Carbon\Carbon::parse($articulo->fecha_publicacion)->format('d/m/Y') }}
-                                    @else
-                                        Sin fecha
-                                    @endif
-                                </p>
+                        <a href="{{ route('articulos.show', $articulo->slug) }}" class="article-card-link">
+                            <div class="article-card">
+                                <div class="article-info">
+                                    <div class="article-text">
+                                        <h3 class="article-title">{{ $articulo->titulo }}</h3>
+                                        <p class="article-date">
+                                            @if ($articulo->fecha_publicacion)
+                                                {{ \Carbon\Carbon::parse($articulo->fecha_publicacion)->format('d/m/Y') }}
+                                            @else
+                                                Sin fecha
+                                            @endif
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="article-actions">
+                                    <a href="{{ route('articulos.edit', $articulo) }}" class="action-icon" title="Editar">
+                                        <i class="bi bi-pen"></i>
+                                    </a>
+                                    <button type="button" class="action-icon action-delete" title="Eliminar" data-id="{{ $articulo->id }}" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                    <form action="{{ route('admin.articulos.destroy', $articulo) }}" method="POST" style="display:none;" id="delete-form-{{ $articulo->id }}">
+                                        @csrf
+                                        @method('DELETE')
+                                    </form>
+                                </div>
                             </div>
-                            <div class="article-actions">
-                                <a href="{{ route('articulos.edit', $articulo) }}" class="action-icon" title="Editar">
-                                    <i class="bi bi-pen"></i>
-                                </a>
-                                <button type="button" class="action-icon action-delete" title="Eliminar" data-id="{{ $articulo->id }}" data-bs-toggle="modal" data-bs-target="#deleteModal">
-                                    <i class="bi bi-trash2"></i>
-                                </button>
-                                <form action="{{ route('admin.articulos.destroy', $articulo) }}" method="POST" style="display:none;" id="delete-form-{{ $articulo->id }}">
-                                    @csrf
-                                    @method('DELETE')
-                                </form>
-                            </div>
-                        </div>
+                        </a>
                     @empty
                         <p class="no-articles">No hay artículos disponibles.</p>
                     @endforelse
@@ -71,7 +75,8 @@
 
             // Capturar el ID del artículo al hacer clic en eliminar
             document.querySelectorAll('.action-delete').forEach(button => {
-                button.addEventListener('click', () => {
+                button.addEventListener('click', (e) => {
+                    e.preventDefault(); // Evitar que el clic en el botón active el enlace de la tarjeta
                     articleId = button.getAttribute('data-id');
                 });
             });
