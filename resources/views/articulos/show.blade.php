@@ -1,6 +1,9 @@
 @extends('layouts.app')
 @section('title', isset($articulo->titulo) ? $articulo->titulo : 'Artículo')
 @section('content')
+    <div class="main-container">
+        <div class="second-background" style="z-index:-10;"></div>
+
     <div class="container mt-5">
         @if ($articulo)
             <div class="article-container">
@@ -37,4 +40,6 @@
             <p class="error-message">No se encontró el artículo.</p>
         @endif
     </div>
+    </div>
+
 @endsection

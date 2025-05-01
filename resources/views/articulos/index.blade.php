@@ -10,6 +10,36 @@
                 @if (session('success'))
                     <div class="alert alert-success">{{ session('success') }}</div>
                 @endif
+                <div class="filter-container">
+                    <form method="GET" action="{{ route('admin.dashboard') }}" class="filter-form">
+                        <div class="filter-left">
+                            <div class="filter-group">
+                                <label for="start_date" class="filter-label">Desde:</label>
+                                <input type="date" name="start_date" id="start_date" class="filter-input"
+                                       value="{{ request('start_date') }}">
+                            </div>
+                            <div class="filter-group">
+                                <label for="end_date" class="filter-label">Hasta:</label>
+                                <input type="date" name="end_date" id="end_date" class="filter-input"
+                                       value="{{ request('end_date') }}">
+                            </div>
+                            <button type="submit" class="btn btn-admin-filter">Filtrar</button>
+                        </div>
+                        <div class="filter-right">
+                            <div class="filter-group">
+                                <label for="order_by" class="filter-label">Ordenar por:</label>
+                                <select name="order_by" id="order_by" class="filter-select filter-select-wide" onchange="this.form.submit()">
+                                    <option value="recent" {{ request('order_by') == 'recent' ? 'selected' : '' }}>
+                                        Más recientes
+                                    </option>
+                                    <option value="oldest" {{ request('order_by') == 'oldest' ? 'selected' : '' }}>
+                                        Más antiguos
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                    </form>
+                </div>
                 <a href="{{ route('articulos.create') }}" class="btn-admin-create">Crear Artículo</a>
                 <div class="article-list">
                     @forelse ($articulos as $articulo)
@@ -45,6 +75,9 @@
                         <p class="no-articles">No hay artículos disponibles.</p>
                     @endforelse
                 </div>
+                <div class="pagination-container">
+                    {{ $articulos->appends(request()->query())->links('vendor.pagination.custom') }}
+                </div>
             </div>
         </div>
     </div>
@@ -76,8 +109,9 @@
             // Capturar el ID del artículo al hacer clic en eliminar
             document.querySelectorAll('.action-delete').forEach(button => {
                 button.addEventListener('click', (e) => {
-                    e.preventDefault(); // Evitar que el clic en el botón active el enlace de la tarjeta
+                    e.preventDefault();
                     articleId = button.getAttribute('data-id');
+                    e.stopPropagation(); // Evitar que el clic en eliminar active el enlace de la card
                 });
             });
 
@@ -86,6 +120,13 @@
                 if (articleId) {
                     document.getElementById(`delete-form-${articleId}`).submit();
                 }
+            });
+
+            // Evitar que el clic en editar active el enlace de la card
+            document.querySelectorAll('.action-icon:not(.action-delete)').forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                });
             });
         });
     </script>

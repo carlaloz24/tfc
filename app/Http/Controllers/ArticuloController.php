@@ -1,20 +1,51 @@
 <?php
+
 namespace App\Http\Controllers;
+
 use App\Models\Articulo;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Storage;
+use Carbon\Carbon;
 
 class ArticuloController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $articulos = Articulo::all();
+        $query = Articulo::query();
+
+        $orderBy = $request->query('order_by', 'recent');
+        if ($orderBy === 'recent') {
+            $query->orderBy('fecha_publicacion', 'desc');
+        } elseif ($orderBy === 'oldest') {
+            $query->orderBy('fecha_publicacion', 'asc');
+        }
+
+        $articulos = $query->paginate(2);
+
         return view('articulos.public_index', compact('articulos'));
     }
-    public function adminIndex()
+
+    public function adminIndex(Request $request)
     {
-        $articulos = Articulo::all();
+        $query = Articulo::query();
+
+        $orderBy = $request->query('order_by', 'recent');
+        if ($orderBy === 'recent') {
+            $query->orderBy('fecha_publicacion', 'desc');
+        } elseif ($orderBy === 'oldest') {
+            $query->orderBy('fecha_publicacion', 'asc');
+        }
+
+        if ($request->filled('date_range')) {
+            $dates = explode(' - ', $request->input('date_range'));
+            if (count($dates) === 2) {
+                $startDate = Carbon::createFromFormat('d/m/Y', trim($dates[0]))->startOfDay();
+                $endDate = Carbon::createFromFormat('d/m/Y', trim($dates[1]))->endOfDay();
+                $query->whereBetween('fecha_publicacion', [$startDate, $endDate]);
+            }
+        }
+
+        $articulos = $query->paginate(10);
+
         return view('articulos.index', compact('articulos'));
     }
 
@@ -25,68 +56,23 @@ class ArticuloController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'titulo' => 'required|string|max:255',
             'contenido' => 'required|string',
-            'imagen' => 'nullable|image|mimes:jpg,png,jpeg|max:2048',
+            'fecha_publicacion' => 'nullable|date',
+            'imagen' => 'nullable|image|max:2048',
+            'slug' => 'required|string|unique:articulos,slug',
+            'id_usuario' => 'required|exists:users,id',
         ]);
 
-        $articulo = new Articulo();
-        $articulo->id_usuario = auth()->id();
-        $articulo->titulo = $request->titulo;
-        $articulo->slug = Str::slug($request->titulo);
-        $articulo->contenido = $request->contenido;
-        $articulo->fecha_publicacion = now();
-
         if ($request->hasFile('imagen')) {
-            $path = $request->file('imagen')->store('articulos', 'public');
-            $articulo->imagen = $path;
+            $validated['imagen'] = $request->file('imagen')->store('public/articulos');
         }
 
-        $articulo->save();
+        Articulo::create($validated);
 
-        return redirect()->route('admin.articulos.index')->with('success', 'Artículo creado.');
-    }
-
-    public function destroy($id)
-    {
-        $articulo = Articulo::findOrFail($id);
-        if ($articulo->imagen) {
-            Storage::disk('public')->delete($articulo->imagen);
-        }
-        $articulo->delete();
-        return redirect()->route('admin.articulos.index')->with('success', 'Artículo eliminado.');
-    }
-
-    public function update(Request $request, Articulo $articulo)
-    {
-        $request->validate([
-            'titulo' => 'required|string|max:255',
-            'contenido' => 'required|string',
-            'imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-        ]);
-
-        $data = $request->only(['titulo', 'contenido']);
-        $data['slug'] = Str::slug($request->titulo);
-
-        // Manejar la imagen
-        if ($request->has('borrar_imagen') && $articulo->imagen) {
-            Storage::disk('public')->delete($articulo->imagen);
-            $data['imagen'] = null;
-        }
-
-        if ($request->hasFile('imagen')) {
-            // Borrar la imagen anterior si existe
-            if ($articulo->imagen) {
-                Storage::disk('public')->delete($articulo->imagen);
-            }
-            $path = $request->file('imagen')->store('articulos', 'public');
-            $data['imagen'] = $path;
-        }
-
-        $articulo->update($data);
-
-        return redirect()->route('admin.articulos.index')->with('success', 'Artículo actualizado correctamente');
+        return redirect()->route('admin.dashboard')
+            ->with('success', 'Artículo creado con éxito');
     }
 
     public function show($slug)
@@ -95,9 +81,41 @@ class ArticuloController extends Controller
         return view('articulos.show', compact('articulo'));
     }
 
-    public function edit($id)
+    public function edit($slug)
     {
-        $articulo = Articulo::findOrFail($id);
+        $articulo = Articulo::where('slug', $slug)->firstOrFail();
         return view('articulos.edit', compact('articulo'));
+    }
+
+    public function update(Request $request, $slug)
+    {
+        $articulo = Articulo::where('slug', $slug)->firstOrFail();
+
+        $validated = $request->validate([
+            'titulo' => 'required|string|max:255',
+            'contenido' => 'required|string',
+            'fecha_publicacion' => 'nullable|date',
+            'imagen' => 'nullable|image|max:2048',
+            'slug' => 'required|string|unique:articulos,slug,' . $articulo->id,
+            'id_usuario' => 'required|exists:users,id',
+        ]);
+
+        if ($request->hasFile('imagen')) {
+            $validated['imagen'] = $request->file('imagen')->store('public/articulos');
+        }
+
+        $articulo->update($validated);
+
+        return redirect()->route('admin.dashboard')
+            ->with('success', 'Artículo actualizado con éxito');
+    }
+
+    public function destroy($slug)
+    {
+        $articulo = Articulo::where('slug', $slug)->firstOrFail();
+        $articulo->delete();
+
+        return redirect()->route('admin.dashboard')
+            ->with('success', 'Artículo eliminado con éxito');
     }
 }
