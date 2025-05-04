@@ -146,7 +146,6 @@
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>2025 Todos los derechos reservados Barfco</p>
             </div>
         </div>
     </footer>

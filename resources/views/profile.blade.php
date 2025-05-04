@@ -30,67 +30,68 @@
                 </form>
             </div>
 
-            <!-- Lista de mascotas -->
+            <!-- Lista de mascotas y dietas -->
             <div class="profile-panel">
                 <h2 class="profile-title">Tus Mascotas</h2>
                 <a href="{{ route('mascotas.create') }}" class="profile-btn-primary mb-3">Añadir Mascota</a>
                 @if($mascotas->isEmpty())
                     <p class="profile-description">No tienes mascotas registradas. ¡Añade una!</p>
                 @else
-                    <div class="table-responsive">
-                        <table class="profile-pets-table">
-                            <thead>
-                            <tr>
-                                <th>Nombre</th>
-                                <th>Raza</th>
-                                <th>Categoría Edad</th>
-                                <th>Peso</th>
-                                <th>Nivel Actividad</th>
-                                <th>Dieta Preferida</th>
-                                <th>Acciones</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            @foreach($mascotas as $mascota)
-                                <tr>
-                                    <td>{{ $mascota->nombre }}</td>
-                                    <td>{{ $mascota->raza }}</td>
-                                    <td>{{ $mascota->categoria_edad }}</td>
-                                    <td>{{ $mascota->peso }} kg</td>
-                                    <td>{{ $mascota->nivel_actividad }}</td>
-                                    <td>{{ $mascota->tipo_dieta_preferida }}</td>
-                                    <td>
-                                        <a href="{{ route('mascotas.show', $mascota->id) }}" class="profile-action-icon"><i class="bi bi-eye"></i></a>
-                                        <a href="{{ route('mascotas.edit', $mascota->id) }}" class="profile-action-icon"><i class="bi bi-pencil"></i></a>
-                                        <form action="{{ route('mascotas.destroy', $mascota->id) }}" method="POST" style="display:inline;">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="profile-action-icon profile-action-delete" onclick="return confirm('¿Eliminar esta mascota?')"><i class="bi bi-trash"></i></button>
-                                        </form>
-                                    </td>
-                                </tr>
-                            @endforeach
-                            </tbody>
-                        </table>
+                    <div class="row g-3">
+                        @foreach($mascotas as $mascota)
+                            <div class="col-md-6">
+                                <div class="pet-card">
+                                    <div class="pet-card-body">
+                                        <h3 class="pet-card-title">{{ $mascota->nombre }}</h3>
+                                        <p class="pet-card-text">
+                                            <strong>Raza:</strong> {{ $mascota->raza ?? 'No especificada' }}<br>
+                                            <strong>Edad:</strong> {{ $mascota->categoria_edad }}<br>
+                                            <strong>Peso:</strong> {{ $mascota->peso }} kg<br>
+                                            <strong>Plan:</strong>
+                                            @if($mascota->plan)
+                                                {{ ucfirst($mascota->plan->tipo_plan) }} ({{ ucfirst($mascota->plan->frecuencia) }})
+                                            @else
+                                                Sin plan
+                                            @endif
+                                        </p>
+                                        <h4 class="pet-card-subtitle">Dietas Generadas</h4>
+                                        @if($mascota->dietas->isEmpty())
+                                            <p>No hay dietas generadas para {{ $mascota->nombre }}.</p>
+                                        @else
+                                            <ul class="pet-diet-list">
+                                                @foreach($mascota->dietas as $dieta)
+                                                    <li class="pet-diet-item">
+                                                        <span>Dieta {{ ucfirst($dieta->tipo_dieta) }} - {{ $dieta->created_at->format('Y-m-d') }}</span>
+                                                        <a href="{{ route('dietas.download', $dieta->id) }}" class="pet-btn-download">Descargar PDF</a>
+                                                    </li>
+                                                @endforeach
+                                            </ul>
+                                        @endif
+                                        <div class="pet-card-actions">
+                                            <a href="{{ route('mascotas.show', $mascota->id) }}" class="pet-btn-action"><i class="bi bi-eye"></i></a>
+                                            <a href="{{ route('mascotas.edit', $mascota->id) }}" class="pet-btn-action"><i class="bi bi-pencil"></i></a>
+                                            <form action="{{ route('mascotas.destroy', $mascota->id) }}" method="POST" style="display:inline;">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="pet-btn-action pet-btn-delete" onclick="return confirm('¿Eliminar esta mascota?')"><i class="bi bi-trash"></i></button>
+                                            </form>
+                                            @if(!$mascota->plan)
+                                                <a href="{{ route('planes.contratar', ['tipo_plan' => 'basico', 'mascota_id' => $mascota->id]) }}" class="pet-btn-primary">Contratar Plan</a>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
                     </div>
                 @endif
             </div>
 
-            <!-- Extras: Historial de dietas y facturas -->
+            <!-- Facturas -->
             <div class="profile-panel">
-                <h2 class="profile-title">Extras</h2>
-                <div class="row g-3">
-                    <div class="col-md-6">
-                        <h3 class="profile-subtitle">Historial de Dietas</h3>
-                        <p class="profile-description">Consulta las dietas generadas para tus mascotas.</p>
-                        <a href="#" class="profile-btn-secondary" onclick="alert('Funcionalidad en desarrollo')">Ver Historial</a>
-                    </div>
-                    <div class="col-md-6">
-                        <h3 class="profile-subtitle">Facturas</h3>
-                        <p class="profile-description">Descarga las facturas de tu plan contratado.</p>
-                        <a href="#" class="profile-btn-secondary" onclick="alert('Funcionalidad en desarrollo')">Descargar Facturas</a>
-                    </div>
-                </div>
+                <h2 class="profile-title">Facturas</h2>
+                <p class="profile-description">Descarga las facturas de tus planes contratados.</p>
+                <a href="#" class="profile-btn-secondary" onclick="alert('Funcionalidad en desarrollo')">Descargar Facturas</a>
             </div>
         </div>
     </div>

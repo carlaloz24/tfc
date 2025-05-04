@@ -33,7 +33,7 @@
             </ul>
             <ul class="navbar-nav ms-auto">
                 @auth
-                    <li class="nav-item"><a class="nav-link btn-home-secondary" href="{{ route('profile.index') }}">Mi Perfil</a></li>
+                    <li class="nav-item"><a class="nav-link btn-home-secondary" href="{{ route('profile.index') }}">Cuenta</a></li>
                     <li class="nav-item">
                         <form action="{{ route('logout') }}" method="POST" style="display:inline;">
                             @csrf
@@ -49,9 +49,9 @@
     </div>
 </nav>
 @yield('content')
-<footer class="bg-light py-3 mt-4" style="background-color: #dad6c9;">
+<footer style="background-color: #dad6c9;" class="py-3 mt-4">
     <div class="container text-center">
-        <p>© {{ date('Y') }} Barf&Co. Todos los derechos reservados.</p>
+        <p style="color: #6c757d; font-size: 0.85rem;">© {{ date('Y') }} Barf&Co. Todos los derechos reservados.</p>
     </div>
 </footer>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

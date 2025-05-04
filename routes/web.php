@@ -6,6 +6,8 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\MascotaController;
+use App\Http\Controllers\DietaController;
+use App\Http\Controllers\PlanController;
 
 // Rutas públicas
 Route::get('/', fn () => view('home'))->name('home');
@@ -14,7 +16,6 @@ Route::get('/articulos/{slug}', [ArticuloController::class, 'show'])->name('arti
 Route::get('/calculadora', fn () => view('calculadora'))->name('calculadora');
 Route::get('/planes', fn () => view('planes'))->name('planes');
 Route::get('/contacto', fn () => view('home'))->name('contacto');
-Route::get('/perfil', fn () => view('perfil'))->name('perfil');
 Route::get('/politica-privacidad', fn () => view('politica-privacidad'))->name('politica-privacidad');
 Route::get('/terminos-uso', fn () => view('terminos-uso'))->name('terminos-uso');
 Route::get('/aviso-legal', fn () => view('aviso-legal'))->name('aviso-legal');
@@ -46,6 +47,12 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.delete');
     Route::resource('mascotas', MascotaController::class);
+    Route::get('/dietas/create', [DietaController::class, 'create'])->name('dietas.create');
+    Route::post('/dietas', [DietaController::class, 'store'])->name('dietas.store');
+    Route::get('/dietas/{id}/download', [DietaController::class, 'download'])->name('dietas.download');
+    Route::get('/planes/contratar/{tipo_plan}', [PlanController::class, 'contratar'])->name('planes.contratar');
+    Route::post('/planes/checkout', [PlanController::class, 'checkout'])->name('planes.checkout');
+    Route::get('/planes/success', [PlanController::class, 'success'])->name('planes.success');
 });
 
 // Rutas de administración (protegidas por auth y admin)
@@ -58,5 +65,3 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::put('/articulos/{articulo}', [ArticuloController::class, 'update'])->name('articulos.update');
     Route::delete('/articulos/{articulo}', [ArticuloController::class, 'destroy'])->name('admin.articulos.destroy');
 });
-
-?>
