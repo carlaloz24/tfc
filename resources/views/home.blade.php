@@ -10,7 +10,7 @@
                         <h1 class="home-title">Transforma la calidad de vida de tu mascota</h1>
                         <p class="home-description">Optimiza la salud de tu perro con planes de alimentación personalizados, diseñados para adaptarse perfectamente a sus características y necesidades, garantizando su bienestar y vitalidad.</p>
                         <div class="home-actions">
-                            <a href="{{ route('calculadora') }}" class="btn-home-primary">
+                            <a href="{{ route('calculadora.index') }}" class="btn-home-primary">
                                 Generar dieta gratis
                                 <i class="bi bi-arrow-right ms-2"></i>
                             </a>
@@ -131,7 +131,7 @@
                     <ul class="footer-links">
                         <li><strong><a>Páginas</a></strong></li>
                         <li><a href="#top">Inicio</a></li>
-                        <li><a href="{{ route('calculadora') }}">Calculadora</a></li>
+                        <li><a href="{{ route('calculadora.index') }}">Calculadora</a></li>
                         <li><a href="{{ route('planes') }}">Planes</a></li>
                         <li><a href="{{ route('contacto') }}">Contacto</a></li>
                     </ul>

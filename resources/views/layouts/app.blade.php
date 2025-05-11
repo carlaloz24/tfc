@@ -22,8 +22,7 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav mx-auto">
                 <li class="nav-item"><a class="nav-link" href="{{ route('home') }}">Inicio</a></li>
-                <li class="nav-item"><a class="nav-link" href="{{ route('calculadora') }}">Calculadora</a></li>
-                <li class="nav-item"><a class="nav-link" href="{{ route('planes') }}">Planes</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ route('calculadora.index') }}">Calculadora</a></li>                <li class="nav-item"><a class="nav-link" href="{{ route('planes') }}">Planes</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ route('articulos.index') }}">Blog</a></li>
                 @auth
                     @if (Auth::user()->is_admin)

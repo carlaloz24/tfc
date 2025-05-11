@@ -1,61 +1,49 @@
 <?php
-
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ArticuloController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\MascotaController;
-use App\Http\Controllers\DietaController;
+use App\Http\Controllers\CalculadoraController;
 use App\Http\Controllers\PlanController;
 
-// Rutas públicas
 Route::get('/', fn () => view('home'))->name('home');
 Route::get('/blog', [ArticuloController::class, 'index'])->name('articulos.index');
 Route::get('/articulos/{slug}', [ArticuloController::class, 'show'])->name('articulos.show');
-Route::get('/calculadora', fn () => view('calculadora'))->name('calculadora');
+Route::get('/calculadora', [CalculadoraController::class, 'show'])->name('calculadora.show');
+Route::get('/calculadora/index', [CalculadoraController::class, 'index'])->name('calculadora.index');
+Route::get('/calculadora/create/{mascota}', [CalculadoraController::class, 'create'])->name('calculadora.create');
+Route::post('/calculadora', [CalculadoraController::class, 'store'])->name('calculadora.store');
 Route::get('/planes', fn () => view('planes'))->name('planes');
 Route::get('/contacto', fn () => view('home'))->name('contacto');
 Route::get('/politica-privacidad', fn () => view('politica-privacidad'))->name('politica-privacidad');
 Route::get('/terminos-uso', fn () => view('terminos-uso'))->name('terminos-uso');
 Route::get('/aviso-legal', fn () => view('aviso-legal'))->name('aviso-legal');
 
-Route::post('/contact', function () {
-    // Lógica para manejar el formulario
-    return redirect()->back()->with('success', 'Mensaje enviado');
-})->name('contact.submit');
+Route::post('/contact', fn () => redirect()->back()->with('success', 'Mensaje enviado'))->name('contact.submit');
+Route::post('/newsletter', fn () => redirect()->back()->with('success', '¡Suscrito a la newsletter!'))->name('newsletter.subscribe');
 
-Route::post('/newsletter', function () {
-    // Lógica para manejar la suscripción
-    return redirect()->back()->with('success', '¡Suscrito a la newsletter!');
-})->name('newsletter.subscribe');
-
-// Rutas de autenticación
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login']);
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
 Route::post('/register', [RegisterController::class, 'register']);
 
-// Ruta para login de administrador
 Route::get('/admin/login', [LoginController::class, 'showAdminLoginForm'])->name('admin.login');
 Route::post('/admin/login', [LoginController::class, 'adminLogin']);
 
-// Rutas protegidas por autenticación
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.delete');
     Route::resource('mascotas', MascotaController::class);
-    Route::get('/dietas/create', [DietaController::class, 'create'])->name('dietas.create');
-    Route::post('/dietas', [DietaController::class, 'store'])->name('dietas.store');
-    Route::get('/dietas/{id}/download', [DietaController::class, 'download'])->name('dietas.download');
+    Route::get('/calculadora/{id}/download', [CalculadoraController::class, 'download'])->name('calculadora.download');
     Route::get('/planes/contratar/{tipo_plan}', [PlanController::class, 'contratar'])->name('planes.contratar');
     Route::post('/planes/checkout', [PlanController::class, 'checkout'])->name('planes.checkout');
     Route::get('/planes/success', [PlanController::class, 'success'])->name('planes.success');
 });
 
-// Rutas de administración (protegidas por auth y admin)
 Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::get('/dashboard', [ArticuloController::class, 'adminIndex'])->name('admin.dashboard');
     Route::get('/articulos', [ArticuloController::class, 'adminIndex'])->name('admin.articulos.index');

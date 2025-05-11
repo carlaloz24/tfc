@@ -2,8 +2,8 @@
 @section('title', 'Mi Perfil')
 @section('content')
     <div class="profile-container">
-               <div class="profile-block">
-            <h1> ¡Hola {{ Auth::user()->nombre }} !</h1>
+        <div class="profile-block">
+            <h1>¡Hola {{ Auth::user()->nombre }}!</h1>
             <!-- Datos del usuario -->
             <div class="profile-panel">
                 <h2 class="profile-title">Datos Personales</h2>
@@ -45,9 +45,13 @@
                                     <div class="pet-card-body">
                                         <h3 class="pet-card-title">{{ $mascota->nombre }}</h3>
                                         <p class="pet-card-text">
-                                            <strong>Raza:</strong> {{ $mascota->raza ?? 'No especificada' }}<br>
-                                            <strong>Edad:</strong> {{ $mascota->categoria_edad }}<br>
+                                            <strong>Edad:</strong> {{ ucfirst(str_replace('_', ' ', $mascota->categoria_edad)) }}<br>
                                             <strong>Peso:</strong> {{ $mascota->peso }} kg<br>
+                                            <strong>Nivel de Actividad:</strong> {{ ucfirst($mascota->nivel_actividad) }}<br>
+                                            <strong>Esterilizado:</strong> {{ $mascota->esterilizado ? 'Sí' : 'No' }}<br>
+                                            <strong>Dieta Preferida:</strong> {{ ucfirst(str_replace('_', ' ', $mascota->tipo_dieta_preferida)) }}<br>
+                                            <strong>Condiciones de Salud:</strong> {{ implode(', ', $mascota->condiciones_salud ?? []) ?: 'Ninguna' }}<br>
+                                            <strong>Alergias:</strong> {{ implode(', ', $mascota->alimentos_alergia ?? []) ?: 'Ninguna' }}<br>
                                             <strong>Plan:</strong>
                                             @if($mascota->plan)
                                                 {{ ucfirst($mascota->plan->tipo_plan) }} ({{ ucfirst($mascota->plan->frecuencia) }})
@@ -58,10 +62,6 @@
                                         <h4 class="pet-card-subtitle">Dietas Generadas</h4>
                                         @if($mascota->dietas->isEmpty())
                                             <p>No hay dietas generadas para {{ $mascota->nombre }}.</p>
-                                            <a href="{{ route('calculadora') }}" class="pet-btn-primary">Generar Dieta</a>
-
-                                        @else
-                                            <ul class="pet-diet-list">
                                                 @foreach($mascota->dietas as $dieta)
                                                     <li class="pet-diet-item">
                                                         <span>Dieta {{ ucfirst($dieta->tipo_dieta) }} - {{ $dieta->created_at->format('Y-m-d') }}</span>
@@ -69,6 +69,7 @@
                                                     </li>
                                                 @endforeach
                                             </ul>
+                                            <a href="{{ route('calculadora.create', $mascota->id) }}" class="pet-btn-primary">Generar Dieta</a>
                                         @endif
                                         <div class="pet-card-actions">
                                             <a href="{{ route('mascotas.show', $mascota->id) }}" class="pet-btn-action"><i class="bi bi-eye"></i></a>

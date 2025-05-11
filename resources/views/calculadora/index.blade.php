@@ -1,38 +1,122 @@
 @extends('layouts.app')
-@section('title', 'Calculadora de Dieta')
+@section('title', 'Calculadora')
 @section('content')
-    <div class="profile-container">
-        <div class="profile-block">
-            <div class="profile-panel">
-                <h2 class="profile-title">Calculadora de Dieta para {{ $mascota->nombre }}</h2>
-                <form id="calculadora-form" action="{{ route('calculadora.store') }}" method="POST" class="profile-data-form">
-                    @csrf
-                    <input type="hidden" name="mascota_id" value="{{ $mascota->id }}">
-                    <input type="hidden" name="menu_json" id="menu_json" value='{ "alimentos": ["pollo", "zanahoria"] }'>
-                    <div class="row g-3">
+    <div class="main-container">
+        <div class="second-background"></div>
+        <header class="hero">
+            <h1>Calculadora de Dietas Caninas</h1>
+            <p style="line-height: 24px">Personaliza la dieta ideal para tu perro en pocos pasos</p>
+        </header>
+        <section class="plans">
+            <article class="card" style="max-width: 1000px; width: 100%">
+                <form id="formularioDieta" class="form-calculadora p-4">
+                    <div class="row g-4">
                         <div class="col-md-6">
-                            <div class="profile-form-group">
-                                <label for="tipo_dieta" class="profile-form-label">Tipo de Dieta</label>
-                                <select name="tipo_dieta" id="tipo_dieta" class="profile-form-select" required>
-                                    <option value="barf">BARF</option>
-                                    <option value="cocida">Cocida</option>
-                                    <option value="mixta_50">Mixta 50%</option>
-                                    <option value="mixta_70">Mixta 70%</option>
+                            <div class="mb-3">
+                                <label for="nombrePerro" class="form-label">Nombre del Perro</label>
+                                <input type="text" class="form-control" id="nombrePerro" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="peso" class="form-label">Peso (kg)</label>
+                                <input type="number" class="form-control" id="peso" min="1" step="0.1" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="edad" class="form-label">Edad</label>
+                                <select class="form-select" id="edad" required>
+                                    <option value="cachorro_menor_4">Cachorro (<4 meses)</option>
+                                    <option value="cachorro_mayor_4">Cachorro (>4 meses)</option>
+                                    <option value="adulto">Adulto</option>
+                                    <option value="senior">Senior</option>
                                 </select>
                             </div>
                         </div>
                         <div class="col-md-6">
-                            <div class="profile-form-group">
-                                <label for="peso" class="profile-form-label">Peso (kg)</label>
-                                <input type="number" id="peso" name="peso" class="profile-form-input" value="{{ $mascota->peso }}" required readonly>
+                            <div class="mb-3">
+                                <label for="esterilizado" class="form-label">¿Esterilizado?</label>
+                                <select class="form-select" id="esterilizado" required>
+                                    <option value="no">No</option>
+                                    <option value="si">Sí</option>
+                                </select>
                             </div>
                         </div>
-                    </div>
-                    <div class="profile-form-actions">
-                        <button type="submit" class="profile-btn-primary">Generar Dieta</button>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="nivelActividad" class="form-label">Nivel de Actividad</label>
+                                <select class="form-select" id="nivelActividad" required>
+                                    <option value="baja">Baja</option>
+                                    <option value="moderada">Moderada</option>
+                                    <option value="alta">Alta</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="tipoDieta" class="form-label">Tipo de Dieta</label>
+                                <select class="form-select" id="tipoDieta" required>
+                                    <option value="barf">BARF</option>
+                                    <option value="cocida">Cocida</option>
+                                    <option value="mixta_50">Mixta (50% Pienso / 50% Natural)</option>
+                                    <option value="mixta_70">Mixta (70% Pienso / 30% Natural)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="mb-3">
+                                <label class="form-label">Condiciones de Salud</label><br>
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="obesidad" name="condicionesSalud" value="obesidad">
+                                    <label class="form-check-label" for="obesidad">Obesidad</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="renal" name="condicionesSalud" value="renal">
+                                    <label class="form-check-label" for="renal">Renal</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="artrosis" name="condicionesSalud" value="artrosis">
+                                    <label class="form-check-label" for="artrosis">Artrosis</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="diabetes" name="condicionesSalud" value="diabetes">
+                                    <label class="form-check-label" for="diabetes">Diabetes</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="alergia" name="condicionesSalud" value="alergia">
+                                    <label class="form-check-label" for="alergia">Alergia / Intolerancia</label>
+                                </div>
+                                <select multiple class="form-select mt-2" id="alimentosAlergia" style="display: none;">
+                                    <option value="pollo_pechuga">Pechuga de Pollo</option>
+                                    <option value="pollo_muslo">Muslo de Pollo</option>
+                                    <option value="pavo">Pavo</option>
+                                    <option value="ternera">Ternera</option>
+                                    <option value="cordero">Cordero</option>
+                                    <option value="conejo">Conejo</option>
+                                    <option value="sardina">Sardina</option>
+                                    <option value="caballa">Caballa</option>
+                                    <option value="salmon">Salmón</option>
+                                    <option value="higado_pollo">Hígado de Pollo</option>
+                                    <option value="higado_res">Hígado de Res</option>
+                                    <option value="rinon_res">Riñón de Res</option>
+                                    <option value="corazon_pollo">Corazón de Pollo</option>
+                                    <option value="mollejas">Mollejas</option>
+                                    <option value="tripa_verde">Tripa Verde</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <button id="calcularBtn" type="submit" style="width: 100%; background-color: #fb4d17; height: 50px;">Calcular Dieta</button>
+                        </div>
                     </div>
                 </form>
-            </div>
-        </div>
+                <div id="resultados" class="mt-5"></div>
+                <button id="descargarPDF" class="btn btn-success mt-3" style="display: none;">Descargar PDF</button>
+            </article>
+        </section>
     </div>
 @endsection
+@push('scripts')
+    @vite(['resources/js/calculadora.js'])
+@endpush
