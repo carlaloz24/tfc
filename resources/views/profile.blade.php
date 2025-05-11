@@ -59,17 +59,19 @@
                                                 Sin plan
                                             @endif
                                         </p>
-                                        <h4 class="pet-card-subtitle">Dietas Generadas</h4>
+                                        <h4 class="pet-card-subtitle">Dieta Actual</h4>
                                         @if($mascota->dietas->isEmpty())
-                                            <p>No hay dietas generadas para {{ $mascota->nombre }}.</p>
-                                                @foreach($mascota->dietas as $dieta)
-                                                    <li class="pet-diet-item">
-                                                        <span>Dieta {{ ucfirst($dieta->tipo_dieta) }} - {{ $dieta->created_at->format('Y-m-d') }}</span>
-                                                        <a href="{{ route('dietas.download', $dieta->id) }}" class="pet-btn-download">Descargar PDF</a>
-                                                    </li>
-                                                @endforeach
-                                            </ul>
+                                            <p>No hay dieta generada para {{ $mascota->nombre }}.</p>
                                             <a href="{{ route('calculadora.create', $mascota->id) }}" class="pet-btn-primary">Generar Dieta</a>
+                                        @else
+                                            @php
+                                                $dieta = $mascota->dietas->first();
+                                            @endphp
+                                            <p>
+                                                Dieta {{ ucfirst($dieta->tipo_dieta) }} - {{ $dieta->created_at->format('Y-m-d') }}
+                                                <a href="{{ route('calculadora.download', $dieta->id) }}" class="pet-btn-download">Descargar PDF</a>
+                                            </p>
+                                            <a href="{{ route('calculadora.create', $mascota->id) }}" class="pet-btn-primary">Actualizar Dieta</a>
                                         @endif
                                         <div class="pet-card-actions">
                                             <a href="{{ route('mascotas.show', $mascota->id) }}" class="pet-btn-action"><i class="bi bi-eye"></i></a>
@@ -80,7 +82,7 @@
                                                 <button type="submit" class="pet-btn-action pet-btn-delete" onclick="return confirm('¿Eliminar esta mascota?')"><i class="bi bi-trash"></i></button>
                                             </form>
                                             @if(!$mascota->plan)
-                                                <a href="{{ route('planes.contratar', ['tipo_plan' => 'basico', 'mascota_id' => $mascota->id]) }}" class="pet-btn-primary">Contratar Plan</a>
+                                                <a href="#" class="pet-btn-primary" onclick="alert('Funcionalidad de contratación de planes en desarrollo')">Contratar Plan</a>
                                             @endif
                                         </div>
                                     </div>

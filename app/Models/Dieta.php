@@ -1,14 +1,23 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
 class Dieta extends Model
 {
-    protected $table = 'dietas';
     protected $fillable = [
-        'id_mascota', 'id_usuario', 'calorias', 'tipo_dieta', 'menu_json', 'pdf_dieta', 'fecha_generacion', 'created_at', 'updated_at',
+        'id_mascota',
+        'id_usuario',
+        'calorias',
+        'tipo_dieta',
+        'menu_json',
+        'pdf_dieta',
+        'fecha_generacion',
+    ];
+
+    protected $casts = [
+        'menu_json' => 'array',
+        'fecha_generacion' => 'date',
     ];
 
     public function mascota()
