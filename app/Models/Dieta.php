@@ -8,7 +8,7 @@ class Dieta extends Model
 {
     protected $table = 'dietas';
     protected $fillable = [
-        'id_mascota', 'calorias', 'tipo_dieta', 'menu_json', 'pdf_dieta', 'created_at',
+        'id_mascota', 'id_usuario', 'calorias', 'tipo_dieta', 'menu_json', 'pdf_dieta', 'fecha_generacion', 'created_at', 'updated_at',
     ];
 
     public function mascota()

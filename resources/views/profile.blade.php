@@ -2,7 +2,8 @@
 @section('title', 'Mi Perfil')
 @section('content')
     <div class="profile-container">
-        <div class="profile-block">
+               <div class="profile-block">
+            <h1> ¡Hola {{ Auth::user()->nombre }} !</h1>
             <!-- Datos del usuario -->
             <div class="profile-panel">
                 <h2 class="profile-title">Datos Personales</h2>
@@ -57,6 +58,8 @@
                                         <h4 class="pet-card-subtitle">Dietas Generadas</h4>
                                         @if($mascota->dietas->isEmpty())
                                             <p>No hay dietas generadas para {{ $mascota->nombre }}.</p>
+                                            <a href="{{ route('calculadora') }}" class="pet-btn-primary">Generar Dieta</a>
+
                                         @else
                                             <ul class="pet-diet-list">
                                                 @foreach($mascota->dietas as $dieta)

@@ -23,23 +23,27 @@ class MascotaController extends Controller
     {
         $request->validate([
             'nombre' => 'required|string|max:255',
-            'raza' => 'nullable|string|max:255',
             'categoria_edad' => 'required|in:cachorro_menor_4,cachorro_mayor_4,adulto,senior',
             'peso' => 'required|numeric|min:0',
             'nivel_actividad' => 'required|in:baja,moderada,alta',
             'esterilizado' => 'required|boolean',
             'tipo_dieta_preferida' => 'required|in:barf,cocida,mixta_50,mixta_70',
+            'condiciones_salud' => 'nullable|array',
+            'condiciones_salud.*' => 'in:obesidad,renal,artrosis,diabetes,alergia',
+            'alimentos_alergia' => 'nullable|array',
+            'alimentos_alergia.*' => 'in:pollo_pechuga,pollo_muslo,pavo,ternera,cordero,conejo,sardina,caballa,salmon,higado_pollo,higado_res,rinon_res,corazon_pollo,mollejas,tripa_verde',
         ]);
 
         Mascota::create([
             'id_usuario' => Auth::id(),
             'nombre' => $request->nombre,
-            'raza' => $request->raza,
             'categoria_edad' => $request->categoria_edad,
             'peso' => $request->peso,
             'nivel_actividad' => $request->nivel_actividad,
             'esterilizado' => $request->esterilizado,
             'tipo_dieta_preferida' => $request->tipo_dieta_preferida,
+            'condiciones_salud' => $request->condiciones_salud,
+            'alimentos_alergia' => $request->alimentos_alergia,
         ]);
 
         return redirect()->route('profile.index')->with('success', 'Mascota añadida correctamente.');
@@ -69,17 +73,27 @@ class MascotaController extends Controller
 
         $request->validate([
             'nombre' => 'required|string|max:255',
-            'raza' => 'nullable|string|max:255',
             'categoria_edad' => 'required|in:cachorro_menor_4,cachorro_mayor_4,adulto,senior',
             'peso' => 'required|numeric|min:0',
             'nivel_actividad' => 'required|in:baja,moderada,alta',
             'esterilizado' => 'required|boolean',
             'tipo_dieta_preferida' => 'required|in:barf,cocida,mixta_50,mixta_70',
+            'condiciones_salud' => 'nullable|array',
+            'condiciones_salud.*' => 'in:obesidad,renal,artrosis,diabetes,alergia',
+            'alimentos_alergia' => 'nullable|array',
+            'alimentos_alergia.*' => 'in:pollo_pechuga,pollo_muslo,pavo,ternera,cordero,conejo,sardina,caballa,salmon,higado_pollo,higado_res,rinon_res,corazon_pollo,mollejas,tripa_verde',
         ]);
 
-        $mascota->update($request->only([
-            'nombre', 'raza', 'categoria_edad', 'peso', 'nivel_actividad', 'esterilizado', 'tipo_dieta_preferida'
-        ]));
+        $mascota->update([
+            'nombre' => $request->nombre,
+            'categoria_edad' => $request->categoria_edad,
+            'peso' => $request->peso,
+            'nivel_actividad' => $request->nivel_actividad,
+            'esterilizado' => $request->esterilizado,
+            'tipo_dieta_preferida' => $request->tipo_dieta_preferida,
+            'condiciones_salud' => $request->condiciones_salud,
+            'alimentos_alergia' => $request->alimentos_alergia,
+        ]);
 
         return redirect()->route('profile.index')->with('success', 'Mascota actualizada correctamente.');
     }

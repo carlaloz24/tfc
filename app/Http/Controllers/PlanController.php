@@ -11,78 +11,68 @@ use Stripe\Stripe;
 
 class PlanController extends Controller
 {
-    public function contratar(Request $request, $tipo_plan)
+    public function index()
     {
-        $mascotas = Mascota::where('id_usuario', Auth::id())->get();
+        return view('planes.index');
+    }
 
-        if ($mascotas->isEmpty()) {
-            return redirect()->route('mascotas.create')->with('error', 'Debes añadir una mascota para contratar un plan.');
+    public function select()
+    {
+        $mascotas = Mascota::where('id_usuario', Auth::id())->with('dieta')->get();
+        if ($mascotas->isEmpty() || !$mascotas->pluck('dieta')->contains(fn ($dieta) => !is_null($dieta))) {
+            return redirect()->route('profile.index')->with('error', 'Debes generar una dieta primero.');
         }
-
-        $mascota_id = $request->query('mascota_id');
-        return view('planes.contratar', compact('tipo_plan', 'mascotas', 'mascota_id'));
+        return view('planes.select', compact('mascotas'));
     }
 
     public function checkout(Request $request)
     {
         $request->validate([
-            'tipo_plan' => 'required|in:basico,premium,personalizado',
             'mascota_id' => 'required|exists:mascotas,id',
-            'frecuencia' => 'required|in:semanal,quincenal,mensual',
+            'frecuencia' => 'required|in:mensual,anual',
+            'tipo_plan' => 'required|in:basico,premium,personalizado',
+            'payment_method' => 'required',
         ]);
 
-        $mascota = Mascota::where('id', $request->mascota_id)
-            ->where('id_usuario', Auth::id())
-            ->firstOrFail();
+        $mascota = Mascota::where('id', $request->mascota_id)->where('id_usuario', Auth::id())->with('dieta')->firstOrFail();
+        if (!$mascota->dieta) {
+            return redirect()->route('profile.index')->with('error', 'La mascota seleccionada no tiene una dieta asociada.');
+        }
 
-        // Configurar Stripe
-        Stripe::setApiKey(config('services.stripe.secret'));
+        Stripe::setApiKey(env('STRIPE_SECRET'));
 
-        // Precios según plan (ajusta según tus precios reales)
-        $precios = [
-            'basico' => ['semanal' => 999, 'quincenal' => 1899, 'mensual' => 2999],
-            'premium' => ['semanal' => 1499, 'quincenal' => 2799, 'mensual' => 4999],
-            'personalizado' => ['semanal' => 1999, 'quincenal' => 3799, 'mensual' => 6999],
+        $prices = [
+            'basico' => ['mensual' => 'price_monthly_basic', 'anual' => 'price_yearly_basic'],
+            'premium' => ['mensual' => 'price_monthly_premium', 'anual' => 'price_yearly_premium'],
+            'personalizado' => ['mensual' => 'price_monthly_custom', 'anual' => 'price_yearly_custom'],
         ];
 
-        $precio = $precios[$request->tipo_plan][$request->frecuencia];
+        $priceId = $prices[$request->tipo_plan][$request->frecuencia]; // Reemplaza con tus Price IDs reales de Stripe
 
-        // Crear sesión de Stripe
         $session = Session::create([
             'payment_method_types' => ['card'],
             'line_items' => [[
-                'price_data' => [
-                    'currency' => 'eur',
-                    'product_data' => [
-                        'name' => 'Plan ' . ucfirst($request->tipo_plan) . ' para ' . $mascota->nombre,
-                    ],
-                    'unit_amount' => $precio,
-                ],
+                'price' => $priceId,
                 'quantity' => 1,
             ]],
             'mode' => 'subscription',
-            'success_url' => route('planes.success', ['tipo_plan' => $request->tipo_plan, 'mascota_id' => $request->mascota_id, 'frecuencia' => $request->frecuencia]) . '&session_id={CHECKOUT_SESSION_ID}',
-            'cancel_url' => route('planes.contratar', $request->tipo_plan),
+            'success_url' => route('planes.success'),
+            'cancel_url' => route('planes.select'),
         ]);
 
-        return redirect()->away($session->url);
+        $plan = new Plan();
+        $plan->id_usuario = Auth::id();
+        $plan->id_mascota = $mascota->id;
+        $plan->tipo_plan = $request->tipo_plan;
+        $plan->frecuencia = $request->frecuencia;
+        $plan->stripe_session_id = $session->id;
+        $plan->save();
+
+        return redirect($session->url);
     }
 
-    public function success(Request $request)
+    public function success()
     {
-        $tipo_plan = $request->tipo_plan;
-        $mascota_id = $request->mascota_id;
-        $frecuencia = $request->frecuencia;
-
-        // Guardar el plan en la base de datos
-        Plan::create([
-            'id_usuario' => Auth::id(),
-            'id_mascota' => $mascota_id,
-            'tipo_plan' => $tipo_plan,
-            'frecuencia' => $frecuencia,
-            'activo' => 1,
-        ]);
-
-        return view('planes.gracias', compact('tipo_plan', 'mascota_id'));
+        return redirect()->route('profile.index')->with('success', '¡Plan contratado exitosamente!');
     }
 }

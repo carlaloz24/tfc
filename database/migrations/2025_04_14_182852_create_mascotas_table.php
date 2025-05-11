@@ -9,14 +9,15 @@ return new class extends Migration
     {
         Schema::create('mascotas', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('id_usuario')->constrained('usuarios')->onDelete('cascade');
+            $table->foreignId('id_usuario')->constrained('users')->onDelete('cascade');
             $table->string('nombre');
-            $table->string('raza')->nullable();
-            $table->enum('categoria_edad', ['cachorro_menor_4', 'cachorro_mayor_4', 'adulto', 'senior']);
-            $table->decimal('peso', 5, 2);
-            $table->enum('nivel_actividad', ['baja', 'moderada', 'alta']);
+            $table->string('categoria_edad');
+            $table->decimal('peso', 8, 2);
+            $table->string('nivel_actividad');
             $table->boolean('esterilizado');
-            $table->enum('tipo_dieta_preferida', ['barf', 'cocida', 'mixta_50', 'mixta_70']);
+            $table->string('tipo_dieta_preferida');
+            $table->json('condiciones_salud')->nullable();
+            $table->json('alimentos_alergia')->nullable();
             $table->timestamps();
         });
     }

@@ -8,11 +8,20 @@ class Mascota extends Model
 {
     protected $table = 'mascotas';
     protected $fillable = [
-        'id_usuario', 'nombre', 'raza', 'categoria_edad', 'peso', 'nivel_actividad',
-        'esterilizado', 'tipo_dieta_preferida',
+        'id_usuario',
+        'nombre',
+        'categoria_edad',
+        'peso',
+        'nivel_actividad',
+        'esterilizado',
+        'tipo_dieta_preferida',
+        'condiciones_salud',
+        'alimentos_alergia',
     ];
     protected $casts = [
         'esterilizado' => 'boolean',
+        'condiciones_salud' => 'array',
+        'alimentos_alergia' => 'array',
     ];
 
     public function dietas()
