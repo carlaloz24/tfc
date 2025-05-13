@@ -8,16 +8,19 @@ class Dieta extends Model
     use HasFactory;
     protected $fillable = [
         'id_mascota',
+        'id_usuario',
+        'calorias',
+        'tipo_dieta',
+        'menu_json',
+        'pdf_dieta',
+        'fecha_generacion',
         'nombre',
         'peso',
         'categoria_edad',
         'esterilizado',
         'nivel_actividad',
-        'tipo_dieta',
         'condiciones_salud',
         'alimentos_alergia',
-        'menu_json',
-        'pdf_url', // Añadido
     ];
 
     protected $casts = [

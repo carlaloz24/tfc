@@ -1,81 +1,139 @@
 @extends('layouts.app')
 @section('title', 'Contratar Plan')
 @section('content')
-    <div class="profile-container">
-        <div class="profile-block">
-            <div class="profile-panel">
-                <h2 class="profile-title">Contratar Plan</h2>
+    <div class="plan-selection">
+        <div class="plan-container">
+            <div class="plan-card">
+                <h1 class="plan-title">Contratar un Plan</h1>
+
                 @if (session('error'))
-                    <div class="alert alert-danger">
+                    <div class="alert alert-error">
                         {{ session('error') }}
                     </div>
                 @endif
-                <form id="plan-form" action="{{ route('planes.checkout') }}" method="POST" class="profile-data-form">
-                    @csrf
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <div class="profile-form-group">
-                                <label for="mascota_id" class="profile-form-label">Seleccionar Mascota</label>
-                                <select name="mascota_id" id="mascota_id" class="profile-form-select" required>
-                                    <option value="">-- Selecciona una mascota --</option>
-                                    @foreach ($mascotas as $mascota)
-                                        @if ($mascota->dieta)
-                                            <option value="{{ $mascota->id }}">{{ $mascota->nombre }}</option>
-                                        @endif
-                                    @endforeach
-                                </select>
-                                @error('mascota_id')
-                                <span class="text-danger">{{ $message }}</span>
-                                @enderror
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="profile-form-group">
-                                <label for="pdf_dieta" class="profile-form-label">Dieta Asociada (PDF)</label>
-                                <div id="pdf_dieta">
-                                    <p>Selecciona una mascota para ver la dieta.</p>
+                @if (session('success'))
+                    <div class="alert alert-success">
+                        {{ session('success') }}
+                    </div>
+                @endif
+
+                <div class="plan-columns">
+                    <!-- Columna izquierda: Selección -->
+                    <div class="plan-column">
+                        <div class="plan-section">
+                            <h3 class="plan-section-title">Detalles del Plan</h3>
+                            <form id="plan-form" action="{{ route('planes.checkout') }}" method="POST">
+                                @csrf
+                                <div class="mb-4">
+                                    <label for="mascota_id" class="plan-input-label">Mascota</label>
+                                    <select name="mascota_id" id="mascota_id" class="plan-input" required>
+                                        <option value="">-- Selecciona una mascota --</option>
+                                        @foreach ($mascotas as $mascota)
+                                            @if ($mascota->dietas->isNotEmpty())
+                                                <option value="{{ $mascota->id }}" {{ $mascota->id == $mascotaSeleccionada->id ? 'selected' : '' }}>
+                                                    {{ $mascota->nombre }}
+                                                </option>
+                                            @endif
+                                        @endforeach
+                                    </select>
+                                    @error('mascota_id')
+                                    <span class="plan-error">{{ $message }}</span>
+                                    @enderror
                                 </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="profile-form-group">
-                                <label for="frecuencia" class="profile-form-label">Frecuencia de Envío</label>
-                                <select name="frecuencia" id="frecuencia" class="profile-form-select" required>
-                                    <option value="mensual">Mensual</option>
-                                    <option value="anual">Anual</option>
-                                </select>
-                                @error('frecuencia')
-                                <span class="text-danger">{{ $message }}</span>
-                                @enderror
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="profile-form-group">
-                                <label for="tipo_plan" class="profile-form-label">Tipo de Plan</label>
-                                <select name="tipo_plan" id="tipo_plan" class="profile-form-select" required>
-                                    <option value="basico">Básico</option>
-                                    <option value="premium">Premium</option>
-                                    <option value="personalizado">Personalizado</option>
-                                </select>
-                                @error('tipo_plan')
-                                <span class="text-danger">{{ $message }}</span>
-                                @enderror
-                            </div>
-                        </div>
-                        <div class="col-md-12">
-                            <div class="profile-form-group">
-                                <label class="profile-form-label">Pago con Stripe</label>
-                                <div id="card-element" class="form-control"></div>
-                                <div id="card-errors" class="text-danger"></div>
-                            </div>
-                        </div>
-                        <div class="col-md-12">
-                            <div class="profile-form-actions">
-                                <button type="submit" id="submit-button" class="profile-btn-primary">Pagar con Stripe</button>
-                            </div>
+
+                                <div class="mb-4">
+                                    <label class="plan-input-label">Dieta Asociada</label>
+                                    <div id="pdf_dieta">
+                                        @if ($dietaSeleccionada && $dietaSeleccionada->pdf_dieta)
+                                            <a href="{{ route('dietas.pdf', $mascotaSeleccionada->id) }}" target="_blank" class="pdf-link">
+                                                <svg class="pdf-icon" fill="none" stroke="#fb4d17" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                                </svg>
+                                                Ver Dieta PDF
+                                            </a>
+                                        @else
+                                            <p class="text-[#858585] text-[0.9rem]">No hay dieta disponible.</p>
+                                        @endif
+                                    </div>
+                                </div>
+
+                                <div class="mb-4">
+                                    <label for="frecuencia" class="plan-input-label">Frecuencia</label>
+                                    <select name="frecuencia" id="frecuencia" class="plan-input" required>
+                                        <option value="mensual">Mensual</option>
+                                        <option value="anual">Anual</option>
+                                    </select>
+                                    @error('frecuencia')
+                                    <span class="plan-error">{{ $message }}</span>
+                                    @enderror
+                                </div>
+
+                                <div class="mb-4">
+                                    <label for="tipo_plan" class="plan-input-label">Tipo de Plan</label>
+                                    <select name="tipo_plan" id="tipo_plan" class="plan-input" required>
+                                        <option value="basico">Básico</option>
+                                        <option value="premium">Premium</option>
+                                        <option value="personalizado">Personalizado</option>
+                                    </select>
+                                    @error('tipo_plan')
+                                    <span class="plan-error">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                            </form>
                         </div>
                     </div>
-                </form>
+
+                    <!-- Columna derecha: Pago y Resumen -->
+                    <div class="plan-column">
+                        <div class="plan-section">
+                            <h3 class="plan-section-title">Información de Pago</h3>
+                            <div class="mb-4">
+                                <label for="nombre" class="plan-input-label">Nombre</label>
+                                <input type="text" id="nombre" name="nombre" class="plan-input" placeholder="Juan" required>
+                            </div>
+                            <div class="mb-4">
+                                <label for="apellidos" class="plan-input-label">Apellidos</label>
+                                <input type="text" id="apellidos" name="apellidos" class="plan-input" placeholder="Pérez García" required>
+                            </div>
+                            <div class="payment-card mb-4">
+                                <div class="mb-4">
+                                    <label for="card-element" class="plan-input-label">Número de Tarjeta</label>
+                                    <div id="card-element" class="plan-input"></div>
+                                </div>
+                                <div style="display: flex; gap: 16px; flex-wrap: wrap;">
+                                    <div style="flex: 1; min-width: 120px;">
+                                        <label for="expiry_date" class="plan-input-label">Expiración</label>
+                                        <input type="text" id="expiry_date" name="expiry_date" class="plan-input" placeholder="MM/AA" pattern="\d{2}/\d{2}" required>
+                                    </div>
+                                    <div style="flex: 1; min-width: 120px;">
+                                        <label for="cvc" class="plan-input-label">CVC</label>
+                                        <input type="text" id="cvc" name="cvc" class="plan-input" placeholder="123" maxlength="3" pattern="\d{3}" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="card-errors" class="plan-error"></div>
+
+                            <hr class="divider">
+
+                            <h3 class="plan-section-title">Resumen del Pago</h3>
+                            <div class="summary-card mb-4">
+                                <div class="summary-row">
+                                    <div class="summary-label">Plan:</div>
+                                    <div class="summary-value" id="summary-plan">Básico</div>
+                                    <div class="summary-label">Frecuencia:</div>
+                                    <div class="summary-value" id="summary-frequency">Mensual</div>
+                                    <div class="summary-label">Precio:</div>
+                                    <div class="summary-value" id="summary-price">€30/mes</div>
+                                    <div class="summary-label">Próximo cobro:</div>
+                                    <div class="summary-value" id="summary-next-billing">{{ now()->addMonth()->format('d/m/Y') }}</div>
+                                </div>
+                            </div>
+                            <button id="submit-button" class="pay-button">
+                                Pagar Ahora
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -84,36 +142,46 @@
     <script>
         const stripe = Stripe('{{ env('STRIPE_KEY') }}');
         const elements = stripe.elements();
-        const cardElement = elements.create('card');
+        const cardElement = elements.create('card', {
+            style: {
+                base: {
+                    fontFamily: 'Inter, sans-serif',
+                    fontSize: '16px',
+                    color: '#1e1e1e',
+                    '::placeholder': {
+                        color: '#858585',
+                    },
+                    backgroundColor: '#d3d3d3',
+                    padding: '12px',
+                    borderRadius: '10px',
+                },
+                invalid: {
+                    color: '#fb4d17',
+                },
+            },
+        });
         cardElement.mount('#card-element');
 
-        const form = document.getElementById('plan-form');
-        const submitButton = document.getElementById('submit-button');
-        const cardErrors = document.getElementById('card-errors');
+        const prices = {
+            basico: { mensual: 30, anual: 324 },
+            premium: { mensual: 50, anual: 540 },
+            personalizado: { mensual: 80, anual: 864 }
+        };
 
-        form.addEventListener('submit', async (event) => {
-            event.preventDefault();
-            submitButton.disabled = true;
+        function updatePaymentSummary() {
+            const plan = document.getElementById('tipo_plan').value;
+            const frequency = document.getElementById('frecuencia').value;
+            const price = prices[plan][frequency];
+            const nextBilling = frequency === 'mensual'
+                ? '{{ now()->addMonth()->format('d/m/Y') }}'
+                : '{{ now()->addYear()->format('d/m/Y') }}';
 
-            const { paymentMethod, error } = await stripe.createPaymentMethod({
-                type: 'card',
-                card: cardElement,
-            });
+            document.getElementById('summary-plan').textContent = plan.charAt(0).toUpperCase() + plan.slice(1);
+            document.getElementById('summary-frequency').textContent = frequency.charAt(0).toUpperCase() + frequency.slice(1);
+            document.getElementById('summary-price').textContent = `€${price}/${frequency === 'mensual' ? 'mes' : 'año'}`;
+            document.getElementById('summary-next-billing').textContent = nextBilling;
+        }
 
-            if (error) {
-                cardErrors.textContent = error.message;
-                submitButton.disabled = false;
-            } else {
-                const hiddenInput = document.createElement('input');
-                hiddenInput.setAttribute('type', 'hidden');
-                hiddenInput.setAttribute('name', 'payment_method');
-                hiddenInput.setAttribute('value', paymentMethod.id);
-                form.appendChild(hiddenInput);
-                form.submit();
-            }
-        });
-
-        // Actualizar PDF al cambiar mascota
         document.getElementById('mascota_id').addEventListener('change', function() {
             const mascotaId = this.value;
             const pdfDiv = document.getElementById('pdf_dieta');
@@ -127,17 +195,86 @@
                     .then(response => response.json())
                     .then(data => {
                         if (data.pdf_url) {
-                            pdfDiv.innerHTML = `<a href="${data.pdf_url}" target="_blank">Ver Dieta PDF</a>`;
+                            pdfDiv.innerHTML = `<a href="${data.pdf_url}" class="pdf-link" target="_blank"><svg class="pdf-icon" fill="none" stroke="#fb4d17" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>Ver Dieta PDF</a>`;
                         } else {
-                            pdfDiv.innerHTML = '<p>No hay dieta disponible.</p>';
+                            pdfDiv.innerHTML = '<p class="text-[#858585] text-[0.9rem]">No hay dieta disponible.</p>';
                         }
                     })
                     .catch(() => {
-                        pdfDiv.innerHTML = '<p>Error al cargar la dieta.</p>';
+                        pdfDiv.innerHTML = '<p class="text-[#fb4d17] text-[0.9rem]">Error al cargar la dieta.</p>';
                     });
             } else {
-                pdfDiv.innerHTML = '<p>Selecciona una mascota para ver la dieta.</p>';
+                pdfDiv.innerHTML = '<p class="text-[#858585] text-[0.9rem]">Selecciona una mascota para ver la dieta.</p>';
             }
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const mascotaId = '{{ $mascotaSeleccionada->id }}';
+            const pdfDiv = document.getElementById('pdf_dieta');
+            if (mascotaId) {
+                fetch(`/dietas/${mascotaId}/pdf`, {
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json',
+                    },
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.pdf_url) {
+                            pdfDiv.innerHTML = `<a href="${data.pdf_url}" class="pdf-link" target="_blank"><svg class="pdf-icon" fill="none" stroke="#fb4d17" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>Ver Dieta PDF</a>`;
+                        } else {
+                            pdfDiv.innerHTML = '<p class="text-[#858585] text-[0.9rem]">No hay dieta disponible.</p>';
+                        }
+                    })
+                    .catch(() => {
+                        pdfDiv.innerHTML = '<p class="text-[#fb4d17] text-[0.9rem]">Error al cargar la dieta.</p>';
+                    });
+            }
+            updatePaymentSummary();
+        });
+
+        document.getElementById('tipo_plan').addEventListener('change', updatePaymentSummary);
+        document.getElementById('frecuencia').addEventListener('change', updatePaymentSummary);
+
+        document.getElementById('submit-button').addEventListener('click', async function(e) {
+            e.preventDefault();
+            const nombre = document.getElementById('nombre').value;
+            const apellidos = document.getElementById('apellidos').value;
+            const expiryDate = document.getElementById('expiry_date').value;
+            const cvc = document.getElementById('cvc').value;
+            const cardErrors = document.getElementById('card-errors');
+
+            if (!nombre || !apellidos || !expiryDate || !cvc) {
+                cardErrors.textContent = 'Por favor, completa todos los campos.';
+                return;
+            }
+
+            if (!/^\d{2}\/\d{2}$/.test(expiryDate)) {
+                cardErrors.textContent = 'La fecha de expiración debe ser MM/AA.';
+                return;
+            }
+
+            if (!/^\d{3}$/.test(cvc)) {
+                cardErrors.textContent = 'El código de seguridad debe tener 3 dígitos.';
+                return;
+            }
+
+            const { error, paymentMethod } = await stripe.createPaymentMethod({
+                type: 'card',
+                card: cardElement,
+                billing_details: {
+                    name: `${nombre} ${apellidos}`,
+                },
+            });
+
+            if (error) {
+                cardErrors.textContent = error.message;
+                return;
+            }
+
+            cardErrors.textContent = '';
+            alert('Método de pago creado correctamente (ficticio). Enviar a backend: ' + paymentMethod.id);
+            document.getElementById('plan-form').submit();
         });
     </script>
 @endsection

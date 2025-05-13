@@ -2906,3 +2906,205 @@ ul li {
     border-radius: 5px;
     font-size: 1rem;
 }
+
+
+
+
+/* Select - Contratar plan desde perfil*/
+
+
+.plan-selection {
+    font-family: 'Inter', sans-serif;
+    color: #1e1e1e;
+    background-color: #dad6c9;
+    min-height: 100vh;
+    padding: 40px 0;
+}
+
+.plan-selection .plan-container {
+    width: calc(100% - 40px);
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.plan-selection .plan-card {
+    background: #efeeeb;
+    border: 1px solid #d3d3d3;
+    border-radius: 15px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    padding: 40px;
+    width: 100%;
+}
+
+.plan-selection .plan-title {
+    font-size: 2.5rem;
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.plan-selection .plan-columns {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 32px;
+    margin: 0 -16px;
+}
+
+.plan-selection .plan-column {
+    flex: 1;
+    min-width: 0;
+    padding: 0 16px;
+}
+
+.plan-selection .plan-section {
+    background: #ffffff;
+    border: 1px solid #d3d3d3;
+    border-radius: 15px;
+    padding: 30px;
+}
+
+.plan-selection .plan-section-title {
+    font-size: 1.5rem;
+    font-weight: 500;
+    margin-bottom: 24px;
+}
+
+.plan-selection .plan-input-label {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #1e1e1e;
+    margin-bottom: 8px;
+    display: block;
+}
+
+.plan-selection .plan-input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #d3d3d3;
+    border-radius: 10px;
+    background: #EFEEEB;
+    font-size: 1rem;
+    color: #1e1e1e;
+}
+
+.plan-selection .plan-input:focus {
+    outline: none;
+    border-color: #fb4d17;
+}
+
+.plan-selection .plan-error {
+    color: #fb4d17;
+    font-size: 0.9rem;
+    margin-top: 4px;
+    display: block;
+}
+
+.plan-selection .pdf-link {
+    display: flex;
+    align-items: center;
+    background: #ffffff;
+    border: 1px solid #d3d3d3;
+    border-radius: 10px;
+    padding: 8px 12px;
+    color: #fb4d17;
+    font-weight: 500;
+    text-decoration: none;
+    transition: background 0.3s, color 0.3s;
+}
+
+.plan-selection .pdf-link:hover {
+    background: #f8f8f8;
+    color: #e04312;
+}
+
+.plan-selection .pdf-icon {
+    width: 16px;
+    height: 16px;
+    margin-right: 8px;
+}
+
+.plan-selection .payment-card {
+    background: #ffffff;
+    border: 1px solid #d3d3d3;
+    border-radius: 10px;
+    padding: 24px;
+}
+
+.plan-selection .summary-card {
+    background: #ffffff;
+    border: 1px solid #d3d3d3;
+    border-radius: 10px;
+    padding: 24px;
+}
+
+.plan-selection .summary-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    font-size: 0.9rem;
+}
+
+.plan-selection .summary-label {
+    flex: 0 0 50%;
+    color: #858585;
+    font-weight: 500;
+}
+
+.plan-selection .summary-value {
+    flex: 0 0 50%;
+    text-align: right;
+    font-weight: 500;
+}
+
+.plan-selection .pay-button {
+    width: 100%;
+    padding: 12px;
+    background: #fb4d17;
+    color: #ffffff;
+    border: none;
+    border-radius: 10px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.3s;
+}
+
+.plan-selection .pay-button:hover {
+    background: #e04312;
+}
+
+.plan-selection .alert {
+    background: #ffffff;
+    border: none;
+    border-left: 4px solid;
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 40px;
+}
+
+.plan-selection .alert-error {
+    border-left-color: #fb4d17;
+    color: #fb4d17;
+}
+
+.plan-selection .alert-success {
+    border-left-color: #083630;
+    color: #1e1e1e;
+}
+
+.plan-selection .divider {
+    border-top: 2px solid #d3d3d3;
+    margin: 24px 0;
+}
+
+@media (max-width: 767px) {
+    .plan-selection .plan-columns {
+        flex-direction: column;
+        gap: 24px;
+    }
+    .plan-selection .plan-column {
+        flex: 0 0 100%;
+    }
+}
