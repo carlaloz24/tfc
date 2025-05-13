@@ -1,78 +1,97 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use App\Models\Mascota;
-use App\Models\Plan;
+use App\Models\Dieta;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Stripe\Checkout\Session;
-use Stripe\Stripe;
+use Illuminate\Support\Facades\Log;
 
 class PlanController extends Controller
 {
-    public function index()
+    public function select($mascota_id)
     {
-        return view('planes.index');
-    }
+        try {
+            // Obtener el usuario autenticado
+            $user = Auth::user();
+            if (!$user) {
+                return redirect()->route('login')->with('error', 'Debes iniciar sesión para contratar un plan.');
+            }
 
-    public function select()
-    {
-        $mascotas = Mascota::where('id_usuario', Auth::id())->with('dieta')->get();
-        if ($mascotas->isEmpty() || !$mascotas->pluck('dieta')->contains(fn ($dieta) => !is_null($dieta))) {
-            return redirect()->route('profile.index')->with('error', 'Debes generar una dieta primero.');
+            // Obtener la mascota seleccionada
+            $mascotaSeleccionada = Mascota::where('id_usuario', $user->id)
+                ->where('id', $mascota_id)
+                ->with('dietas') // Cargar la relación dietas
+                ->firstOrFail();
+
+            // Verificar que la mascota tenga al menos una dieta asociada
+            $dietaSeleccionada = $mascotaSeleccionada->dietas()->latest()->first();
+            if (!$dietaSeleccionada) {
+                return redirect()->back()->with('error', 'La mascota seleccionada no tiene una dieta asociada.');
+            }
+
+            // Obtener todas las mascotas del usuario con al menos una dieta
+            $mascotas = Mascota::where('id_usuario', $user->id)
+                ->whereHas('dietas') // Cambiado de 'dieta' a 'dietas'
+                ->with('dietas') // Cargar dietas para cada mascota
+                ->get();
+
+            return view('planes.select', [
+                'mascotaSeleccionada' => $mascotaSeleccionada,
+                'dietaSeleccionada' => $dietaSeleccionada,
+                'mascotas' => $mascotas,
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error en PlanController@select', [
+                'mascota_id' => $mascota_id,
+                'error' => $e->getMessage(),
+            ]);
+            return redirect()->back()->with('error', 'Error al cargar la página de selección de plan.');
         }
-        return view('planes.select', compact('mascotas'));
     }
 
     public function checkout(Request $request)
     {
-        $request->validate([
-            'mascota_id' => 'required|exists:mascotas,id',
-            'frecuencia' => 'required|in:mensual,anual',
-            'tipo_plan' => 'required|in:basico,premium,personalizado',
-            'payment_method' => 'required',
-        ]);
+        try {
+            $validated = $request->validate([
+                'mascota_id' => 'required|exists:mascotas,id',
+                'frecuencia' => 'required|in:mensual,anual',
+                'tipo_plan' => 'required|in:basico,premium,personalizado',
+                'payment_method' => 'required',
+            ]);
 
-        $mascota = Mascota::where('id', $request->mascota_id)->where('id_usuario', Auth::id())->with('dieta')->firstOrFail();
-        if (!$mascota->dieta) {
-            return redirect()->route('profile.index')->with('error', 'La mascota seleccionada no tiene una dieta asociada.');
+            $user = Auth::user();
+            if (!$user) {
+                return response()->json(['success' => false, 'message' => 'Usuario no autenticado'], 401);
+            }
+
+            // Verificar que la mascota pertenece al usuario y tiene al menos una dieta
+            $mascota = Mascota::where('id_usuario', $user->id)
+                ->where('id', $request->mascota_id)
+                ->whereHas('dietas') // Cambiado de 'dieta' a 'dietas'
+                ->firstOrFail();
+
+            // Aquí integrarías la lógica de Stripe para procesar el pago
+            // Por ahora, simulamos el éxito
+            Log::info('Procesando checkout', [
+                'mascota_id' => $request->mascota_id,
+                'frecuencia' => $request->frecuencia,
+                'tipo_plan' => $request->tipo_plan,
+                'payment_method' => $request->payment_method,
+            ]);
+
+            // Simular creación de suscripción (ajusta según tu modelo)
+            // Ejemplo: Suscripcion::create([...]);
+
+            return redirect()->route('profile.index')->with('success', 'Plan contratado correctamente.');
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return back()->withErrors($e->errors())->withInput();
+        } catch (\Exception $e) {
+            Log::error('Error en PlanController@checkout', [
+                'error' => $e->getMessage(),
+                'request' => $request->all(),
+            ]);
+            return back()->with('error', 'Error al procesar el pago.');
         }
-
-        Stripe::setApiKey(env('STRIPE_SECRET'));
-
-        $prices = [
-            'basico' => ['mensual' => 'price_monthly_basic', 'anual' => 'price_yearly_basic'],
-            'premium' => ['mensual' => 'price_monthly_premium', 'anual' => 'price_yearly_premium'],
-            'personalizado' => ['mensual' => 'price_monthly_custom', 'anual' => 'price_yearly_custom'],
-        ];
-
-        $priceId = $prices[$request->tipo_plan][$request->frecuencia]; // Reemplaza con tus Price IDs reales de Stripe
-
-        $session = Session::create([
-            'payment_method_types' => ['card'],
-            'line_items' => [[
-                'price' => $priceId,
-                'quantity' => 1,
-            ]],
-            'mode' => 'subscription',
-            'success_url' => route('planes.success'),
-            'cancel_url' => route('planes.select'),
-        ]);
-
-        $plan = new Plan();
-        $plan->id_usuario = Auth::id();
-        $plan->id_mascota = $mascota->id;
-        $plan->tipo_plan = $request->tipo_plan;
-        $plan->frecuencia = $request->frecuencia;
-        $plan->stripe_session_id = $session->id;
-        $plan->save();
-
-        return redirect($session->url);
-    }
-
-    public function success()
-    {
-        return redirect()->route('profile.index')->with('success', '¡Plan contratado exitosamente!');
     }
 }

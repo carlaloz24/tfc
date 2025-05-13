@@ -1,23 +1,30 @@
 <?php
 namespace App\Models;
-
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Dieta extends Model
 {
+    use HasFactory;
     protected $fillable = [
         'id_mascota',
-        'id_usuario',
-        'calorias',
+        'nombre',
+        'peso',
+        'categoria_edad',
+        'esterilizado',
+        'nivel_actividad',
         'tipo_dieta',
+        'condiciones_salud',
+        'alimentos_alergia',
         'menu_json',
-        'pdf_dieta',
-        'fecha_generacion',
+        'pdf_url', // Añadido
     ];
 
     protected $casts = [
+        'condiciones_salud' => 'array',
+        'alimentos_alergia' => 'array',
         'menu_json' => 'array',
-        'fecha_generacion' => 'date',
+        'esterilizado' => 'boolean',
     ];
 
     public function mascota()

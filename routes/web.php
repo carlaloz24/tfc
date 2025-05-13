@@ -1,4 +1,6 @@
 <?php
+
+use App\Http\Controllers\DietaController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ArticuloController;
 use App\Http\Controllers\Auth\LoginController;
@@ -39,9 +41,13 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.delete');
     Route::resource('mascotas', MascotaController::class);
     Route::get('/calculadora/{id}/download', [CalculadoraController::class, 'download'])->name('calculadora.download');
-    Route::get('/planes/contratar/{tipo_plan}', [PlanController::class, 'contratar'])->name('planes.contratar');
+    Route::get('/planes/contratar/{tipo_plan}', [PlanController::class, 'contratar'])->name('planes.select');
     Route::post('/planes/checkout', [PlanController::class, 'checkout'])->name('planes.checkout');
     Route::get('/planes/success', [PlanController::class, 'success'])->name('planes.success');
+    Route::get('/planes/select/{mascota_id}', [PlanController::class, 'select'])->name('planes.select');
+    Route::post('/planes/checkout', [PlanController::class, 'checkout'])->name('planes.checkout');
+    Route::get('/dietas/{mascota_id}/pdf', [DietaController::class, 'getPdf'])->name('dietas.pdf');
+
 });
 
 Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {

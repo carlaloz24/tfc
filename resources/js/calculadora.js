@@ -161,7 +161,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             // Habilitar botón de descarga de PDF
             descargarPDFBtn.style.display = 'block';
-            descargarPDFBtn.onclick = () => descargarPDF(data.nombre, energiaMetabolica, dieta, menuSemanal, ajustesAplicados, data.tipo_dieta);
+            descargarPDFBtn.onclick = () => descargarPDF(data.nombre, data.peso, energiaMetabolica, dieta, menuSemanal, ajustesAplicados, data.tipo_dieta);
 
             // Enviar el formulario al servidor
             fetch(form.action, {
@@ -171,13 +171,18 @@ document.addEventListener('DOMContentLoaded', function () {
                     'Accept': 'application/json',
                 },
             }).then(response => {
-                console.log('Respuesta del servidor:', response);
-                return response.json().then(data => ({ data, status: response.status, ok: response.ok }));
-            }).then(({ data, status, ok }) => {
-                if (!ok) {
-                    throw new Error(data.error || 'Error en la respuesta del servidor');
+                if (!response.ok) {
+                    return response.json().then(error => {
+                        throw new Error(error.message || `Error en la respuesta del servidor: ${response.statusText}`);
+                    });
                 }
-                console.log('Formulario enviado con éxito:', data);
+                return response.json();
+            }).then(data => {
+                console.log('Respuesta del servidor:', data);
+                if (!data.success) {
+                    throw new Error(data.message || 'Error al guardar la dieta');
+                }
+                console.log('Dieta guardada con éxito:', data.dieta_id);
             }).catch(error => {
                 console.error('Error en fetch:', error);
                 resultadosDiv.innerHTML += `<p class="text-danger mt-3">Advertencia: ${error.message}. Por favor, verifica la asociación de la dieta en el perfil.</p>`;
@@ -331,67 +336,174 @@ function mostrarResultados(nombrePerro, peso, energiaMetabolica, dieta, menuSema
     divResultados.innerHTML = html;
 }
 
-function descargarPDF(nombrePerro, energiaMetabolica, dieta, menuSemanal, ajustesAplicados, tipoDieta) {
+function descargarPDF(nombrePerro, peso, energiaMetabolica, dieta, menuSemanal, ajustesAplicados, tipoDieta) {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
+
+    // Configuración inicial
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const pageHeight = doc.internal.pageSize.getHeight();
+    const margin = 10;
+    let y = margin;
+
+    // Fondo general (similar a .main-container y .second-background)
+    doc.setFillColor(239, 238, 235); // #efeeeb
+    doc.rect(0, 0, pageWidth, pageHeight, 'F');
+
+    // Encabezado (similar a .hero)
+    doc.setFillColor(239, 238, 235); // #efeeeb
+    doc.roundedRect(margin, y, pageWidth - 2 * margin, 50, 15, 15, 'F');
+    doc.setFontSize(24);
+    doc.setTextColor(30, 30, 30); // #1e1e1e
+    doc.setFont('helvetica', 'bold'); // Aproximamos 'Inter'
+    doc.text('Dieta Canina Personalizada', pageWidth / 2, y + 20, { align: 'center' });
     doc.setFontSize(12);
+    doc.setTextColor(133, 133, 133); // #858585
+    doc.setFont('helvetica', 'normal');
+    doc.text(`Generado el ${new Date().toLocaleDateString()}`, pageWidth - margin - 5, y + 35, { align: 'right' });
+    y += 60;
 
-    // Encabezado
-    doc.text(`Dieta para ${nombrePerro}`, 10, 10);
-    doc.text(`Peso: ${dieta.peso || 'No especificado'} kg`, 10, 20);
-    doc.text(`Tipo de dieta: ${tipoDieta}`, 10, 30);
-    doc.text(`Calorías diarias: ${Math.round(energiaMetabolica)} kcal`, 10, 40);
+    // Espacio para logo (similar a .card)
+    doc.setFillColor(255, 255, 255); // #ffffff
+    doc.roundedRect(margin + 10, y, 50, 30, 10, 10, 'F');
+    doc.setDrawColor(211, 211, 211); // #d3d3d3
+    doc.roundedRect(margin + 10, y, 50, 30, 10, 10, 'D');
+    doc.setTextColor(133, 133, 133);
+    doc.setFontSize(10);
+    doc.text('Espacio para Logo', margin + 35, y + 15, { align: 'center' });
+    y += 40;
+
+    // Tarjeta de resumen (similar a .card)
+    doc.setFillColor(255, 255, 255); // #ffffff
+    doc.roundedRect(margin, y, pageWidth - 2 * margin, 80, 15, 15, 'F');
+    doc.setDrawColor(211, 211, 211); // #d3d3d3
+    doc.roundedRect(margin, y, pageWidth - 2 * margin, 80, 15, 15, 'D');
+    doc.setFontSize(16);
+    doc.setTextColor(30, 30, 30); // #1e1e1e
+    doc.setFont('helvetica', 'bold');
+    doc.text(`Dieta para ${nombrePerro}`, margin + 10, y + 15);
+    doc.setFontSize(12);
+    doc.setTextColor(133, 133, 133); // #858585
+    doc.setFont('helvetica', 'normal');
+    doc.text(`Peso: ${peso} kg`, margin + 10, y + 30);
+    doc.text(`Tipo de dieta: ${tipoDieta}`, margin + 10, y + 40);
+    doc.text(`Calorías diarias: ${Math.round(energiaMetabolica)} kcal`, margin + 10, y + 50);
     if (ajustesAplicados.length > 0) {
-        doc.text(`Ajustes aplicados: ${ajustesAplicados.join(', ')}`, 10, 50);
+        doc.text(`Ajustes aplicados: ${ajustesAplicados.join(', ')}`, margin + 10, y + 60);
     }
+    y += 90;
 
-    // Distribución de macronutrientes
-    let y = ajustesAplicados.length > 0 ? 60 : 50;
-    doc.text('Distribución de Macronutrientes', 10, y);
+    // Tabla de macronutrientes (similar a .plans-table)
+    doc.setFillColor(255, 255, 255); // #ffffff
+    doc.roundedRect(margin, y, pageWidth - 2 * margin, 20 + 10 * Object.keys(dieta).length, 15, 15, 'F');
+    doc.setDrawColor(211, 211, 211); // #d3d3d3
+    doc.roundedRect(margin, y, pageWidth - 2 * margin, 20 + 10 * Object.keys(dieta).length, 15, 15, 'D');
+    doc.setFontSize(14);
+    doc.setTextColor(30, 30, 30); // #1e1e1e
+    doc.setFont('helvetica', 'bold');
+    doc.text('Distribución de Macronutrientes', margin + 10, y + 10);
+    y += 20;
+
+    // Encabezados de la tabla
+    doc.setFillColor(8, 54, 48); // #083630
+    doc.roundedRect(margin + 5, y - 5, pageWidth - 2 * margin - 10, 10, 5, 5, 'F');
+    doc.setFontSize(10);
+    doc.setTextColor(255, 255, 255); // Blanco
+    doc.text('Categoría', margin + 10, y);
+    doc.text('kcal', margin + 50, y);
+    doc.text('g', margin + 70, y);
+    doc.text('Prot.', margin + 90, y);
+    doc.text('Grasas', margin + 110, y);
+    doc.text('CH', margin + 130, y);
     y += 10;
-    doc.text('Categoría    kcal    g    Prot.    Grasas    CH', 10, y);
-    y += 5;
-    doc.text('---------------------------------------------', 10, y);
-    y += 5;
 
+    // Filas de la tabla
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(133, 133, 133); // #858585
+    let rowIndex = 0;
     for (let categoria in dieta) {
-        doc.text(`${categoria.padEnd(12)} ${Math.round(dieta[categoria].kcal).toString().padEnd(7)} ${Math.round(dieta[categoria].gramos).toString().padEnd(4)} ${Math.round(dieta[categoria].proteinas).toString().padEnd(8)} ${Math.round(dieta[categoria].grasas).toString().padEnd(9)} ${Math.round(dieta[categoria].carbohidratos)}`, 10, y);
-        y += 7;
-    }
-
-    // Menú semanal
-    y += 10;
-    doc.text('Menú Semanal', 10, y);
-    y += 10;
-
-    for (let dia in menuSemanal) {
-        if (y > 260) {
-            doc.addPage();
-            y = 10;
+        if (rowIndex % 2 === 0) {
+            doc.setFillColor(239, 238, 235); // #efeeeb
+            doc.rect(margin + 5, y - 5, pageWidth - 2 * margin - 10, 10, 'F');
         }
-        doc.text(`${dia}`, 10, y);
+        doc.text(categoria, margin + 10, y);
+        doc.text(Math.round(dieta[categoria].kcal).toString(), margin + 50, y);
+        doc.text(Math.round(dieta[categoria].gramos).toString(), margin + 70, y);
+        doc.text(Math.round(dieta[categoria].proteinas).toString(), margin + 90, y);
+        doc.text(Math.round(dieta[categoria].grasas).toString(), margin + 110, y);
+        doc.text(Math.round(dieta[categoria].carbohidratos).toString(), margin + 130, y);
         y += 10;
-        doc.text(`Mañana:`, 10, y);
+        rowIndex++;
+        if (y > pageHeight - margin - 20) {
+            doc.addPage();
+            doc.setFillColor(239, 238, 235); // #efeeeb
+            doc.rect(0, 0, pageWidth, pageHeight, 'F');
+            y = margin;
+        }
+    }
+    y += 10;
+
+    // Menú semanal (similar a .card con accordion)
+    doc.setFillColor(255, 255, 255); // #ffffff
+    doc.roundedRect(margin, y, pageWidth - 2 * margin, 20, 15, 15, 'F');
+    doc.setDrawColor(211, 211, 211); // #d3d3d3
+    doc.roundedRect(margin, y, pageWidth - 2 * margin, 20, 15, 15, 'D');
+    doc.setFontSize(14);
+    doc.setTextColor(30, 30, 30); // #1e1e1e
+    doc.setFont('helvetica', 'bold');
+    doc.text('Menú Semanal', margin + 10, y + 10);
+    y += 30;
+
+    for (
+
+        let dia in menuSemanal) {
+        if (y > pageHeight - margin - 60) {
+            doc.addPage();
+            doc.setFillColor(239, 238, 235); // #efeeeb
+            doc.rect(0, 0, pageWidth, pageHeight, 'F');
+            y = margin;
+        }
+        doc.setFillColor(255, 255, 255); // #ffffff
+        doc.roundedRect(margin, y, pageWidth - 2 * margin, 40 + 12 * (Object.keys(menuSemanal[dia].manana).length + Object.keys(menuSemanal[dia].tarde).length), 15, 15, 'F');
+        doc.setDrawColor(211, 211, 211); // #d3d3d3
+        doc.roundedRect(margin, y, pageWidth - 2 * margin, 40 + 12 * (Object.keys(menuSemanal[dia].manana).length + Object.keys(menuSemanal[dia].tarde).length), 15, 15, 'D');
+        doc.setFontSize(12);
+        doc.setTextColor(30, 30, 30); // #1e1e1e
+        doc.setFont('helvetica', 'bold');
+        doc.text(dia, margin + 10, y + 10);
+        y += 20;
+
+        doc.setFontSize(10);
+        doc.setTextColor(133, 133, 133); // #858585
+        doc.setFont('helvetica', 'normal');
+        doc.text('Mañana:', margin + 15, y);
+        y += 7;
         Object.entries(menuSemanal[dia].manana).forEach(([cat, val]) => {
-            y += 7;
-            if (y > 270) {
-                doc.addPage();
-                y = 10;
-            }
-            doc.text(`${cat}: ${val}`, 15, y);
+            doc.text(`${cat}: ${val}`, margin + 20, y);
+            y += 6;
         });
-        y += 10;
-        doc.text(`Tarde:`, 10, y);
+
+        y += 5;
+        doc.text('Tarde:', margin + 15, y);
+        y += 7;
         Object.entries(menuSemanal[dia].tarde).forEach(([cat, val]) => {
-            y += 7;
-            if (y > 270) {
-                doc.addPage();
-                y = 10;
-            }
-            doc.text(`${cat}: ${val}`, 15, y);
+            doc.text(`${cat}: ${val}`, margin + 20, y);
+            y += 6;
         });
         y += 15;
+
+        if (y > pageHeight - margin - 20) {
+            doc.addPage();
+            doc.setFillColor(239, 238, 235); // #efeeeb
+            doc.rect(0, 0, pageWidth, pageHeight, 'F');
+            y = margin;
+        }
     }
+
+    // Pie de página
+    doc.setFontSize(8);
+    doc.setTextColor(133, 133, 133); // #858585
+    doc.text('Calculadora de Dietas Caninas - Todos los derechos reservados', pageWidth / 2, pageHeight - margin, { align: 'center' });
 
     doc.save(`Dieta_${nombrePerro}_${new Date().toISOString().split('T')[0]}.pdf`);
 }

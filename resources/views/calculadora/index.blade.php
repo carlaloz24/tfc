@@ -113,12 +113,12 @@
                         </div>
                         <input type="hidden" name="menu_json" id="menu_json" value="{}">
                         <div class="col-md-12">
-                            <button type="submit" class="btn btn-primary" style="width: 100%; height: 50px;">Calcular Dieta</button>
+                            <button type="submit" class="btn btn-success" style="width: 100%; background-color: #083630; height: 50px;">Calcular Dieta</button>
                         </div>
                     </div>
                 </form>
                 <div id="resultados" class="mt-5"></div>
-                <button id="descargarPDF" class="btn btn-success mt-3" style="display: none;">Descargar PDF</button>
+                <button id="descargarPDF" class="btn btn-success mt-3" style="display: none; width: 100%; background-color: #083630; height: 50px;">Descargar PDF</button>
             </article>
         </section>
     </div>

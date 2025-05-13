@@ -105,7 +105,7 @@
                             </div>
                         </div>
                         <div class="col-md-12">
-                            <button id="calcularBtn" type="submit" style="width: 100%; background-color: #fb4d17; height: 50px;">Calcular Dieta</button>
+                            <button id="calcularBtn" type="submit" style="width: 100%; background-color: #083630; height: 50px;">Calcular Dieta</button>
                         </div>
                     </div>
                 </form>

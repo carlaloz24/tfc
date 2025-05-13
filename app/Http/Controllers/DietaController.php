@@ -1,16 +1,48 @@
 <?php
-
 namespace App\Http\Controllers;
 
-use App\Models\Dieta;
 use App\Models\Mascota;
+use App\Models\Dieta;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Response;
-use PDF;
+use Illuminate\Support\Facades\Log;
 
 class DietaController extends Controller
 {
+    public function getPdf(Request $request, $mascota_id)
+    {
+        try {
+            $user = Auth::user();
+            if (!$user) {
+                return response()->json(['success' => false, 'message' => 'Usuario no autenticado'], 401);
+            }
+
+            $mascota = Mascota::where('id_usuario', $user->id)
+                ->where('id', $mascota_id)
+                ->whereHas('dietas')
+                ->firstOrFail();
+
+            // Obtener la dieta más reciente
+            $dieta = $mascota->dietas()->latest()->first();
+
+            if (!$dieta || !$dieta->pdf_url) {
+                return response()->json(['success' => false, 'message' => 'No hay PDF disponible'], 404);
+            }
+
+            return response()->json([
+                'success' => true,
+                'pdf_url' => $dieta->pdf_url,
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error en DietaController@getPdf', [
+                'mascota_id' => $mascota_id,
+                'error' => $e->getMessage(),
+            ]);
+            return response()->json(['success' => false, 'message' => 'Error al cargar el PDF'], 500);
+        }
+    }
+
+
     public function create()
     {
         $mascotas = Mascota::where('id_usuario', Auth::id())->get();
@@ -42,7 +74,7 @@ class DietaController extends Controller
 
         $mascota = Mascota::where('id', $request->mascota_id)->where('id_usuario', Auth::id())->firstOrFail();
 
-        // Calcular calorías según edad, esterilización, actividad
+        // Calcular calorías
         $baseCalorias = $request->peso * 30 + 70;
         $calorias = match ($request->categoria_edad) {
             'cachorro_menor_4' => $baseCalorias * 2,
@@ -60,6 +92,7 @@ class DietaController extends Controller
         }
         $calorias = round($calorias);
 
+        // Generar PDF
         $pdf = PDF::loadView('calculadora.pdf', [
             'mascota' => $mascota,
             'calorias' => $calorias,
@@ -69,15 +102,19 @@ class DietaController extends Controller
             'alimentos_alergia' => $request->alimentos_alergia ?? [],
         ]);
 
-        $pdfData = $pdf->output();
+        // Guardar PDF en storage
+        $pdfPath = 'public/dietas/dieta_' . $mascota->id . '_' . now()->format('YmdHis') . '.pdf';
+        Storage::put($pdfPath, $pdf->output());
+        $pdfUrl = Storage::url($pdfPath);
 
+        // Guardar dieta
         $dieta = new Dieta();
         $dieta->id_mascota = $mascota->id;
         $dieta->id_usuario = Auth::id();
         $dieta->calorias = $calorias;
         $dieta->tipo_dieta = $request->tipo_dieta;
         $dieta->menu_json = $request->menu_json;
-        $dieta->pdf_dieta = $pdfData;
+        $dieta->pdf_url = $pdfUrl;
         $dieta->fecha_generacion = now();
         $dieta->save();
 
