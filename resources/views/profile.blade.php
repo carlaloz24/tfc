@@ -93,12 +93,42 @@
                 @endif
             </div>
 
+
             <!-- Facturas -->
-            <div class="profile-panel">
-                <h2 class="profile-title">Facturas</h2>
-                <p class="profile-description">Descarga las facturas de tus planes contratados.</p>
-                <a href="#" class="profile-btn-secondary" onclick="alert('Funcionalidad en desarrollo')">Descargar Facturas</a>
+            <div class="profile-section">
+                <h2>Mis Facturas</h2>
+                @if (auth()->user()->facturas->isEmpty())
+                    <p>No tienes facturas.</p>
+                @else
+                    <table class="facturas-table">
+                        <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Plan</th>
+                            <th>Mascota</th>
+                            <th>Precio</th>
+                            <th>Descargar</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @foreach (auth()->user()->facturas as $factura)
+                            <tr>
+                                <td>{{ $factura->fecha_emision->format('d/m/Y') }}</td>
+                                <td>{{ ucfirst($factura->tipo_plan) }}</td>
+                                <td>{{ $factura->mascota->nombre }}</td>
+                                <td>€{{ number_format($factura->precio, 2) }}/{{ $factura->frecuencia }}</td>
+                                <td>
+                                    <a href="{{ Storage::url($factura->pdf_path) }}" class="btn btn-orange" download>Descargar PDF</a>
+                                </td>
+                            </tr>
+                        @endforeach
+                        </tbody>
+                    </table>
+                @endif
             </div>
+
+
+
         </div>
     </div>
 @endsection

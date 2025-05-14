@@ -34,6 +34,7 @@ Route::post('/register', [RegisterController::class, 'register']);
 
 Route::get('/admin/login', [LoginController::class, 'showAdminLoginForm'])->name('admin.login');
 Route::post('/admin/login', [LoginController::class, 'adminLogin']);
+Route::get('/planes/select/{mascota_id}/{tipo_plan?}', [PlanController::class, 'select'])->name('planes.select');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
@@ -41,15 +42,21 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.delete');
     Route::resource('mascotas', MascotaController::class);
     Route::get('/calculadora/{id}/download', [CalculadoraController::class, 'download'])->name('calculadora.download');
-    Route::get('/planes/contratar/{tipo_plan}', [PlanController::class, 'contratar'])->name('planes.select');
     Route::post('/planes/checkout', [PlanController::class, 'checkout'])->name('planes.checkout');
     Route::get('/planes/success', [PlanController::class, 'success'])->name('planes.success');
-    Route::get('/planes/select/{mascota_id}', [PlanController::class, 'select'])->name('planes.select');
-    Route::post('/planes/checkout', [PlanController::class, 'checkout'])->name('planes.checkout');
     Route::get('/dietas/{mascota_id}/pdf', [DietaController::class, 'getPdf'])->name('dietas.pdf');
-
 });
-
+Route::get('/test-factura/{id}', function ($id) {
+    $factura = \App\Models\Factura::findOrFail($id);
+    $path = storage_path('app/' . $factura->pdf_path);
+    if (file_exists($path)) {
+        return response()->file($path, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="factura_' . $id . '.pdf"',
+        ]);
+    }
+    return response()->json(['error' => 'Archivo no encontrado'], 404);
+});
 Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::get('/dashboard', [ArticuloController::class, 'adminIndex'])->name('admin.dashboard');
     Route::get('/articulos', [ArticuloController::class, 'adminIndex'])->name('admin.articulos.index');

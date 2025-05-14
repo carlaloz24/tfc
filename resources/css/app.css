@@ -3108,3 +3108,14 @@ ul li {
         flex: 0 0 100%;
     }
 }
+
+
+
+
+/* Facturas */
+.profile-section { margin-bottom: 30px; }
+.mascota-card { border: 1px solid #d3d3d3; padding: 15px; margin-bottom: 10px; border-radius: 5px; }
+.facturas-table { width: 100%; border-collapse: collapse; }
+.facturas-table th, .facturas-table td { border: 1px solid #d3d3d3; padding: 10px; text-align: left; }
+.facturas-table th { background-color: #fb4d17; color: #fff; }
+.btn.btn-orange { background-color: #fb4d17; color: #fff; padding: 8px 15px; border-radius: 5px; text-decoration: none; display: inline-block; }

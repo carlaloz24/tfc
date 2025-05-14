@@ -18,8 +18,7 @@
                     <span class="price-value">50€ /mes</span>
                 </p>
                 <p class="description">Ideal para empezar con una dieta sencilla y nutritiva</p>
-                <button>Contratar Plan</button>
-                <p class="features-title">Características:</p>
+                <button onclick="window.location.href='{{ auth()->check() && auth()->user()->mascotas->isNotEmpty() ? route('planes.select', ['mascota_id' => auth()->user()->mascotas->first()->id, 'tipo_plan' => 'basico']) : route('login') }}'">Contratar Plan</button>                <p class="features-title">Características:</p>
                 <ul>
                     <li><span class="check-circle green"></span>Entrega automática recurrente</li>
                     <li><span class="check-circle green"></span>Dieta estándar (BARF, Cocida o Mixta)</li>
@@ -34,9 +33,7 @@
                         <span class="price-value">110€ /mes</span>
                     </p>
                     <p class="description">Ideal para quienes buscan una dieta personalizada para su perro</p>
-                    <button>Contratar Plan</button>
-                    <p class="features-title">Características:</p>
-                    <ul>
+                    <button onclick="window.location.href='{{ auth()->check() && auth()->user()->mascotas->isNotEmpty() ? route('planes.select', ['mascota_id' => auth()->user()->mascotas->first()->id, 'tipo_plan' => 'personalizado']) : route('login') }}'">Contratar Plan</button>                <ul>
                         <li><span class="check-circle green"></span>Dieta 100% personalizada</li>
                         <li><span class="check-circle green"></span>Entrega automática recurrente</li>
                         <li><span class="check-circle green"></span>Guía básica de nutrición canina</li>
@@ -51,10 +48,9 @@
                     <span class="price-value">140€ /mes</span>
                 </p>
                 <p class="description">Ideal para una alimentación cuidada al máximo detalle</p>
-                <button>Contratar Plan</button>
-                <p class="features-title">Características:</p>
-                <ul>
-                    <li><span class="check-circle green"></span>Dieta 100% personalizada</li>
+                <button onclick="window.location.href='{{ auth()->check() && auth()->user()->mascotas->isNotEmpty() ? route('planes.select', ['mascota_id' => auth()->user()->mascotas->first()->id, 'tipo_plan' => 'personalizado']) : route('login') }}'">Contratar Plan</button>                <ul>
+
+                <li><span class="check-circle green"></span>Dieta 100% personalizada</li>
                     <li><span class="check-circle green"></span>Entrega automática recurrente</li>
                     <li><span class="check-circle green"></span>Guía básica de nutrición canina</li>
                     <li><span class="check-circle green"></span>Contenido exclusivo vía email</li>
