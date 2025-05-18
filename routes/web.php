@@ -17,11 +17,15 @@ Route::get('/calculadora', [CalculadoraController::class, 'show'])->name('calcul
 Route::get('/calculadora/index', [CalculadoraController::class, 'index'])->name('calculadora.index');
 Route::get('/calculadora/create/{mascota}', [CalculadoraController::class, 'create'])->name('calculadora.create');
 Route::post('/calculadora', [CalculadoraController::class, 'store'])->name('calculadora.store');
+Route::post('/calculadora/generar', [DietaController::class, 'store'])->name('calculadora.store')->middleware('auth');
 Route::get('/planes', fn () => view('planes'))->name('planes');
 Route::get('/contacto', fn () => view('home'))->name('contacto');
 Route::get('/politica-privacidad', fn () => view('politica-privacidad'))->name('politica-privacidad');
 Route::get('/terminos-uso', fn () => view('terminos-uso'))->name('terminos-uso');
 Route::get('/aviso-legal', fn () => view('aviso-legal'))->name('aviso-legal');
+Route::get('/politica-cookies', function () {
+    return view('cookies');
+})->name('cookies');
 
 Route::post('/contact', fn () => redirect()->back()->with('success', 'Mensaje enviado'))->name('contact.submit');
 Route::post('/newsletter', fn () => redirect()->back()->with('success', '¡Suscrito a la newsletter!'))->name('newsletter.subscribe');

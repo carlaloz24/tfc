@@ -113,7 +113,7 @@
                         </div>
                         <input type="hidden" name="menu_json" id="menu_json" value="{}">
                         <div class="col-md-12">
-                            <button type="submit" class="btn btn-success" style="width: 100%; background-color: #083630; height: 50px;">Calcular Dieta</button>
+                            <button id="calcularBtn" type="submit" style="width: 100%; background-color: #fb4d17; height: 50px; border-radius: 25px;">Calcular Dieta</button>
                         </div>
                     </div>
                 </form>

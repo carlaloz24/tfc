@@ -28,7 +28,7 @@
                     <a href="{{ route('articulos.show', $articulo->slug) }}" class="card-link">
                         <div class="card-articulos">
                             @if ($articulo->imagen)
-                                <img src="{{ asset('storage/' . $articulo->imagen) }}"
+                                <img src="{{ Storage::url($articulo->imagen) }}"
                                      alt="{{ $articulo->titulo }}"
                                      class="card-img">
                             @else

@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Articulo;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Log;
 
 class ArticuloController extends Controller
 {
@@ -19,7 +21,7 @@ class ArticuloController extends Controller
             $query->orderBy('fecha_publicacion', 'asc');
         }
 
-        $articulos = $query->paginate(2);
+        $articulos = $query->paginate(10); // Aumentado a 10 artículos por página
 
         return view('articulos.public_index', compact('articulos'));
     }
@@ -35,13 +37,10 @@ class ArticuloController extends Controller
             $query->orderBy('fecha_publicacion', 'asc');
         }
 
-        if ($request->filled('date_range')) {
-            $dates = explode(' - ', $request->input('date_range'));
-            if (count($dates) === 2) {
-                $startDate = Carbon::createFromFormat('d/m/Y', trim($dates[0]))->startOfDay();
-                $endDate = Carbon::createFromFormat('d/m/Y', trim($dates[1]))->endOfDay();
-                $query->whereBetween('fecha_publicacion', [$startDate, $endDate]);
-            }
+        if ($request->filled('start_date') && $request->filled('end_date')) {
+            $startDate = Carbon::createFromFormat('Y-m-d', $request->input('start_date'))->startOfDay();
+            $endDate = Carbon::createFromFormat('Y-m-d', $request->input('end_date'))->endOfDay();
+            $query->whereBetween('fecha_publicacion', [$startDate, $endDate]);
         }
 
         $articulos = $query->paginate(10);
@@ -56,23 +55,60 @@ class ArticuloController extends Controller
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'titulo' => 'required|string|max:255',
-            'contenido' => 'required|string',
-            'fecha_publicacion' => 'nullable|date',
-            'imagen' => 'nullable|image|max:2048',
-            'slug' => 'required|string|unique:articulos,slug',
-            'id_usuario' => 'required|exists:users,id',
-        ]);
+        try {
+            Log::info('Iniciando creación de artículo', ['request' => $request->all()]);
 
-        if ($request->hasFile('imagen')) {
-            $validated['imagen'] = $request->file('imagen')->store('public/articulos');
+            $validated = $request->validate([
+                'titulo' => 'required|string|max:255',
+                'contenido' => 'required|string',
+                'fecha_publicacion' => 'nullable|date',
+                'imagen' => 'nullable|image|max:2048',
+            ]);
+
+            Log::info('Validación correcta', ['validated' => $validated]);
+
+            $slug = Str::slug($request->input('titulo'));
+            $originalSlug = $slug;
+            $count = 1;
+            while (Articulo::where('slug', $slug)->exists()) {
+                $slug = $originalSlug . '-' . $count++;
+            }
+
+            Log::info('Slug generado', ['slug' => $slug]);
+
+            if (!auth()->check()) {
+                Log::error('Usuario no autenticado');
+                return redirect()->route('login')->with('error', 'Debes iniciar sesión');
+            }
+
+            $userId = auth()->id();
+            Log::info('ID de usuario', ['id_usuario' => $userId]);
+
+            $data = $validated;
+            $data['slug'] = $slug;
+            $data['id_usuario'] = $userId;
+            $data['fecha_publicacion'] = $validated['fecha_publicacion'] ?? now()->toDateTimeString();
+
+            if ($request->hasFile('imagen')) {
+                Log::info('Subiendo imagen');
+                $data['imagen'] = $request->file('imagen')->store('articulos', 'public'); // Cambiado a 'articulos', 'public'
+                Log::info('Imagen guardada', ['imagen' => $data['imagen']]);
+            }
+
+            Log::info('Creando artículo', ['data' => $data]);
+            Articulo::create($data);
+
+            Log::info('Artículo creado con éxito');
+
+            return redirect()->route('admin.dashboard')
+                ->with('success', 'Artículo creado con éxito');
+        } catch (\Exception $e) {
+            Log::error('Error al crear artículo', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+            return back()->with('error', 'Error al crear el artículo: ' . $e->getMessage());
         }
-
-        Articulo::create($validated);
-
-        return redirect()->route('admin.dashboard')
-            ->with('success', 'Artículo creado con éxito');
     }
 
     public function show($slug)
@@ -97,11 +133,11 @@ class ArticuloController extends Controller
             'fecha_publicacion' => 'nullable|date',
             'imagen' => 'nullable|image|max:2048',
             'slug' => 'required|string|unique:articulos,slug,' . $articulo->id,
-            'id_usuario' => 'required|exists:users,id',
+            'id_usuario' => 'required|exists:usuarios,id',
         ]);
 
         if ($request->hasFile('imagen')) {
-            $validated['imagen'] = $request->file('imagen')->store('public/articulos');
+            $validated['imagen'] = $request->file('imagen')->store('articulos', 'public'); // Cambiado
         }
 
         $articulo->update($validated);

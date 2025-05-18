@@ -1,122 +1,83 @@
 @extends('layouts.app')
-@section('title', 'Calculadora')
+
 @section('content')
-    <div class="main-container">
-        <div class="second-background"></div>
-        <header class="hero">
-            <h1>Calculadora de Dietas Caninas</h1>
-            <p style="line-height: 24px">Personaliza la dieta ideal para tu perro en pocos pasos</p>
-        </header>
-        <section class="plans">
-            <article class="card" style="max-width: 1000px; width: 100%">
-                <form id="formularioDieta" class="form-calculadora p-4">
-                    <div class="row g-4">
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="nombrePerro" class="form-label">Nombre del Perro</label>
-                                <input type="text" class="form-control" id="nombrePerro" required>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="peso" class="form-label">Peso (kg)</label>
-                                <input type="number" class="form-control" id="peso" min="1" step="0.1" required>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="edad" class="form-label">Edad</label>
-                                <select class="form-select" id="edad" required>
-                                    <option value="cachorro_menor_4">Cachorro (<4 meses)</option>
-                                    <option value="cachorro_mayor_4">Cachorro (>4 meses)</option>
-                                    <option value="adulto">Adulto</option>
-                                    <option value="senior">Senior</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="esterilizado" class="form-label">¿Esterilizado?</label>
-                                <select class="form-select" id="esterilizado" required>
-                                    <option value="no">No</option>
-                                    <option value="si">Sí</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="nivelActividad" class="form-label">Nivel de Actividad</label>
-                                <select class="form-select" id="nivelActividad" required>
-                                    <option value="baja">Baja</option>
-                                    <option value="moderada">Moderada</option>
-                                    <option value="alta">Alta</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="tipoDieta" class="form-label">Tipo de Dieta</label>
-                                <select class="form-select" id="tipoDieta" required>
-                                    <option value="barf">BARF</option>
-                                    <option value="cocida">Cocida</option>
-                                    <option value="mixta_50">Mixta (50% Pienso / 50% Natural)</option>
-                                    <option value="mixta_70">Mixta (70% Pienso / 30% Natural)</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-md-12">
-                            <div class="mb-3">
-                                <label class="form-label">Condiciones de Salud</label><br>
-                                <div class="form-check">
-                                    <input type="checkbox" class="form-check-input" id="obesidad" name="condicionesSalud" value="obesidad">
-                                    <label class="form-check-label" for="obesidad">Obesidad</label>
-                                </div>
-                                <div class="form-check">
-                                    <input type="checkbox" class="form-check-input" id="renal" name="condicionesSalud" value="renal">
-                                    <label class="form-check-label" for="renal">Renal</label>
-                                </div>
-                                <div class="form-check">
-                                    <input type="checkbox" class="form-check-input" id="artrosis" name="condicionesSalud" value="artrosis">
-                                    <label class="form-check-label" for="artrosis">Artrosis</label>
-                                </div>
-                                <div class="form-check">
-                                    <input type="checkbox" class="form-check-input" id="diabetes" name="condicionesSalud" value="diabetes">
-                                    <label class="form-check-label" for="diabetes">Diabetes</label>
-                                </div>
-                                <div class="form-check">
-                                    <input type="checkbox" class="form-check-input" id="alergia" name="condicionesSalud" value="alergia">
-                                    <label class="form-check-label" for="alergia">Alergia / Intolerancia</label>
-                                </div>
-                                <select multiple class="form-select mt-2" id="alimentosAlergia" style="display: none;">
-                                    <option value="pollo_pechuga">Pechuga de Pollo</option>
-                                    <option value="pollo_muslo">Muslo de Pollo</option>
-                                    <option value="pavo">Pavo</option>
-                                    <option value="ternera">Ternera</option>
-                                    <option value="cordero">Cordero</option>
-                                    <option value="conejo">Conejo</option>
-                                    <option value="sardina">Sardina</option>
-                                    <option value="caballa">Caballa</option>
-                                    <option value="salmon">Salmón</option>
-                                    <option value="higado_pollo">Hígado de Pollo</option>
-                                    <option value="higado_res">Hígado de Res</option>
-                                    <option value="rinon_res">Riñón de Res</option>
-                                    <option value="corazon_pollo">Corazón de Pollo</option>
-                                    <option value="mollejas">Mollejas</option>
-                                    <option value="tripa_verde">Tripa Verde</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-md-12">
-                            <button id="calcularBtn" type="submit" style="width: 100%; background-color: #fb4d17; height: 50px;">Calcular Dieta</button>
-                        </div>
-                    </div>
-                </form>
-                <div id="resultados" class="mt-5"></div>
-                <button id="descargarPDF" class="btn btn-success mt-3" style="display: none;">Descargar PDF</button>
-            </article>
-        </section>
+    <article class="card form-card">
+        <div class="form-container" style="width: 1500px;">
+            <h2 class="result-title">Calculadora de Dieta</h2>
+            <form id="formularioDieta" action="{{ route('calculadora.store') }}" method="POST">
+                @csrf
+                <label for="mascota_id">Mascota (opcional):</label>
+                <select name="mascota_id" id="mascota_id">
+                    <option value="">Seleccionar mascota</option>
+                    @foreach(auth()->user()->mascotas as $mascota)
+                        <option value="{{ $mascota->id }}">{{ $mascota->nombre }}</option>
+                    @endforeach
+                </select>
+                <label for="nombre">Nombre del perro:</label>
+                <input type="text" name="nombre" id="nombre" required>
+                <label for="peso">Peso (kg):</label>
+                <input type="number" name="peso" id="peso" step="0.1" required>
+                <label for="categoria_edad">Edad:</label>
+                <select name="categoria_edad" id="categoria_edad" required>
+                    <option value="cachorro_menor_4">Cachorro (<4 meses)</option>
+                    <option value="cachorro_mayor_4">Cachorro (>4 meses)</option>
+                    <option value="adulto">Adulto</option>
+                    <option value="senior">Senior</option>
+                </select>
+                <label for="esterilizado">Esterilizado:</label>
+                <select name="esterilizado" id="esterilizado" required>
+                    <option value="1">Sí</option>
+                    <option value="0">No</option>
+                </select>
+                <label for="nivel_actividad">Nivel de actividad:</label>
+                <select name="nivel_actividad" id="nivel_actividad" required>
+                    <option value="baja">Baja</option>
+                    <option value="moderada">Moderada</option>
+                    <option value="alta">Alta</option>
+                </select>
+                <label for="tipo_dieta">Tipo de dieta:</label>
+                <select name="tipo_dieta" id="tipo_dieta" required>
+                    <option value="barf">BARF</option>
+                    <option value="cocida">Cocida</option>
+                    <option value="mixta_50">Mixta 50%</option>
+                    <option value="mixta_70">Mixta 70%</option>
+                </select>
+                <label for="condiciones_salud">Condiciones de salud:</label>
+                <select name="condiciones_salud[]" id="condiciones_salud" multiple>
+                    <option value="obesidad">Obesidad</option>
+                    <option value="renal">Renal</option>
+                    <option value="artrosis">Artrosis</option>
+                    <option value="diabetes">Diabetes</option>
+                    <option value="alergia">Alergia</option>
+                </select>
+                <label for="alergia">
+                    <input type="checkbox" id="alergia"> ¿Alergias alimentarias?
+                </label>
+                <select name="alimentos_alergia[]" id="alimentos_alergia" multiple style="display: none;">
+                    <option value="pollo_pechuga">Pechuga de pollo</option>
+                    <option value="pollo_muslo">Muslo de pollo</option>
+                    <option value="pavo">Pavo</option>
+                    <option value="ternera">Ternera</option>
+                    <option value="cordero">Cordero</option>
+                    <option value="conejo">Conejo</option>
+                    <option value="sardina">Sardina</option>
+                    <option value="caballa">Caballa</option>
+                    <option value="salmon">Salmón</option>
+                    <option value="higado_pollo">Hígado de pollo</option>
+                    <option value="higado_res">Hígado de res</option>
+                    <option value="rinon_res">Riñón de res</option>
+                    <option value="corazon_pollo">Corazón de pollo</option>
+                    <option value="mollejas">Mollejas</option>
+                    <option value="tripa_verde">Tripa verde</option>
+                </select>
+                <input type="hidden" name="menu_json" id="menu_json">
+                <button type="submit">Generar Dieta</button>
+            </form>
+        </div>
+    </article>
+    <div id="resultados"></div>
+    <div class="button-group">
+        <button id="descargarPDF" style="display: none;" class="download-pdf">Descargar PDF</button>
+        <a href="/planes" id="contratarPlan" style="display: none;" class="plan-button">Contratar un plan</a>
     </div>
 @endsection
-@push('scripts')
-    @vite(['resources/js/calculadora.js'])
-@endpush

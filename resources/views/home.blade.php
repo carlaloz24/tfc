@@ -57,7 +57,7 @@
     </div>
 
     <!-- Sección de contacto -->
-    <div class="contact-container">
+    <div class="contact-container" id="contacto">
         <div class="contact-background"></div>
         <div class="container-fluid contact-content">
             <div class="row align-items-start">
@@ -140,7 +140,7 @@
                     <ul class="footer-links">
                         <li><strong><a>Soporte</a></strong></li>
                         <li><a href="{{ route('politica-privacidad') }}">Política de Privacidad</a></li>
-                        <li><a href="{{ route('terminos-uso') }}">Términos de Uso</a></li>
+                        <li><a href="{{ route('cookies') }}">Política de Cookies</a></li>
                         <li><a href="{{ route('aviso-legal') }}">Aviso Legal</a></li>
                     </ul>
                 </div>

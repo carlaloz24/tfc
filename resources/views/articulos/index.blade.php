@@ -58,13 +58,13 @@
                                     </div>
                                 </div>
                                 <div class="article-actions">
-                                    <a href="{{ route('articulos.edit', $articulo) }}" class="action-icon" title="Editar">
+                                    <a href="{{ route('articulos.edit', $articulo->slug) }}" class="action-icon" title="Editar">
                                         <i class="bi bi-pen"></i>
                                     </a>
                                     <button type="button" class="action-icon action-delete" title="Eliminar" data-id="{{ $articulo->id }}" data-bs-toggle="modal" data-bs-target="#deleteModal">
                                         <i class="bi bi-trash"></i>
                                     </button>
-                                    <form action="{{ route('admin.articulos.destroy', $articulo) }}" method="POST" style="display:none;" id="delete-form-{{ $articulo->id }}">
+                                    <form action="{{ route('admin.articulos.destroy', $articulo->slug) }}" method="POST" style="display:none;" id="delete-form-{{ $articulo->id }}">
                                         @csrf
                                         @method('DELETE')
                                     </form>
@@ -111,14 +111,19 @@
                 button.addEventListener('click', (e) => {
                     e.preventDefault();
                     articleId = button.getAttribute('data-id');
-                    e.stopPropagation(); // Evitar que el clic en eliminar active el enlace de la card
+                    e.stopPropagation();
                 });
             });
 
             // Confirmar eliminación
             document.getElementById('confirm-delete').addEventListener('click', () => {
                 if (articleId) {
-                    document.getElementById(`delete-form-${articleId}`).submit();
+                    const form = document.getElementById(`delete-form-${articleId}`);
+                    if (form) {
+                        form.submit();
+                    } else {
+                        console.error('Formulario no encontrado para ID:', articleId);
+                    }
                 }
             });
 

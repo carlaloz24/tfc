@@ -9,21 +9,20 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @vite(['resources/css/app.css', 'resources/js/app.js', 'resources/js/cookies.js'])
     @yield('styles')
 </head>
 <body>
 <nav class="navbar navbar-expand-lg">
     <div class="navbar-container">
-        <a class="navbar-brand" href="{{ route('home') }}">Barf&Co</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <a class="navbar-brand" href="{{ route('home') }}"><img src="{{ asset('images/logo-barfco.png') }}" alt="Barfco Logo" style="height: 70px; object-fit: contain; margin-left: -60px;"></a>        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav mx-auto">
                 <li class="nav-item"><a class="nav-link" href="{{ route('home') }}">Inicio</a></li>
-                <li class="nav-item"><a class="nav-link" href="{{ route('calculadora.index') }}">Calculadora</a></li>                <li class="nav-item"><a class="nav-link" href="{{ route('planes') }}">Planes</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ route('calculadora.index') }}">Calculadora</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ route('planes') }}">Planes</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ route('articulos.index') }}">Blog</a></li>
                 @auth
                     @if (Auth::user()->is_admin)
