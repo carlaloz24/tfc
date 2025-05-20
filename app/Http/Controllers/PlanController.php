@@ -146,4 +146,23 @@ class PlanController extends Controller
             return back()->with('error', 'Error al procesar el pago: ' . $e->getMessage());
         }
     }
+
+    public function downloadFactura(Factura $factura)
+    {
+        if (Auth::id() !== $factura->user_id) {
+            Log::warning('Acceso no autorizado a factura', ['factura_id' => $factura->id, 'user_id' => Auth::id()]);
+            abort(403, 'Acceso no autorizado.');
+        }
+
+        $filePath = $factura->pdf_path;
+        if (!Storage::exists($filePath)) {
+            Log::error('Archivo de factura no encontrado', ['factura_id' => $factura->id, 'path' => $filePath]);
+            return redirect()->back()->with('error', 'Factura no encontrada.');
+        }
+
+        Log::info('Descargando factura', ['factura_id' => $factura->id, 'path' => $filePath]);
+        return Storage::download($filePath, 'factura-' . $factura->id . '.pdf', [
+            'Content-Type' => 'application/pdf',
+        ]);
+    }
 }

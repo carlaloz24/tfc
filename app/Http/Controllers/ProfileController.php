@@ -10,10 +10,15 @@ class ProfileController extends Controller
 {
     public function index()
     {
-        $mascotas = Mascota::with(['dietas', 'plan'])
-            ->where('id_usuario', Auth::id())
+        $user = Auth::user();
+        $mascotas = Mascota::with('dietas', 'plan')
+            ->where('id_usuario', $user->id)
             ->get();
-        return view('profile', compact('mascotas'));
+        $facturas = $user->facturas()->get();
+        return view('profile', [
+            'mascotas' => $mascotas,
+            'facturas' => $facturas,
+        ]);
     }
 
     public function update(Request $request)

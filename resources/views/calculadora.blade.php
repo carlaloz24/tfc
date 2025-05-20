@@ -1,5 +1,4 @@
 @extends('layouts.app')
-
 @section('content')
     <article class="card form-card">
         <div class="form-container" style="width: 1500px;">
@@ -10,7 +9,7 @@
                 <select name="mascota_id" id="mascota_id">
                     <option value="">Seleccionar mascota</option>
                     @foreach(auth()->user()->mascotas as $mascota)
-                        <option value="{{ $mascota->id }}">{{ $mascota->nombre }}</option>
+                        <option value="{{ $mascota->id }}" {{ $mascota->id == request()->route('mascota') ? 'selected' : '' }}>{{ $mascota->nombre }}</option>
                     @endforeach
                 </select>
                 <label for="nombre">Nombre del perro:</label>
@@ -81,3 +80,7 @@
         <a href="/planes" id="contratarPlan" style="display: none;" class="plan-button">Contratar un plan</a>
     </div>
 @endsection
+@push('scripts')
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    @vite(['resources/js/calculadora.js'])
+@endpush

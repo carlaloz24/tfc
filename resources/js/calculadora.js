@@ -42,7 +42,6 @@ const ajustes = {
     senior: 1.2
 };
 
-// Función para capitalizar categorías con tildes
 function capitalizarCategoria(categoria) {
     const map = {
         'carne': 'Carne',
@@ -55,7 +54,6 @@ function capitalizarCategoria(categoria) {
     };
     return map[categoria] || categoria.charAt(0).toUpperCase() + categoria.slice(1);
 }
-
 
 function formatearAlimento(alimento) {
     const map = {
@@ -96,13 +94,11 @@ function formatearAlimento(alimento) {
     };
     return map[alimento] || alimento.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
 }
+
 document.addEventListener('DOMContentLoaded', function () {
     const form = document.getElementById('formularioDieta');
     const resultadosDiv = document.getElementById('resultados');
     const descargarPDFBtn = document.getElementById('descargarPDF');
-    const contratarPlanBtn = document.getElementById('contratarPlan');
-    const alergiaCheckbox = document.getElementById('alergia');
-    const alimentosAlergiaSelect = document.getElementById('alimentos_alergia');
     const menuJsonInput = document.getElementById('menu_json');
 
     if (!form) {
@@ -110,30 +106,10 @@ document.addEventListener('DOMContentLoaded', function () {
         return;
     }
 
-    if (!descargarPDFBtn) {
-        console.error('Botón con ID "descargarPDF" no encontrado');
-    }
-
-    if (!contratarPlanBtn) {
-        console.error('Botón con ID "contratarPlan" no encontrado');
-    }
-
-    if (alergiaCheckbox && alimentosAlergiaSelect) {
-        alergiaCheckbox.addEventListener('change', function () {
-            alimentosAlergiaSelect.style.display = this.checked ? 'block' : 'none';
-        });
-    }
-
     form.addEventListener('submit', function (e) {
         e.preventDefault();
 
         const formData = new FormData(form);
-        const rawData = {};
-        for (let [key, value] of formData.entries()) {
-            rawData[key] = value;
-        }
-        console.log('Datos crudos del formulario:', rawData);
-
         const data = {
             mascota_id: formData.get('mascota_id') || null,
             nombre: formData.get('nombre')?.trim() || 'Perro',
@@ -146,20 +122,21 @@ document.addEventListener('DOMContentLoaded', function () {
             alimentos_alergia: formData.getAll('alimentos_alergia[]'),
         };
 
-        console.log('Datos procesados:', data);
-
         try {
             if (!formData.get('peso') || isNaN(data.peso) || data.peso <= 0) {
-                throw new Error(`El peso debe ser un número positivo. Valor recibido: ${formData.get('peso') || 'vacío'}`);
+                throw new Error('El peso debe ser un número positivo.');
             }
             if (!data.categoria_edad || !['cachorro_menor_4', 'cachorro_mayor_4', 'adulto', 'senior'].includes(data.categoria_edad)) {
-                throw new Error(`Selecciona una categoría de edad válida. Valor recibido: ${data.categoria_edad || 'vacío'}`);
+                throw new Error('Selecciona una categoría de edad válida.');
             }
             if (!data.nivel_actividad || !['baja', 'moderada', 'alta'].includes(data.nivel_actividad)) {
-                throw new Error(`Selecciona un nivel de actividad válido. Valor recibido: ${data.nivel_actividad || 'vacío'}`);
+                throw new Error('Selecciona un nivel de actividad válido.');
             }
             if (!data.tipo_dieta || !['barf', 'cocida', 'mixta_50', 'mixta_70'].includes(data.tipo_dieta)) {
-                throw new Error(`Selecciona un tipo de dieta válido. Valor recibido: ${data.tipo_dieta || 'vacío'}`);
+                throw new Error('Selecciona un tipo de dieta válido.');
+            }
+            if (!data.nombre) {
+                throw new Error('El nombre es obligatorio.');
             }
 
             let energiaMetabolica = 70 * Math.pow(data.peso, 0.75);
@@ -211,21 +188,18 @@ document.addEventListener('DOMContentLoaded', function () {
             }
 
             const menuSemanal = generarMenuSemanal(dieta, data.condiciones_salud, data.alimentos_alergia, data.tipo_dieta);
+            if (!menuSemanal || Object.keys(menuSemanal).length === 0) {
+                throw new Error('No se pudo generar el menú semanal.');
+            }
             menuJsonInput.value = JSON.stringify(menuSemanal);
 
             mostrarResultados(data.nombre, data.peso, energiaMetabolica, dieta, menuSemanal, ajustesAplicados, data.tipo_dieta);
 
-            if (descargarPDFBtn) {
-                descargarPDFBtn.style.display = 'block';
-                descargarPDFBtn.onclick = () => descargarPDF(data.nombre, data.peso, energiaMetabolica, dieta, menuSemanal, ajustesAplicados, data.tipo_dieta);
-            } else {
-                console.warn('No se puede mostrar el botón de descargar PDF porque no se encontró el elemento');
-            }
+            formData.set('menu_json', JSON.stringify(menuSemanal));
 
-            if (contratarPlanBtn) {
-                contratarPlanBtn.style.display = 'block';
-            } else {
-                console.warn('No se puede mostrar el botón de contratar plan porque no se encontró el elemento');
+            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+            if (!csrfToken) {
+                throw new Error('No se encontró el token CSRF.');
             }
 
             fetch(form.action, {
@@ -233,29 +207,83 @@ document.addEventListener('DOMContentLoaded', function () {
                 body: formData,
                 headers: {
                     'Accept': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken,
                 },
             }).then(response => {
                 if (!response.ok) {
-                    return response.json().then(error => {
-                        throw new Error(error.message || `Error en la respuesta del servidor: ${response.statusText}`);
-                    });
+                    return response.json().then(error => { throw new Error(error.error || 'Error en el servidor'); });
                 }
                 return response.json();
             }).then(data => {
-                console.log('Respuesta del servidor:', data);
-                if (!data.success) {
-                    throw new Error(data.message || 'Error al guardar la dieta');
+                if (data.success) {
+                    if (data.redirect) {
+                        window.location.href = data.redirect;
+                    } else {
+                        if (descargarPDFBtn && data.dieta_id) {
+                            descargarPDFBtn.dataset.dietaId = data.dieta_id;
+                            descargarPDFBtn.style.display = 'block';
+                            descargarPDFBtn.onclick = () => {
+                                const dietaId = descargarPDFBtn.dataset.dietaId;
+                                if (dietaId) {
+                                    window.location.href = `/calculadora/download/${dietaId}`;
+                                } else {
+                                    resultadosDiv.innerHTML = `<p class="result-error">Error: No se encontró el ID de la dieta.</p>`;
+                                }
+                            };
+                        }
+                    }
+                } else {
+                    throw new Error(data.error || 'Error al guardar la dieta');
                 }
-                console.log('Dieta guardada con éxito:', data.dieta_id);
             }).catch(error => {
-                console.error('Error en fetch:', error);
-                resultadosDiv.innerHTML += `<p class="result-error mt-3">Advertencia: ${error.message}. Por favor, verifica la asociación de la dieta en el perfil.</p>`;
+                resultadosDiv.innerHTML = `<p class="result-error">Error: ${error.message}</p>`;
             });
         } catch (error) {
-            console.error('Error en validación:', error);
             resultadosDiv.innerHTML = `<p class="result-error">Error: ${error.message}</p>`;
         }
     });
+
+    const mascotaIdInput = document.getElementById('mascota_id');
+    if (mascotaIdInput && mascotaIdInput.value) {
+        fetch(`/mascotas/${mascotaIdInput.value}`, {
+            headers: {
+                'Accept': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
+            },
+        }).then(response => response.json()).then(mascota => {
+            document.getElementById('nombre').value = mascota.nombre;
+            document.getElementById('peso').value = mascota.peso;
+            document.getElementById('categoria_edad').value = mascota.categoria_edad;
+            document.getElementById('esterilizado').value = mascota.esterilizado ? '1' : '0';
+            document.getElementById('nivel_actividad').value = mascota.nivel_actividad;
+            document.getElementById('tipo_dieta').value = mascota.tipo_dieta_preferida;
+            if (mascota.condiciones_salud) {
+                mascota.condiciones_salud.forEach(value => {
+                    document.querySelector(`input[name="condiciones_salud[]"][value="${value}"]`).checked = true;
+                });
+            }
+            if (mascota.alimentos_alergia) {
+                document.getElementById('alergia').checked = true;
+                document.getElementById('alimentos_alergia').style.display = 'block';
+                const alergiasSelect = document.getElementById('alimentos_alergia');
+                for (let option of alergiasSelect.options) {
+                    if (mascota.alimentos_alergia.includes(option.value)) {
+                        option.selected = true;
+                    }
+                }
+            }
+        }).catch(error => {
+            console.error('Error al cargar datos de la mascota:', error);
+        });
+    }
+
+    const alergiaCheckbox = document.getElementById('alergia');
+    const alergiasSelect = document.getElementById('alimentos_alergia');
+    if (alergiaCheckbox && alergiasSelect) {
+        alergiaCheckbox.addEventListener('change', function () {
+            alergiasSelect.style.display = this.checked ? 'block' : 'none';
+        });
+    }
 });
 
 function generarMenuSemanal(dieta, condicionesSalud, alimentosAlergia, tipoDieta) {
@@ -298,6 +326,7 @@ function generarMenuSemanal(dieta, condicionesSalud, alimentosAlergia, tipoDieta
     });
     return menu;
 }
+
 function mostrarResultados(nombrePerro, peso, energiaMetabolica, dieta, menuSemanal, ajustesAplicados, tipoDieta) {
     const divResultados = document.getElementById('resultados');
     let html = `
@@ -393,210 +422,4 @@ function mostrarResultados(nombrePerro, peso, energiaMetabolica, dieta, menuSema
     `;
 
     divResultados.innerHTML = html;
-}
-
-
-
-function descargarPDF(nombrePerro, peso, energiaMetabolica, dieta, menuSemanal, ajustesAplicados, tipoDieta) {
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
-
-    const pageWidth = doc.internal.pageSize.getWidth();
-    const pageHeight = doc.internal.pageSize.getHeight();
-    const margin = 15;
-    let y = margin;
-
-    // Fondo blanco
-    doc.setFillColor(255, 255, 255);
-    doc.rect(0, 0, pageWidth, pageHeight, 'F');
-
-    // Logo
-    const logoUrl = '/images/logo-barfco.png';
-    const logoWidth = 30;
-    const logoHeight = 30;
-    doc.addImage(logoUrl, 'PNG', margin, margin, logoWidth, logoHeight, undefined, 'NONE'); // Preserva proporciones
-
-    // Fecha (arriba, alineada con logo)
-    doc.setFontSize(10);
-    doc.setTextColor(80, 80, 80); // #505050
-    doc.setFont('Helvetica', 'normal');
-    doc.text(`Generado el ${new Date().toLocaleDateString('es-ES')}`, pageWidth - margin, margin + 7, { align: 'right' });
-
-    // Título (debajo del logo)
-    doc.setFontSize(22);
-    doc.setTextColor(8, 54, 48); // #083630
-    doc.setFont('Helvetica', 'bold'); // Fallback: usa Inter si disponible
-    doc.text(`Dieta para ${nombrePerro}`, pageWidth / 2, margin + logoHeight + 15, { align: 'center' });
-    y = margin + logoHeight + 25;
-
-    // Resumen
-    doc.setFontSize(16);
-    doc.setTextColor(8, 54, 48);
-    doc.setFont('Helvetica', 'bold');
-    doc.text('Resumen', margin, y);
-    y += 10;
-    doc.setFontSize(12);
-    doc.setTextColor(80, 80, 80);
-    const bulletColor = [8, 54, 48]; // #083630
-    const bullet = '•';
-    const bulletOffset = 5;
-    const items = [
-        { label: 'Nombre: ', value: nombrePerro },
-        { label: 'Peso: ', value: `${peso} kg` },
-        { label: 'Tipo de dieta: ', value: tipoDieta.charAt(0).toUpperCase() + tipoDieta.slice(1) },
-        { label: 'Calorías diarias: ', value: `${Math.round(energiaMetabolica)} kcal` },
-    ];
-    if (ajustesAplicados.length > 0) {
-        items.push({ label: 'Ajustes aplicados: ', value: ajustesAplicados.join(', ') });
-    }
-    items.forEach(item => {
-        doc.setTextColor(...bulletColor);
-        doc.text(bullet, margin, y);
-        doc.setTextColor(8, 54, 48);
-        doc.setFont('Helvetica', 'bold');
-        doc.text(item.label, margin + bulletOffset, y);
-        doc.setTextColor(80, 80, 80);
-        doc.setFont('Helvetica', 'normal');
-        const labelWidth = doc.getTextWidth(item.label) + 2;
-        const lines = doc.splitTextToSize(item.value, pageWidth - margin - labelWidth - bulletOffset - 10);
-        lines.forEach((line, index) => {
-            doc.text(line, margin + bulletOffset + labelWidth, y);
-            y += 8;
-        });
-    });
-    y += 10;
-
-    // Línea horizontal
-    doc.setDrawColor(8, 54, 48);
-    doc.setLineWidth(0.3); // Más fina
-    doc.line(margin, y, pageWidth - margin, y);
-    y += 15;
-
-    // Tabla de macronutrientes
-    doc.setFontSize(16);
-    doc.setTextColor(8, 54, 48);
-    doc.setFont('Helvetica', 'bold');
-    doc.text('Distribución de Macronutrientes', margin, y);
-    y += 10;
-
-    // Tabla con bordes redondeados
-    const tableHeight = 10 + 10 * Object.keys(dieta).length;
-    doc.setFillColor(255, 255, 255);
-    doc.roundedRect(margin, y, pageWidth - 2 * margin, tableHeight, 8, 8, 'F');
-
-    // Cabecera (naranja #e04312)
-    doc.setFillColor(224, 67, 18);
-    doc.rect(margin, y, pageWidth - 2 * margin, 10, 'F');
-    doc.setFontSize(10);
-    doc.setTextColor(255, 255, 255);
-    doc.setFont('Helvetica', 'bold');
-    doc.text('Categoría', margin + 5, y + 7);
-    doc.text('kcal', margin + 50, y + 7);
-    doc.text('g', margin + 70, y + 7);
-    doc.text('Prot.', margin + 90, y + 7);
-    doc.text('Grasas', margin + 110, y + 7);
-    doc.text('CH', margin + 130, y + 7);
-    y += 10;
-
-    // Filas
-    doc.setFont('Helvetica', 'normal');
-    doc.setTextColor(80, 80, 80);
-    let rowIndex = 0;
-    for (let categoria in dieta) {
-        if (rowIndex % 2 === 0) {
-            doc.setFillColor(240, 240, 240);
-            doc.rect(margin, y, pageWidth - 2 * margin, 10, 'F');
-        }
-        doc.text(capitalizarCategoria(categoria), margin + 5, y + 7);
-        doc.text(Math.round(dieta[categoria].kcal).toString(), margin + 50, y + 7);
-        doc.text(Math.round(dieta[categoria].gramos).toString(), margin + 70, y + 7);
-        doc.text(Math.round(dieta[categoria].proteinas).toString(), margin + 90, y + 7);
-        doc.text(Math.round(dieta[categoria].grasas).toString(), margin + 110, y + 7);
-        doc.text(Math.round(dieta[categoria].carbohidratos).toString(), margin + 130, y + 7);
-        y += 10;
-        rowIndex++;
-        if (y > pageHeight - margin - 20) {
-            doc.addPage();
-            doc.setFillColor(255, 255, 255);
-            doc.rect(0, 0, pageWidth, pageHeight, 'F');
-            y = margin;
-        }
-    }
-    y += 10;
-
-    // Línea horizontal
-    doc.setDrawColor(8, 54, 48);
-    doc.setLineWidth(0.3); // Más fina
-    doc.line(margin, y, pageWidth - margin, y);
-    y += 15;
-
-    // Menú semanal
-    doc.setFontSize(16);
-    doc.setTextColor(8, 54, 48);
-    doc.setFont('Helvetica', 'bold');
-    doc.text('Menú Semanal', margin, y);
-    y += 10;
-
-    for (let dia in menuSemanal) {
-        if (y > pageHeight - margin - 60) {
-            doc.addPage();
-            doc.setFillColor(255, 255, 255);
-            doc.rect(0, 0, pageWidth, pageHeight, 'F');
-            y = margin;
-        }
-        doc.setFontSize(12);
-        doc.setTextColor(8, 54, 48);
-        doc.setFont('Helvetica', 'bold');
-        doc.text(dia, margin, y);
-        y += 10;
-
-        // Tabla con bordes redondeados
-        const categorias = [...new Set([
-            ...Object.keys(menuSemanal[dia].manana),
-            ...Object.keys(menuSemanal[dia].tarde)
-        ])];
-        const tableHeightMenu = 10 + 10 * categorias.length;
-        doc.setFillColor(255, 255, 255);
-        doc.roundedRect(margin, y, pageWidth - 2 * margin, tableHeightMenu, 8, 8, 'F');
-
-        // Cabecera (verde #083630)
-        doc.setFillColor(8, 54, 48);
-        doc.rect(margin, y, pageWidth - 2 * margin, 10, 'F');
-        doc.setFontSize(10);
-        doc.setTextColor(255, 255, 255);
-        doc.setFont('Helvetica', 'bold');
-        doc.text('Categoría', margin + 5, y + 7);
-        doc.text('Mañana', margin + 60, y + 7);
-        doc.text('Tarde', margin + 115, y + 7);
-        y += 10;
-
-        // Filas
-        doc.setFont('Helvetica', 'normal');
-        doc.setTextColor(80, 80, 80);
-        categorias.forEach((cat, index) => {
-            if (index % 2 === 0) {
-                doc.setFillColor(240, 240, 240);
-                doc.rect(margin, y, pageWidth - 2 * margin, 10, 'F');
-            }
-            doc.text(capitalizarCategoria(cat), margin + 5, y + 7);
-            doc.text(menuSemanal[dia].manana[cat] || '-', margin + 60, y + 7);
-            doc.text(menuSemanal[dia].tarde[cat] || '-', margin + 115, y + 7);
-            y += 10;
-            if (y > pageHeight - margin - 20) {
-                doc.addPage();
-                doc.setFillColor(255, 255, 255);
-                doc.rect(0, 0, pageWidth, pageHeight, 'F');
-                y = margin;
-            }
-        });
-        y += 25;
-    }
-
-    // Footer
-    doc.setFontSize(8);
-    doc.setTextColor(80, 80, 80);
-    doc.setFont('Helvetica', 'normal');
-    doc.text('Calculadora de Dietas Caninas - Todos los derechos reservados', pageWidth / 2, pageHeight - margin, { align: 'center' });
-
-    doc.save(`Dieta_${nombrePerro}_${new Date().toISOString().split('T')[0]}.pdf`);
 }

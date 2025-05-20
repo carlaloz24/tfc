@@ -1,5 +1,6 @@
 <?php
 namespace App\Models;
+
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -33,5 +34,10 @@ class Dieta extends Model
     public function mascota()
     {
         return $this->belongsTo(Mascota::class, 'id_mascota');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'id_usuario');
     }
 }
