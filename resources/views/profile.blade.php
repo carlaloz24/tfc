@@ -32,7 +32,6 @@
             </div>
 
             <!-- Lista de mascotas y dietas -->
-            <!-- Lista de mascotas y dietas -->
             <div class="profile-panel">
                 <h2 class="profile-title">Tus Mascotas</h2>
                 <a href="{{ route('mascotas.create') }}" class="profile-btn-primary mb-3">Añadir Mascota</a>
@@ -63,25 +62,16 @@
                                         <h4 class="pet-card-subtitle">Dieta Actual</h4>
                                         @if($mascota->dietas->isEmpty())
                                             <p>No hay dieta generada para {{ $mascota->nombre }}.</p>
-                                            <a href="{{ route('calculadora.create', $mascota->id) }}" class="pet-btn-generate">Generar Dieta</a>
+                                            <a href="{{ route('calculadora.create', $mascota->id) }}" class="pet-btn-primary">Generar Dieta</a>
                                         @else
                                             @php
                                                 $dieta = $mascota->dietas->first();
-                                                $filename = 'Dieta_' . $mascota->nombre . '_' . $dieta->fecha_generacion . '.pdf';
                                             @endphp
-                                            <div class="pet-diet-info">
-                                                <p>
-                                                    <strong>Tipo:</strong> {{ ucfirst($dieta->tipo_dieta) }}<br>
-                                                    <strong>Calorías:</strong> {{ $dieta->calorias }} kcal<br>
-                                                    <strong>Fecha:</strong> {{ $dieta->fecha_generacion }}<br>
-                                                    @if($dieta->pdf_dieta)
-                                                        <a href="{{ route('calculadora.download', $dieta->id) }}" class="pet-btn-download">Descargar PDF ({{ $filename }})</a>
-                                                @else
-                                                    <p>No se encontró el PDF de la dieta.</p>
-                                                    @endif
-                                                    </p>
-                                                    <a href="{{ route('calculadora.create', $mascota->id) }}" class="pet-btn-update">Actualizar Dieta</a>
-                                            </div>
+                                            <p>
+                                                Dieta {{ ucfirst($dieta->tipo_dieta) }} - {{ $dieta->created_at->format('Y-m-d') }}
+                                                <a href="{{ route('calculadora.download', $dieta->id) }}" class="pet-btn-download">Descargar PDF</a>
+                                            </p>
+                                            <a href="{{ route('calculadora.create', $mascota->id) }}" class="pet-btn-primary">Actualizar Dieta</a>
                                         @endif
                                         <div class="pet-card-actions">
                                             <a href="{{ route('mascotas.show', $mascota->id) }}" class="pet-btn-action"><i class="bi bi-eye"></i></a>
@@ -104,36 +94,10 @@
             </div>
 
             <!-- Facturas -->
-            <div class="profile-section">
-                <h2>Mis Facturas</h2>
-                @if($facturas->isEmpty())
-                    <p>No tienes facturas.</p>
-                @else
-                    <table class="facturas-table">
-                        <thead>
-                        <tr>
-                            <th>Fecha</th>
-                            <th>Plan</th>
-                            <th>Mascota</th>
-                            <th>Precio</th>
-                            <th>Descargar</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        @foreach($facturas as $factura)
-                            <tr>
-                                <td>{{ $factura->fecha_emision->format('d/m/Y') }}</td>
-                                <td>{{ ucfirst($factura->tipo_plan) }}</td>
-                                <td>{{ $factura->mascota->nombre }}</td>
-                                <td>€{{ number_format($factura->precio, 2) }}/{{ $factura->frecuencia }}</td>
-                                <td>
-                                    <a href="{{ route('facturas.download', $factura->id) }}" class="btn btn-orange">Descargar PDF</a>
-                                </td>
-                            </tr>
-                        @endforeach
-                        </tbody>
-                    </table>
-                @endif
+            <div class="profile-panel">
+                <h2 class="profile-title">Facturas</h2>
+                <p class="profile-description">Descarga las facturas de tus planes contratados.</p>
+                <a href="#" class="profile-btn-secondary" onclick="alert('Funcionalidad en desarrollo')">Descargar Facturas</a>
             </div>
         </div>
     </div>

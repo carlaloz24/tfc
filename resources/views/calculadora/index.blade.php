@@ -11,20 +11,17 @@
             <article class="card" style="max-width: 1000px; width: 100%">
                 <form id="formularioDieta" action="{{ route('calculadora.store') }}" method="POST" class="form-calculadora p-4">
                     @csrf
-                    @if (isset($mascota))
-                        <input type="hidden" name="mascota_id" id="mascota_id" value="{{ $mascota->id }}">
-                    @endif
                     <div class="row g-4">
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="nombre" class="form-label">Nombre del Perro</label>
-                                <input type="text" class="form-control" id="nombre" name="nombre" value="{{ $mascota->nombre ?? '' }}" required>
+                                <input type="text" class="form-control" id="nombre" name="nombre" placeholder="Ej. Max">
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="peso" class="form-label">Peso (kg)</label>
-                                <input type="number" class="form-control" id="peso" name="peso" min="0.1" step="0.1" value="{{ $mascota->peso ?? '' }}" required>
+                                <input type="number" class="form-control" id="peso" name="peso" min="0.1" step="0.1" required>
                             </div>
                         </div>
                         <div class="col-md-6">
@@ -32,10 +29,10 @@
                                 <label for="categoria_edad" class="form-label">Edad</label>
                                 <select class="form-select" id="categoria_edad" name="categoria_edad" required>
                                     <option value="">Selecciona una opción</option>
-                                    <option value="cachorro_menor_4" {{ isset($mascota) && $mascota->categoria_edad == 'cachorro_menor_4' ? 'selected' : '' }}>Cachorro (<4 meses)</option>
-                                    <option value="cachorro_mayor_4" {{ isset($mascota) && $mascota->categoria_edad == 'cachorro_mayor_4' ? 'selected' : '' }}>Cachorro (>4 meses)</option>
-                                    <option value="adulto" {{ isset($mascota) && $mascota->categoria_edad == 'adulto' ? 'selected' : '' }}>Adulto</option>
-                                    <option value="senior" {{ isset($mascota) && $mascota->categoria_edad == 'senior' ? 'selected' : '' }}>Senior</option>
+                                    <option value="cachorro_menor_4">Cachorro (<4 meses)</option>
+                                    <option value="cachorro_mayor_4">Cachorro (>4 meses)</option>
+                                    <option value="adulto">Adulto</option>
+                                    <option value="senior">Senior</option>
                                 </select>
                             </div>
                         </div>
@@ -44,8 +41,8 @@
                                 <label for="esterilizado" class="form-label">¿Esterilizado?</label>
                                 <select class="form-select" id="esterilizado" name="esterilizado" required>
                                     <option value="">Selecciona una opción</option>
-                                    <option value="1" {{ isset($mascota) && $mascota->esterilizado ? 'selected' : '' }}>Sí</option>
-                                    <option value="0" {{ isset($mascota) && !$mascota->esterilizado ? 'selected' : '' }}>No</option>
+                                    <option value="1">Sí</option>
+                                    <option value="0">No</option>
                                 </select>
                             </div>
                         </div>
@@ -54,9 +51,9 @@
                                 <label for="nivel_actividad" class="form-label">Nivel de Actividad</label>
                                 <select class="form-select" id="nivel_actividad" name="nivel_actividad" required>
                                     <option value="">Selecciona una opción</option>
-                                    <option value="baja" {{ isset($mascota) && $mascota->nivel_actividad == 'baja' ? 'selected' : '' }}>Baja</option>
-                                    <option value="moderada" {{ isset($mascota) && $mascota->nivel_actividad == 'moderada' ? 'selected' : '' }}>Moderada</option>
-                                    <option value="alta" {{ isset($mascota) && $mascota->nivel_actividad == 'alta' ? 'selected' : '' }}>Alta</option>
+                                    <option value="baja">Baja</option>
+                                    <option value="moderada">Moderada</option>
+                                    <option value="alta">Alta</option>
                                 </select>
                             </div>
                         </div>
@@ -65,10 +62,10 @@
                                 <label for="tipo_dieta" class="form-label">Tipo de Dieta</label>
                                 <select class="form-select" id="tipo_dieta" name="tipo_dieta" required>
                                     <option value="">Selecciona una opción</option>
-                                    <option value="barf" {{ isset($mascota) && $mascota->tipo_dieta_preferida == 'barf' ? 'selected' : '' }}>BARF</option>
-                                    <option value="cocida" {{ isset($mascota) && $mascota->tipo_dieta_preferida == 'cocida' ? 'selected' : '' }}>Cocida</option>
-                                    <option value="mixta_50" {{ isset($mascota) && $mascota->tipo_dieta_preferida == 'mixta_50' ? 'selected' : '' }}>Mixta (50% Pienso / 50% Natural)</option>
-                                    <option value="mixta_70" {{ isset($mascota) && $mascota->tipo_dieta_preferida == 'mixta_70' ? 'selected' : '' }}>Mixta (70% Pienso / 30% Natural)</option>
+                                    <option value="barf">BARF</option>
+                                    <option value="cocida">Cocida</option>
+                                    <option value="mixta_50">Mixta (50% Pienso / 50% Natural)</option>
+                                    <option value="mixta_70">Mixta (70% Pienso / 30% Natural)</option>
                                 </select>
                             </div>
                         </div>
@@ -76,45 +73,41 @@
                             <div class="mb-3">
                                 <label class="form-label">Condiciones de Salud</label><br>
                                 <div class="form-check">
-                                    <input type="checkbox" class="form-check-input" id="obesidad" name="condiciones_salud[]" value="obesidad" {{ isset($mascota) && in_array('obesidad', $mascota->condiciones_salud ?? []) ? 'checked' : '' }}>
+                                    <input type="checkbox" class="form-check-input" id="obesidad" name="condiciones_salud[]" value="obesidad">
                                     <label class="form-check-label" for="obesidad">Obesidad</label>
                                 </div>
                                 <div class="form-check">
-                                    <input type="checkbox" class="form-check-input" id="renal" name="condiciones_salud[]" value="renal" {{ isset($mascota) && in_array('renal', $mascota->condiciones_salud ?? []) ? 'checked' : '' }}>
+                                    <input type="checkbox" class="form-check-input" id="renal" name="condiciones_salud[]" value="renal">
                                     <label class="form-check-label" for="renal">Renal</label>
                                 </div>
                                 <div class="form-check">
-                                    <input type="checkbox" class="form-check-input" id="artrosis" name="condiciones_salud[]" value="artrosis" {{ isset($mascota) && in_array('artrosis', $mascota->condiciones_salud ?? []) ? 'checked' : '' }}>
+                                    <input type="checkbox" class="form-check-input" id="artrosis" name="condiciones_salud[]" value="artrosis">
                                     <label class="form-check-label" for="artrosis">Artrosis</label>
                                 </div>
                                 <div class="form-check">
-                                    <input type="checkbox" class="form-check-input" id="diabetes" name="condiciones_salud[]" value="diabetes" {{ isset($mascota) && in_array('diabetes', $mascota->condiciones_salud ?? []) ? 'checked' : '' }}>
+                                    <input type="checkbox" class="form-check-input" id="diabetes" name="condiciones_salud[]" value="diabetes">
                                     <label class="form-check-label" for="diabetes">Diabetes</label>
                                 </div>
                                 <div class="form-check">
-                                    <input type="checkbox" class="form-check-input" id="alergia" name="condiciones_salud[]" value="alergia" {{ isset($mascota) && in_array('alergia', $mascota->condiciones_salud ?? []) ? 'checked' : '' }}>
+                                    <input type="checkbox" class="form-check-input" id="alergia" name="condiciones_salud[]" value="alergia">
                                     <label class="form-check-label" for="alergia">Alergia / Intolerancia</label>
                                 </div>
-                                <select multiple class="form-select mt-2" id="alimentos_alergia" name="alimentos_alergia[]" style="display: {{ isset($mascota) && in_array('alergia', $mascota->condiciones_salud ?? []) ? 'block' : 'none' }};">
-                                    @foreach ([
-                                        'pollo_pechuga' => 'Pechuga de Pollo',
-                                        'pollo_muslo' => 'Muslo de Pollo',
-                                        'pavo' => 'Pavo',
-                                        'ternera' => 'Ternera',
-                                        'cordero' => 'Cordero',
-                                        'conejo' => 'Conejo',
-                                        'sardina' => 'Sardina',
-                                        'caballa' => 'Caballa',
-                                        'salmon' => 'Salmón',
-                                        'higado_pollo' => 'Hígado de Pollo',
-                                        'higado_res' => 'Hígado de Res',
-                                        'rinon_res' => 'Riñón de Res',
-                                        'corazon_pollo' => 'Corazón de Pollo',
-                                        'mollejas' => 'Mollejas',
-                                        'tripa_verde' => 'Tripa Verde'
-                                    ] as $value => $label)
-                                        <option value="{{ $value }}" {{ isset($mascota) && in_array($value, $mascota->alimentos_alergia ?? []) ? 'selected' : '' }}>{{ $label }}</option>
-                                    @endforeach
+                                <select multiple class="form-select mt-2" id="alimentos_alergia" name="alimentos_alergia[]" style="display: none;">
+                                    <option value="pollo_pechuga">Pechuga de Pollo</option>
+                                    <option value="pollo_muslo">Muslo de Pollo</option>
+                                    <option value="pavo">Pavo</option>
+                                    <option value="ternera">Ternera</option>
+                                    <option value="cordero">Cordero</option>
+                                    <option value="conejo">Conejo</option>
+                                    <option value="sardina">Sardina</option>
+                                    <option value="caballa">Caballa</option>
+                                    <option value="salmon">Salmón</option>
+                                    <option value="higado_pollo">Hígado de Pollo</option>
+                                    <option value="higado_res">Hígado de Res</option>
+                                    <option value="rinon_res">Riñón de Res</option>
+                                    <option value="corazon_pollo">Corazón de Pollo</option>
+                                    <option value="mollejas">Mollejas</option>
+                                    <option value="tripa_verde">Tripa Verde</option>
                                 </select>
                             </div>
                         </div>

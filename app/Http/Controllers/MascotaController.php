@@ -106,4 +106,21 @@ class MascotaController extends Controller
         $mascota->delete();
         return redirect()->route('profile.index')->with('success', 'Mascota eliminada correctamente.');
     }
+
+    public function showData($id)
+    {
+        $mascota = Mascota::where('id', $id)
+            ->where('id_usuario', Auth::id())
+            ->firstOrFail();
+        return response()->json([
+            'nombre' => $mascota->nombre,
+            'peso' => $mascota->peso,
+            'categoria_edad' => $mascota->categoria_edad,
+            'esterilizado' => $mascota->esterilizado,
+            'nivel_actividad' => $mascota->nivel_actividad,
+            'tipo_dieta_preferida' => $mascota->tipo_dieta_preferida,
+            'condiciones_salud' => $mascota->condiciones_salud ?? [],
+            'alimentos_alergia' => $mascota->alimentos_alergia ?? [],
+        ]);
+    }
 }

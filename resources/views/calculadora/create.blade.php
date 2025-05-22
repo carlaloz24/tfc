@@ -9,7 +9,8 @@
         </header>
         <section class="plans">
             <article class="card" style="max-width: 1000px; width: 100%">
-                <form id="formularioDieta" action="{{ route('calculadora.store', $mascota->id) }}" method="POST" class="form-calculadora p-4">                    @csrf
+                <form id="formularioDieta" action="{{ route('calculadora.store') }}" method="POST" class="form-calculadora p-4">
+                    @csrf
                     <input type="hidden" name="mascota_id" value="{{ $mascota->id }}">
                     <input type="hidden" name="menu_json" id="menu_json" value="{}">
                     <input type="hidden" name="nombre" value="{{ $mascota->nombre }}">

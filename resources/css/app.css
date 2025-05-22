@@ -1355,12 +1355,12 @@ ul li {
 }
 
 .profile-form-input {
-    background: #f3f3f3;
+    background: #efeeeb;
     border: none;
     border-radius: 30px;
     padding: 12px 15px;
     font-size: 1rem;
-    color: #1e1e1e;
+    color: #858585;
 }
 
 .profile-form-input:focus {
@@ -2798,7 +2798,7 @@ ul li {
 
 /* Estilos para tarjetas de mascotas */
 .pet-card {
-    border: 1px solid #6c757d;
+    border: 1px solid #9ea3a8;
     border-radius: 10px;
     background-color: #fff;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -3558,7 +3558,6 @@ ul li {
     color: #e67e22;
     text-align: center;
     margin-bottom: 25px;
-    text-transform: uppercase;
     letter-spacing: 1px;
 }
 

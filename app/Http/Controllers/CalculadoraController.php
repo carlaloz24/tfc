@@ -30,143 +30,107 @@ class CalculadoraController extends Controller
 
     public function store(Request $request)
     {
-        Log::info('Inicio de CalculadoraController@store', ['request' => $request->all()]);
+        Log::info('Datos recibidos en CalculadoraController@store:', $request->all());
+
+        $request->validate([
+            'mascota_id' => 'nullable|exists:mascotas,id',
+            'tipo_dieta' => 'required|in:barf,cocida,mixta_50,mixta_70',
+            'menu_json' => 'required|json',
+            'peso' => 'required|numeric|min:0.1',
+            'nombre' => 'required|string|max:255',
+            'categoria_edad' => 'required|in:cachorro_menor_4,cachorro_mayor_4,adulto,senior',
+            'esterilizado' => 'required|boolean',
+            'nivel_actividad' => 'required|in:baja,moderada,alta',
+            'condiciones_salud' => 'nullable|array',
+            'condiciones_salud.*' => 'in:obesidad,renal,artrosis,diabetes,alergia',
+            'alimentos_alergia' => 'nullable|array',
+            'alimentos_alergia.*' => 'in:pollo_pechuga,pollo_muslo,pavo,ternera,cordero,conejo,sardina,caballa,salmon,higado_pollo,higado_res,rinon_res,corazon_pollo,mollejas,tripa_verde',
+        ]);
 
         try {
-            $validated = $request->validate([
-                'mascota_id' => 'nullable|exists:mascotas,id',
-                'tipo_dieta' => 'required|in:barf,cocida,mixta_50,mixta_70',
-                'menu_json' => 'required|json',
-                'peso' => 'required|numeric|min:0.1',
-                'nombre' => 'required|string|max:255',
-                'categoria_edad' => 'required|in:cachorro_menor_4,cachorro_mayor_4,adulto,senior',
-                'esterilizado' => 'required|boolean',
-                'nivel_actividad' => 'required|in:baja,moderada,alta',
-                'condiciones_salud' => 'nullable|array',
-                'condiciones_salud.*' => 'in:obesidad,renal,artrosis,diabetes,alergia',
-                'alimentos_alergia' => 'nullable|array',
-                'alimentos_alergia.*' => 'in:pollo_pechuga,pollo_muslo,pavo,ternera,cordero,conejo,sardina,caballa,salmon,higado_pollo,higado_res,rinon_res,corazon_pollo,mollejas,tripa_verde',
-            ]);
-
             $mascota = null;
             if ($request->mascota_id) {
                 $mascota = Mascota::where('id', $request->mascota_id)
                     ->where('id_usuario', Auth::id())
                     ->firstOrFail();
-                $mascota->update([
-                    'peso' => $request->peso,
-                    'categoria_edad' => $request->categoria_edad,
-                    'esterilizado' => $request->esterilizado,
-                    'nivel_actividad' => $request->nivel_actividad,
-                    'tipo_dieta_preferida' => $request->tipo_dieta,
-                    'condiciones_salud' => $request->condiciones_salud ?? [],
-                    'alimentos_alergia' => $request->alimentos_alergia ?? [],
-                ]);
+
+                // Actualizar datos de la mascota
+                $mascota->peso = $request->peso;
+                $mascota->categoria_edad = $request->categoria_edad;
+                $mascota->esterilizado = $request->esterilizado;
+                $mascota->nivel_actividad = $request->nivel_actividad;
+                $mascota->tipo_dieta_preferida = $request->tipo_dieta;
+                $mascota->condiciones_salud = $request->condiciones_salud ?? [];
+                $mascota->alimentos_alergia = $request->alimentos_alergia ?? [];
+                $mascota->save();
+                Log::info('Mascota actualizada:', $mascota->toArray());
             }
 
-            $energiaMetabolica = 70 * pow($request->peso, 0.75);
-            $factorAjuste = match ($request->categoria_edad) {
-                'cachorro_menor_4' => 3,
-                'cachorro_mayor_4' => 2,
-                'adulto' => ['baja' => 1.2, 'moderada' => 1.6, 'alta' => 2][$request->nivel_actividad],
-                'senior' => 1.2,
+            // Calcular calorías
+            $baseCalorias = $request->peso * 30 + 70;
+            $calorias = match ($request->categoria_edad) {
+                'cachorro_menor_4' => $baseCalorias * 2,
+                'cachorro_mayor_4' => $baseCalorias * 1.5,
+                'adulto' => $baseCalorias * ($request->esterilizado ? 0.8 : 1),
+                'senior' => $baseCalorias * 0.7,
             };
-            $calorias = $energiaMetabolica * $factorAjuste;
-
+            $calorias *= match ($request->nivel_actividad) {
+                'baja' => 0.8,
+                'moderada' => 1,
+                'alta' => 1.2,
+            };
             if (in_array('obesidad', $request->condiciones_salud ?? [])) {
-                $calorias *= 0.8;
-            }
-            if ($request->esterilizado) {
-                $gramosIdeales = $request->peso * 20;
-                $gramosActuales = $calorias / 2;
-                $calorias *= $gramosIdeales / $gramosActuales;
+                $calorias *= 0.7;
             }
             $calorias = round($calorias);
 
-            $menu = json_decode($request->menu_json, true);
-            if (empty($menu)) {
-                throw new \Exception('Menú semanal vacío.');
+            // Generar PDF
+            $pdf = PDF::loadView('calculadora.pdf', [
+                'mascota' => $mascota,
+                'calorias' => $calorias,
+                'tipo_dieta' => $request->tipo_dieta,
+                'menu' => json_decode($request->menu_json, true),
+                'condiciones_salud' => $request->condiciones_salud ?? [],
+                'alimentos_alergia' => $request->alimentos_alergia ?? [],
+            ]);
+
+            $pdfData = $pdf->output();
+            $filename = 'Dieta_' . ($mascota ? $mascota->nombre : $request->nombre) . '_' . now()->format('Y-m-d') . '.pdf';
+
+            // Guardar o actualizar la dieta si hay mascota
+            if ($mascota) {
+                $dieta = Dieta::where('id_mascota', $mascota->id)->first();
+                if (!$dieta) {
+                    $dieta = new Dieta();
+                }
+                $dieta->id_mascota = $mascota->id;
+                $dieta->id_usuario = Auth::id();
+                $dieta->calorias = $calorias;
+                $dieta->tipo_dieta = $request->tipo_dieta;
+                $dieta->menu_json = $request->menu_json;
+                $dieta->pdf_dieta = $pdfData;
+                $dieta->fecha_generacion = now()->toDateString();
+                Log::info('Datos de la dieta antes de guardar:', $dieta->toArray());
+                $dieta->save();
+                Log::info('Dieta guardada con ID: ' . $dieta->id);
+
+                return response()->json([
+                    'success' => true,
+                    'redirect' => route('profile.index'),
+                    'message' => 'Dieta generada y guardada correctamente.',
+                ]);
             }
 
-            $dieta = null;
-            $pdfPath = null;
-            if ($request->mascota_id) {
-                $dieta = Dieta::create([
-                    'id_mascota' => $mascota->id,
-                    'id_usuario' => Auth::id(),
-                    'calorias' => $calorias,
-                    'tipo_dieta' => $request->tipo_dieta,
-                    'menu_json' => $request->menu_json,
-                    'fecha_generacion' => now()->toDateString(),
-                    'nombre' => $request->nombre,
-                    'peso' => $request->peso,
-                    'categoria_edad' => $request->categoria_edad,
-                    'esterilizado' => $request->esterilizado,
-                    'nivel_actividad' => $request->nivel_actividad,
-                    'condiciones_salud' => json_encode($request->condiciones_salud ?? []),
-                    'alimentos_alergia' => json_encode($request->alimentos_alergia ?? []),
-                ]);
-
-                $pdf = PDF::loadView('calculadora.pdf', [
-                    'mascota' => $mascota,
-                    'calorias' => $calorias,
-                    'tipo_dieta' => $request->tipo_dieta,
-                    'menu' => $menu,
-                    'condiciones_salud' => $request->condiciones_salud ?? [],
-                    'alimentos_alergia' => $request->alimentos_alergia ?? [],
-                ]);
-
-                $pdfPath = 'dietas/dieta_' . $dieta->id . '.pdf';
-                \Storage::put('public/' . $pdfPath, $pdf->output());
-                $dieta->update(['pdf_dieta' => $pdfPath]);
-            } else {
-                // Generar PDF temporal para dietas sin mascota
-                $dieta = new Dieta([
-                    'id_usuario' => Auth::id(),
-                    'calorias' => $calorias,
-                    'tipo_dieta' => $request->tipo_dieta,
-                    'menu_json' => $request->menu_json,
-                    'fecha_generacion' => now()->toDateString(),
-                    'nombre' => $request->nombre,
-                    'peso' => $request->peso,
-                    'categoria_edad' => $request->categoria_edad,
-                    'esterilizado' => $request->esterilizado,
-                    'nivel_actividad' => $request->nivel_actividad,
-                    'condiciones_salud' => json_encode($request->condiciones_salud ?? []),
-                    'alimentos_alergia' => json_encode($request->alimentos_alergia ?? []),
-                ]);
-
-                $pdf = PDF::loadView('calculadora.pdf', [
-                    'mascota' => null,
-                    'calorias' => $calorias,
-                    'tipo_dieta' => $request->tipo_dieta,
-                    'menu' => $menu,
-                    'condiciones_salud' => $request->condiciones_salud ?? [],
-                    'alimentos_alergia' => $request->alimentos_alergia ?? [],
-                ]);
-
-                $tempId = uniqid();
-                $pdfPath = 'dietas/temp_dieta_' . $tempId . '.pdf';
-                \Storage::put('public/' . $pdfPath, $pdf->output());
-            }
-
-            $response = [
-                'success' => true,
-                'message' => 'Dieta generada correctamente.',
-                'dieta_id' => $dieta ? ($dieta->id ?? $tempId) : $tempId,
-                'pdf_path' => $pdfPath,
-            ];
-
-            if ($request->mascota_id) {
-                $response['redirect'] = route('profile.index');
-            }
-
-            return response()->json($response);
+            // Descargar PDF si no hay mascota
+            return Response::make($pdfData, 200, [
+                'Content-Type' => 'application/pdf',
+                'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+            ]);
         } catch (\Exception $e) {
             Log::error('Error al generar dieta: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
             return response()->json([
                 'success' => false,
-                'error' => 'Error al generar la dieta: ' . $e->getMessage(),
+                'error' => 'Ocurrió un error al generar la dieta: ' . $e->getMessage(),
             ], 500);
         }
     }
@@ -180,30 +144,16 @@ class CalculadoraController extends Controller
                 })
                 ->firstOrFail();
 
-            $mascota = $dieta->mascota;
-            $menu = json_decode($dieta->menu_json, true);
-            if (empty($menu)) {
-                Log::error('menu_json vacío en CalculadoraController@download para dieta ID: ' . $id);
-                return redirect()->back()->with('error', 'No se proporcionó un menú semanal.');
+            if (!$dieta->pdf_dieta) {
+                return redirect()->back()->with('error', 'No hay PDF disponible.');
             }
 
-            $pdf = PDF::loadView('calculadora.pdf', [
-                'mascota' => $mascota,
-                'calorias' => $dieta->calorias,
-                'tipo_dieta' => $dieta->tipo_dieta,
-                'menu' => $menu,
-                'condiciones_salud' => $mascota->condiciones_salud ?? [],
-                'alimentos_alergia' => $mascota->alimentos_alergia ?? [],
-            ]);
+            $pdfData = $dieta->pdf_dieta;
+            $filename = 'Dieta_' . $dieta->mascota->nombre . '_' . $dieta->created_at->format('Y-m-d') . '.pdf';
 
-            $pdfPath = 'public/dietas/dieta_' . $dieta->id . '.pdf';
-            \Storage::put($pdfPath, $pdf->output());
-            $dieta->update(['pdf_dieta' => $pdfPath]);
-            Log::info('PDF regenerado para dieta:', $dieta->toArray());
-
-            $filename = 'Dieta_' . $mascota->nombre . '_' . $dieta->created_at->format('Y-m-d') . '.pdf';
-            return \Storage::download($pdfPath, $filename, [
+            return Response::make($pdfData, 200, [
                 'Content-Type' => 'application/pdf',
+                'Content-Disposition' => 'attachment; filename="' . $filename . '"',
             ]);
         } catch (\Exception $e) {
             Log::error('Error al descargar dieta: ' . $e->getMessage());
