@@ -50,7 +50,7 @@
                 <p class="description">Ideal para una alimentación cuidada al máximo detalle</p>
                 <button onclick="window.location.href='{{ auth()->check() && auth()->user()->mascotas->isNotEmpty() ? route('planes.select', ['mascota_id' => auth()->user()->mascotas->first()->id, 'tipo_plan' => 'personalizado']) : route('login') }}'">Contratar Plan</button>                <ul>
 
-                <li><span class="check-circle green"></span>Dieta 100% personalizada</li>
+                    <li><span class="check-circle green"></span>Dieta 100% personalizada</li>
                     <li><span class="check-circle green"></span>Entrega automática recurrente</li>
                     <li><span class="check-circle green"></span>Guía básica de nutrición canina</li>
                     <li><span class="check-circle green"></span>Contenido exclusivo vía email</li>

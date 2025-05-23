@@ -17,6 +17,7 @@
         "vite": "^6.2.4"
     },
     "dependencies": {
+        "gsap": "^3.13.0",
         "js-cookie": "^3.0.5"
     }
 }

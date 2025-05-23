@@ -25,36 +25,31 @@
         </div>
     </div>
 
-    <!-- Nueva sección de información -->
-    <div class="info-container">
-        <div class="info-background"></div>
-        <div class="container-fluid info-content">
-            <h2 class="info-title">Nuestras Historias</h2>
-            <p class="info-subtitle">Descubre cómo Barfco transforma la vida de las mascotas con nuestras animaciones interactivas.</p>
-            <div class="info-gallery">
-                <div class="info-item">
-                    <img src="{{ asset('images/dieta-placeholder.png') }}" alt="Historia 1" class="info-image">
-                    <h3 class="info-item-title">Historia 1</h3>
-                    <p class="info-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-                </div>
-                <div class="info-item">
-                    <img src="{{ asset('images/dieta-placeholder.png') }}" alt="Historia 2" class="info-image">
-                    <h3 class="info-item-title">Historia 2</h3>
-                    <p class="info-text">Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-                </div>
-                <div class="info-item">
-                    <img src="{{ asset('images/dieta-placeholder.png') }}" alt="Historia 3" class="info-image">
-                    <h3 class="info-item-title">Historia 3</h3>
-                    <p class="info-text">Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
-                </div>
-                <div class="info-item">
-                    <img src="{{ asset('images/dieta-placeholder.png') }}" alt="Historia 4" class="info-image">
-                    <h3 class="info-item-title">Historia 4</h3>
-                    <p class="info-text">Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-                </div>
-            </div>
-        </div>
+
+
+    <div class="info-gallery-horizontal">
+        <section class="info-item">
+            <img src="{{ asset('images/dieta-placeholder.png') }}" alt="Historia 1" class="info-image">
+            <h3 class="info-item-title">Historia 1</h3>
+            <p class="info-text">Lorem ipsum dolor sit amet...</p>
+        </section>
+        <section class="info-item">
+            <img src="{{ asset('images/dieta-placeholder.png') }}" alt="Historia 2" class="info-image">
+            <h3 class="info-item-title">Historia 2</h3>
+            <p class="info-text">Ut enim ad minim veniam...</p>
+        </section>
+        <section class="info-item">
+            <img src="{{ asset('images/dieta-placeholder.png') }}" alt="Historia 3" class="info-image">
+            <h3 class="info-item-title">Historia 3</h3>
+            <p class="info-text">Duis aute irure dolor in reprehenderit...</p>
+        </section>
+        <section class="info-item">
+            <img src="{{ asset('images/dieta-placeholder.png') }}" alt="Historia 4" class="info-image">
+            <h3 class="info-item-title">Historia 4</h3>
+            <p class="info-text">Excepteur sint occaecat cupidatat...</p>
+        </section>
     </div>
+
 
     <!-- Sección de contacto -->
     <div class="contact-container" id="contacto">

@@ -62,3 +62,4 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
 Route::get('/politica-cookies', function () {
     return view('cookies');
 })->name('cookies');
+
