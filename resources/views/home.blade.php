@@ -26,33 +26,68 @@
     </div>
 
 
+    <div id="scroll-text" class="scroll-text">
+        En BARFCo, somos un equipo de nutricionistas y veterinarios apasionados por la salud canina,
+        creando dietas personalizadas que transforman la vida de tu perro. Con ingredientes frescos y
+        planes adaptados (BARF, cocida o mixta), nuestro servicio combina ciencia, calidad y amor para
+        garantizar una nutrición óptima.
+        ¡Únete a miles de dueños felices y dale a tu compañero lo mejor con nosotros!
+    </div>
+
+
+
+
+
 
     <div class="info-gallery-horizontal">
         <section class="info-item">
-            <img src="{{ asset('images/dieta-placeholder.png') }}" alt="Historia 1" class="info-image">
-            <h3 class="info-item-title">Historia 1</h3>
-            <p class="info-text">Lorem ipsum dolor sit amet...</p>
+            <div class="info-box">
+                <img src="{{ asset('images/dieta-placeholder.png') }}" alt="Historia 1" class="info-image">
+                <h3 class="info-item-title">Dieta Barf</h3>
+                <p class="info-text">Esta dieta cruda, compuesta por carne fresca, vísceras, huesos carnosos y verduras,
+                    replica lo que tu perro comería en la naturaleza. Recomendada por veterinarios y expertos en nutrición
+                    canina por su alta biodisponibilidad y beneficios para la salud,
+                    es una opción estrella para perros activos, con alergias o necesidades específicas.</p>
+            </div>
         </section>
         <section class="info-item">
-            <img src="{{ asset('images/dieta-placeholder.png') }}" alt="Historia 2" class="info-image">
-            <h3 class="info-item-title">Historia 2</h3>
-            <p class="info-text">Ut enim ad minim veniam...</p>
+            <div class="info-box">
+                <img src="{{ asset('images/dieta-placeholder.png') }}" alt="Historia 2" class="info-image">
+                <h3 class="info-item-title">Dieta cocida</h3>
+                <p class="info-text">Si buscas una alternativa fresca y fácil de digerir,
+                    nuestra dieta cocida combina carne, verduras y grasas cuidadosamente cocinadas
+                    para preservar nutrientes. Ideal para perros senior, con digestión sensible o en
+                    transición desde pienso, ofrece sabor y salud sin esfuerzo. Confía en nosotros para
+                    nutrir a tu perro con comidas caseras de calidad.</p>
+            </div>
         </section>
         <section class="info-item">
-            <img src="{{ asset('images/dieta-placeholder.png') }}" alt="Historia 3" class="info-image">
-            <h3 class="info-item-title">Historia 3</h3>
-            <p class="info-text">Duis aute irure dolor in reprehenderit...</p>
+            <div class="info-box">
+                <img src="{{ asset('images/dieta-placeholder.png') }}" alt="Historia 3" class="info-image">
+                <h3 class="info-item-title">Mixta (50% Pienso / 50% Natural)</h3>
+                <p class="info-text">Esta dieta equilibra un 50% de pienso premium con un 50% de comida fresca,
+                    perfecta para perros que les gusta la variedad y dueños que buscan conveniencia sin renunciar a la frescura
+                    y calidad del alimento.
+                    Este tipo de dieta te ofrece una solución práctica y nutritiva para mantener a tu perro saludable.</p>
+            </div>
         </section>
+
         <section class="info-item">
-            <img src="{{ asset('images/dieta-placeholder.png') }}" alt="Historia 4" class="info-image">
-            <h3 class="info-item-title">Historia 4</h3>
-            <p class="info-text">Excepteur sint occaecat cupidatat...</p>
+            <div class="info-box">
+                <img src="{{ asset('images/dieta-placeholder.png') }}" alt="Historia 3" class="info-image">
+                <h3 class="info-item-title">Mixta (70% Pienso / 30% Natural)</h3>
+                <p class="info-text">Para quienes valoran la practicidad con un toque gourmet,
+                    esta dieta combina un 70% de pienso de alta calidad, compuesto por ingredientes naturales y sin aditivos,
+                    con un 30% de comida fresca.
+                    Ideal para perros de cualquier edad y dueños con agendas ocupadas, garantiza nutrición
+                    equilibrada con un extra de sabor.</p>
+            </div>
         </section>
     </div>
 
 
     <!-- Sección de contacto -->
-    <div class="contact-container" id="contacto">
+    <div class="contact-container" id="contacto" style=" margin-top: 100px;">
         <div class="contact-background"></div>
         <div class="container-fluid contact-content">
             <div class="row align-items-start">
@@ -103,7 +138,7 @@
             <div class="footer-background"></div>
             <div class="footer-content">
                 <div class="footer-column">
-                    <img src="{{ asset('images/dieta-placeholder.png') }}" alt="Barfco Logo" class="footer-logo">
+                    <img src="{{ asset('images/logo-barfco-blanco.png') }}" alt="Barfco Logo" class="footer-logo" style="margin-left:-10px">
                     <h3 class="footer-newsletter-title">Suscríbete a la newsletter</h3>
                     <p class="footer-newsletter-text">Recibe por correo los artículos nuevos del blog, ofertas exclusivas y novedades.</p>
                     <form class="footer-newsletter-form" action="{{ route('newsletter.subscribe') }}" method="POST">
@@ -146,5 +181,6 @@
     </footer>
 @endsection
 @push('scripts')
+    @vite('resources/js/text-animation.js')
     @vite('resources/js/info-gallery.js')
 @endpush

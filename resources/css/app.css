@@ -2153,23 +2153,83 @@ ul li {
 
 /* Nueva sección de información*/
 
-
-
 .info-gallery-horizontal {
     display: flex;
-    flex-wrap: nowrap;
     overflow: hidden;
-    width: 100%;
-    height: auto;
+    height: 90vh;
+    margin-top: 120px; /* espacio para el menú fijo */
+    padding-top: 100px; /* o más si necesitas más separación */
+
 }
+
+.info-gallery-horizontal {
+    padding-top: 100px; /* Aumenta si tu menú es más alto */
+}
+
 
 .info-item {
-    flex: 0 0 100%;
-    box-sizing: border-box;
-    padding: 2rem;
-    scroll-snap-align: start;
+    flex: 0 0 45vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 40px;
+
 }
 
+.info-box {
+    max-width: 600px;
+    text-align: center;
+    padding: 1rem;
+    border-radius: 20px;
+    background: #fff;
+    box-shadow: 0 0 20px rgba(0,0,0,0.1);
+}
+
+.info-image {
+    width: 100%;
+    height: 300px;
+    border-radius: 15px;
+    margin-bottom: 1rem;
+}
+
+.info-item-title {
+    font-size: 1.7rem;
+    font-weight: bolder;
+    margin-bottom: 0.5rem;
+    margin-top: 15px;
+    color: #fb4d17;
+}
+
+.info-text {
+        font-size:0.9rem;
+        color: #858585;
+        max-width: 600px;
+    margin:15px;
+    line-height: 21px;
+    margin-bottom: 25px;
+    }
+
+
+
+.scroll-text {
+    font-size: 1.7rem;
+    font-weight: 600;
+    max-width: 900px;
+    margin: 50px;
+    text-align: center;
+    line-height: 35px;
+
+}
+
+.scroll-text .letter {
+    color: rgba(8, 54, 48, 0.37); /* gris claro */
+    user-select: none;
+    transition: none; /* Sin transiciones */
+}
+
+.scroll-text .letter.active {
+    color: #083630; /* gris oscuro */
+}
 
 
 
