@@ -15,6 +15,16 @@
                     @enderror
                 </div>
                 <div class="mb-3">
+                    <label for="raza" class="plan-form-label">Raza</label>
+                    <select name="raza" id="raza" class="plan-form-select" required>
+                        <option value="">Selecciona una raza</option>
+                    </select>
+                    @error('raza')
+                    <div class="text-danger">{{ $message }}</div>
+                    @enderror
+                    <div id="raza-error" class="text-danger" style="display: none;">Error al cargar las razas. Por favor, intenta de nuevo.</div>
+                </div>
+                <div class="mb-3">
                     <label for="categoria_edad" class="plan-form-label">Categoría de Edad</label>
                     <select name="categoria_edad" id="categoria_edad" class="plan-form-select" required>
                         <option value="cachorro_menor_4" {{ old('categoria_edad', $mascota->categoria_edad) == 'cachorro_menor_4' ? 'selected' : '' }}>Cachorro (menor a 4 meses)</option>
@@ -116,9 +126,53 @@
             </form>
         </div>
     </div>
+@endsection
+@push('scripts')
     <script>
-        document.getElementById('alergia').addEventListener('change', function() {
-            document.getElementById('alimentos_alergia').style.display = this.checked ? 'block' : 'none';
+        document.addEventListener('DOMContentLoaded', function () {
+            const alergiaCheckbox = document.getElementById('alergia');
+            const alimentosAlergiaSelect = document.getElementById('alimentos_alergia');
+            const razaSelect = document.getElementById('raza');
+
+            // Manejar visibilidad del selector de alergias
+            if (alergiaCheckbox && alimentosAlergiaSelect) {
+                alergiaCheckbox.addEventListener('change', function () {
+                    alimentosAlergiaSelect.style.display = this.checked ? 'block' : 'none';
+                });
+            }
+
+            // Cargar razas desde Dog CEO's Dog API
+            if (razaSelect) {
+                fetch('https://dog.ceo/api/breeds/list/all')
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Error en la respuesta de la API');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        razaSelect.innerHTML = '<option value="">Selecciona una raza</option>';
+                        const breeds = Object.keys(data.message);
+                        breeds.forEach(breed => {
+                            const formattedBreed = breed
+                                .split(/[-\s]/)
+                                .map(item => item.charAt(0).toUpperCase() + item.slice(1))
+                                .join(' ');
+                            const option = document.createElement('option');
+                            option.value = formattedBreed;
+                            option.textContent = formattedBreed;
+                            if (formattedBreed === '{{ $mascota->raza }}') {
+                                option.selected = true;
+                            }
+                            razaSelect.appendChild(option);
+                        });
+                    })
+                    .catch(error => {
+                        console.error('Error al cargar razas:', error);
+                        document.getElementById('raza-error').style.display = 'block';
+                        razaSelect.innerHTML = '<option value="">Error al cargar razas</option>';
+                    });
+            }
         });
     </script>
-@endsection
+@endpush

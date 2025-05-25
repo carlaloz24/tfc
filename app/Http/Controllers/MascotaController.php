@@ -23,8 +23,9 @@ class MascotaController extends Controller
     {
         $request->validate([
             'nombre' => 'required|string|max:255',
+            'raza' => 'required|string|max:255',
             'categoria_edad' => 'required|in:cachorro_menor_4,cachorro_mayor_4,adulto,senior',
-            'peso' => 'required|numeric|min:0',
+            'peso' => 'required|numeric|min:0.1',
             'nivel_actividad' => 'required|in:baja,moderada,alta',
             'esterilizado' => 'required|boolean',
             'tipo_dieta_preferida' => 'required|in:barf,cocida,mixta_50,mixta_70',
@@ -37,13 +38,14 @@ class MascotaController extends Controller
         Mascota::create([
             'id_usuario' => Auth::id(),
             'nombre' => $request->nombre,
+            'raza' => $request->raza,
             'categoria_edad' => $request->categoria_edad,
             'peso' => $request->peso,
             'nivel_actividad' => $request->nivel_actividad,
             'esterilizado' => $request->esterilizado,
             'tipo_dieta_preferida' => $request->tipo_dieta_preferida,
-            'condiciones_salud' => $request->condiciones_salud,
-            'alimentos_alergia' => $request->alimentos_alergia,
+            'condiciones_salud' => $request->condiciones_salud ?? [],
+            'alimentos_alergia' => $request->alimentos_alergia ?? [],
         ]);
 
         return redirect()->route('profile.index')->with('success', 'Mascota añadida correctamente.');
@@ -73,8 +75,9 @@ class MascotaController extends Controller
 
         $request->validate([
             'nombre' => 'required|string|max:255',
+            'raza' => 'required|string|max:255',
             'categoria_edad' => 'required|in:cachorro_menor_4,cachorro_mayor_4,adulto,senior',
-            'peso' => 'required|numeric|min:0',
+            'peso' => 'required|numeric|min:0.1',
             'nivel_actividad' => 'required|in:baja,moderada,alta',
             'esterilizado' => 'required|boolean',
             'tipo_dieta_preferida' => 'required|in:barf,cocida,mixta_50,mixta_70',
@@ -86,13 +89,14 @@ class MascotaController extends Controller
 
         $mascota->update([
             'nombre' => $request->nombre,
+            'raza' => $request->raza,
             'categoria_edad' => $request->categoria_edad,
             'peso' => $request->peso,
             'nivel_actividad' => $request->nivel_actividad,
             'esterilizado' => $request->esterilizado,
             'tipo_dieta_preferida' => $request->tipo_dieta_preferida,
-            'condiciones_salud' => $request->condiciones_salud,
-            'alimentos_alergia' => $request->alimentos_alergia,
+            'condiciones_salud' => $request->condiciones_salud ?? [],
+            'alimentos_alergia' => $request->alimentos_alergia ?? [],
         ]);
 
         return redirect()->route('profile.index')->with('success', 'Mascota actualizada correctamente.');
@@ -114,6 +118,7 @@ class MascotaController extends Controller
             ->firstOrFail();
         return response()->json([
             'nombre' => $mascota->nombre,
+            'raza' => $mascota->raza,
             'peso' => $mascota->peso,
             'categoria_edad' => $mascota->categoria_edad,
             'esterilizado' => $mascota->esterilizado,

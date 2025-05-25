@@ -15,7 +15,15 @@
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="nombre" class="form-label">Nombre del Perro</label>
-                                <input type="text" class="form-control" id="nombre" name="nombre" placeholder="Ej. Max">
+                                <input type="text" class="form-control" id="nombre" name="nombre" placeholder="Ej. Max" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="raza" class="form-label">Raza</label>
+                                <select class="form-select" id="raza" name="raza" required>
+                                    <option value="">Cargando razas...</option>
+                                </select>
                             </div>
                         </div>
                         <div class="col-md-6">

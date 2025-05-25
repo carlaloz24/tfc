@@ -20,6 +20,12 @@
                                 <label for="peso" class="form-label">Peso (kg)</label>
                                 <input type="number" class="form-control" id="peso" name="peso" min="1" step="0.1" value="{{ $mascota->peso }}" required>
                             </div>
+                            <div class="mb-3">
+                                <label for="raza" class="form-label">Raza1</label>
+                                <select class="form-select" id="raza" name="raza" required>
+                                    <option value="">Cargando razas...</option>
+                                </select>
+                            </div>
                         </div>
                         <div class="col-md-6">
                             <div class="mb-3">

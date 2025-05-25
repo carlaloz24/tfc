@@ -9,24 +9,31 @@
         </header>
         <section class="plans">
             <article class="card" style="max-width: 1000px; width: 100%">
-                <form id="formularioDieta" class="form-calculadora p-4">
+                <form id="formularioDieta" action="{{ route('calculadora.store') }}" method="POST" class="form-calculadora p-4">
+                    @csrf
                     <div class="row g-4">
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="nombrePerro" class="form-label">Nombre del Perro</label>
-                                <input type="text" class="form-control" id="nombrePerro" required>
+                                <input type="text" class="form-control" id="nombrePerro" name="nombre" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="raza" class="form-label">Raza</label>
+                                <select class="form-select" id="raza" name="raza" required>
+                                    <option value="">Cargando razas...</option>
+                                </select>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="peso" class="form-label">Peso (kg)</label>
-                                <input type="number" class="form-control" id="peso" min="1" step="0.1" required>
+                                <input type="number" class="form-control" id="peso" name="peso" min="1" step="0.1" required>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="edad" class="form-label">Edad</label>
-                                <select class="form-select" id="edad" required>
+                                <select class="form-select" id="edad" name="categoria_edad" required>
                                     <option value="cachorro_menor_4">Cachorro (<4 meses)</option>
                                     <option value="cachorro_mayor_4">Cachorro (>4 meses)</option>
                                     <option value="adulto">Adulto</option>
@@ -37,7 +44,7 @@
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="esterilizado" class="form-label">¿Esterilizado?</label>
-                                <select class="form-select" id="esterilizado" required>
+                                <select class="form-select" id="esterilizado" name="esterilizado" required>
                                     <option value="no">No</option>
                                     <option value="si">Sí</option>
                                 </select>
@@ -46,7 +53,7 @@
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="nivelActividad" class="form-label">Nivel de Actividad</label>
-                                <select class="form-select" id="nivelActividad" required>
+                                <select class="form-select" id="nivelActividad" name="nivel_actividad" required>
                                     <option value="baja">Baja</option>
                                     <option value="moderada">Moderada</option>
                                     <option value="alta">Alta</option>
@@ -56,7 +63,7 @@
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="tipoDieta" class="form-label">Tipo de Dieta</label>
-                                <select class="form-select" id="tipoDieta" required>
+                                <select class="form-select" id="tipoDieta" name="tipo_dieta" required>
                                     <option value="barf">BARF</option>
                                     <option value="cocida">Cocida</option>
                                     <option value="mixta_50">Mixta (50% Pienso / 50% Natural)</option>
@@ -68,26 +75,26 @@
                             <div class="mb-3">
                                 <label class="form-label">Condiciones de Salud</label><br>
                                 <div class="form-check">
-                                    <input type="checkbox" class="form-check-input" id="obesidad" name="condicionesSalud" value="obesidad">
+                                    <input type="checkbox" class="form-check-input" id="obesidad" name="condiciones_salud[]" value="obesidad">
                                     <label class="form-check-label" for="obesidad">Obesidad</label>
                                 </div>
                                 <div class="form-check">
-                                    <input type="checkbox" class="form-check-input" id="renal" name="condicionesSalud" value="renal">
+                                    <input type="checkbox" class="form-check-input" id="renal" name="condiciones_salud[]" value="renal">
                                     <label class="form-check-label" for="renal">Renal</label>
                                 </div>
                                 <div class="form-check">
-                                    <input type="checkbox" class="form-check-input" id="artrosis" name="condicionesSalud" value="artrosis">
+                                    <input type="checkbox" class="form-check-input" id="artrosis" name="condiciones_salud[]" value="artrosis">
                                     <label class="form-check-label" for="artrosis">Artrosis</label>
                                 </div>
                                 <div class="form-check">
-                                    <input type="checkbox" class="form-check-input" id="diabetes" name="condicionesSalud" value="diabetes">
+                                    <input type="checkbox" class="form-check-input" id="diabetes" name="condiciones_salud[]" value="diabetes">
                                     <label class="form-check-label" for="diabetes">Diabetes</label>
                                 </div>
                                 <div class="form-check">
-                                    <input type="checkbox" class="form-check-input" id="alergia" name="condicionesSalud" value="alergia">
+                                    <input type="checkbox" class="form-check-input" id="alergia" name="condiciones_salud[]" value="alergia">
                                     <label class="form-check-label" for="alergia">Alergia / Intolerancia</label>
                                 </div>
-                                <select multiple class="form-select mt-2" id="alimentosAlergia" style="display: none;">
+                                <select multiple class="form-select mt-2" id="alimentos_alergia" name="alimentos_alergia[]" style="display: none;">
                                     <option value="pollo_pechuga">Pechuga de Pollo</option>
                                     <option value="pollo_muslo">Muslo de Pollo</option>
                                     <option value="pavo">Pavo</option>
@@ -118,5 +125,6 @@
     </div>
 @endsection
 @push('scripts')
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     @vite(['resources/js/calculadora.js'])
 @endpush

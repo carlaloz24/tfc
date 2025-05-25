@@ -4,7 +4,7 @@
     <div class="container">
         <h2 class="profile-title">Añadir Nueva Mascota</h2>
         <div class="plan-form">
-            <form action="{{ route('mascotas.store') }}" method="POST">
+            <form action="{{ route('mascotas.store') }}" method="POST" id="create-mascota-form">
                 @csrf
                 <div class="mb-3">
                     <label for="nombre" class="plan-form-label">Nombre</label>
@@ -12,6 +12,16 @@
                     @error('nombre')
                     <div class="text-danger">{{ $message }}</div>
                     @enderror
+                </div>
+                <div class="mb-3">
+                    <label for="raza" class="plan-form-label">Raza</label>
+                    <select name="raza" id="raza" class="plan-form-select" required>
+                        <option value="">Selecciona una raza</option>
+                    </select>
+                    @error('raza')
+                    <div class="text-danger">{{ $message }}</div>
+                    @enderror
+                    <div id="raza-error" class="text-danger" style="display: none;">Error al cargar las razas. Por favor, intenta de nuevo.</div>
                 </div>
                 <div class="mb-3">
                     <label for="categoria_edad" class="plan-form-label">Categoría de Edad</label>
@@ -115,9 +125,66 @@
             </form>
         </div>
     </div>
+@endsection
+@push('scripts')
     <script>
-        document.getElementById('alergia').addEventListener('change', function() {
-            document.getElementById('alimentos_alergia').style.display = this.checked ? 'block' : 'none';
+        document.addEventListener('DOMContentLoaded', function () {
+            const alergiaCheckbox = document.getElementById('alergia');
+            const alimentosAlergiaSelect = document.getElementById('alimentos_alergia');
+            const razaSelect = document.getElementById('raza');
+            const form = document.getElementById('create-mascota-form');
+
+            // Manejar visibilidad del selector de alergias
+            if (alergiaCheckbox && alimentosAlergiaSelect) {
+                alergiaCheckbox.addEventListener('change', function () {
+                    alimentosAlergiaSelect.style.display = this.checked ? 'block' : 'none';
+                });
+            }
+
+            // Cargar razas desde Dog CEO's Dog API
+            if (razaSelect) {
+                fetch('https://dog.ceo/api/breeds/list/all')
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Error en la respuesta de la API');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        razaSelect.innerHTML = '<option value="">Selecciona una raza</option>';
+                        const breeds = Object.keys(data.message);
+                        breeds.forEach(breed => {
+                            const formattedBreed = breed
+                                .split(/[-\s]/)
+                                .map(item => item.charAt(0).toUpperCase() + item.slice(1))
+                                .join(' ');
+                            const option = document.createElement('option');
+                            option.value = formattedBreed;
+                            option.textContent = formattedBreed;
+                            if (formattedBreed === '{{ old('raza') }}') {
+                                option.selected = true;
+                            }
+                            razaSelect.appendChild(option);
+                        });
+                    })
+                    .catch(error => {
+                        console.error('Error al cargar razas:', error);
+                        document.getElementById('raza-error').style.display = 'block';
+                        razaSelect.innerHTML = '<option value="">Error al cargar razas</option>';
+                    });
+            }
+
+            // Depurar el valor de raza antes de enviar
+            if (form && razaSelect) {
+                form.addEventListener('submit', function (event) {
+                    const razaValue = razaSelect.value;
+                    console.log('Raza seleccionada:', razaValue);
+                    if (!razaValue) {
+                        event.preventDefault();
+                        alert('Por favor, selecciona una raza.');
+                    }
+                });
+            }
         });
     </script>
-@endsection
+@endpush

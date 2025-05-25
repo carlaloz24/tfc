@@ -56,7 +56,6 @@ function capitalizarCategoria(categoria) {
     return map[categoria] || categoria.charAt(0).toUpperCase() + categoria.slice(1);
 }
 
-
 function formatearAlimento(alimento) {
     const map = {
         'pollo_pechuga': 'Pechuga de pollo',
@@ -96,6 +95,7 @@ function formatearAlimento(alimento) {
     };
     return map[alimento] || alimento.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
 }
+
 document.addEventListener('DOMContentLoaded', function () {
     const form = document.getElementById('formularioDieta');
     const resultadosDiv = document.getElementById('resultados');
@@ -104,6 +104,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const alergiaCheckbox = document.getElementById('alergia');
     const alimentosAlergiaSelect = document.getElementById('alimentos_alergia');
     const menuJsonInput = document.getElementById('menu_json');
+    const razaSelect = document.getElementById('raza');
 
     if (!form) {
         console.error('Formulario con ID "formularioDieta" no encontrado');
@@ -116,6 +117,31 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (!contratarPlanBtn) {
         console.error('Botón con ID "contratarPlan" no encontrado');
+    }
+
+    // Cargar razas desde Dog CEO's Dog API
+    if (razaSelect) {
+        fetch('https://dog.ceo/api/breeds/list/all')
+            .then(response => response.json())
+            .then(data => {
+                razaSelect.innerHTML = '<option value="">Selecciona una raza</option>';
+                const breeds = Object.keys(data.message);
+                breeds.forEach(breed => {
+                    // Capitalizar cada palabra de la raza
+                    const formattedBreed = breed
+                        .split(/[-\s]/)
+                        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                        .join(' ');
+                    const option = document.createElement('option');
+                    option.value = formattedBreed;
+                    option.textContent = formattedBreed;
+                    razaSelect.appendChild(option);
+                });
+            })
+            .catch(error => {
+                console.error('Error al cargar razas:', error);
+                razaSelect.innerHTML = '<option value="">Error al cargar razas</option>';
+            });
     }
 
     if (alergiaCheckbox && alimentosAlergiaSelect) {
@@ -137,6 +163,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const data = {
             mascota_id: formData.get('mascota_id') || null,
             nombre: formData.get('nombre')?.trim() || 'Perro',
+            raza: formData.get('raza')?.trim() || '',
             peso: parseFloat(formData.get('peso')),
             categoria_edad: formData.get('categoria_edad')?.trim() || '',
             esterilizado: formData.get('esterilizado') === '1',
@@ -160,6 +187,9 @@ document.addEventListener('DOMContentLoaded', function () {
             }
             if (!data.tipo_dieta || !['barf', 'cocida', 'mixta_50', 'mixta_70'].includes(data.tipo_dieta)) {
                 throw new Error(`Selecciona un tipo de dieta válido. Valor recibido: ${data.tipo_dieta || 'vacío'}`);
+            }
+            if (!data.raza) {
+                throw new Error('Selecciona una raza válida.');
             }
 
             let energiaMetabolica = 70 * Math.pow(data.peso, 0.75);
@@ -213,11 +243,11 @@ document.addEventListener('DOMContentLoaded', function () {
             const menuSemanal = generarMenuSemanal(dieta, data.condiciones_salud, data.alimentos_alergia, data.tipo_dieta);
             menuJsonInput.value = JSON.stringify(menuSemanal);
 
-            mostrarResultados(data.nombre, data.peso, energiaMetabolica, dieta, menuSemanal, ajustesAplicados, data.tipo_dieta);
+            mostrarResultados(data.nombre, data.peso, energiaMetabolica, dieta, menuSemanal, ajustesAplicados, data.tipo_dieta, data.raza);
 
             if (descargarPDFBtn) {
                 descargarPDFBtn.style.display = 'block';
-                descargarPDFBtn.onclick = () => descargarPDF(data.nombre, data.peso, energiaMetabolica, dieta, menuSemanal, ajustesAplicados, data.tipo_dieta);
+                descargarPDFBtn.onclick = () => descargarPDF(data.nombre, data.peso, energiaMetabolica, dieta, menuSemanal, ajustesAplicados, data.tipo_dieta, data.raza);
             } else {
                 console.warn('No se puede mostrar el botón de descargar PDF porque no se encontró el elemento');
             }
@@ -298,7 +328,8 @@ function generarMenuSemanal(dieta, condicionesSalud, alimentosAlergia, tipoDieta
     });
     return menu;
 }
-function mostrarResultados(nombrePerro, peso, energiaMetabolica, dieta, menuSemanal, ajustesAplicados, tipoDieta) {
+
+function mostrarResultados(nombrePerro, peso, energiaMetabolica, dieta, menuSemanal, ajustesAplicados, tipoDieta, raza) {
     const divResultados = document.getElementById('resultados');
     let html = `
         <article class="card result-card">
@@ -307,6 +338,7 @@ function mostrarResultados(nombrePerro, peso, energiaMetabolica, dieta, menuSema
                 <h3 class="result-subtitle">Resumen</h3>
                 <ul class="result-list">
                     <li><strong>Nombre:</strong> ${nombrePerro}</li>
+                    <li><strong>Raza:</strong> ${raza}</li>
                     <li><strong>Peso:</strong> ${peso} kg</li>
                     <li><strong>Tipo de dieta: </strong> ${tipoDieta.charAt(0).toUpperCase() + tipoDieta.slice(1)}</li>
                     <li><strong>Calorías diarias: </strong> ${Math.round(energiaMetabolica)} kcal</li>
@@ -395,9 +427,7 @@ function mostrarResultados(nombrePerro, peso, energiaMetabolica, dieta, menuSema
     divResultados.innerHTML = html;
 }
 
-
-
-function descargarPDF(nombrePerro, peso, energiaMetabolica, dieta, menuSemanal, ajustesAplicados, tipoDieta) {
+function descargarPDF(nombrePerro, peso, energiaMetabolica, dieta, menuSemanal, ajustesAplicados, tipoDieta, raza) {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
 
@@ -414,18 +444,18 @@ function descargarPDF(nombrePerro, peso, energiaMetabolica, dieta, menuSemanal, 
     const logoUrl = '/images/logo-barfco.png';
     const logoWidth = 30;
     const logoHeight = 30;
-    doc.addImage(logoUrl, 'PNG', margin, margin, logoWidth, logoHeight, undefined, 'NONE'); // Preserva proporciones
+    doc.addImage(logoUrl, 'PNG', margin, margin, logoWidth, logoHeight, undefined, 'NONE');
 
     // Fecha (arriba, alineada con logo)
     doc.setFontSize(10);
-    doc.setTextColor(80, 80, 80); // #505050
+    doc.setTextColor(80, 80, 80);
     doc.setFont('Helvetica', 'normal');
     doc.text(`Generado el ${new Date().toLocaleDateString('es-ES')}`, pageWidth - margin, margin + 7, { align: 'right' });
 
     // Título (debajo del logo)
     doc.setFontSize(22);
-    doc.setTextColor(8, 54, 48); // #083630
-    doc.setFont('Helvetica', 'bold'); // Fallback: usa Inter si disponible
+    doc.setTextColor(8, 54, 48);
+    doc.setFont('Helvetica', 'bold');
     doc.text(`Dieta para ${nombrePerro}`, pageWidth / 2, margin + logoHeight + 15, { align: 'center' });
     y = margin + logoHeight + 25;
 
@@ -437,11 +467,12 @@ function descargarPDF(nombrePerro, peso, energiaMetabolica, dieta, menuSemanal, 
     y += 10;
     doc.setFontSize(12);
     doc.setTextColor(80, 80, 80);
-    const bulletColor = [8, 54, 48]; // #083630
+    const bulletColor = [8, 54, 48];
     const bullet = '•';
     const bulletOffset = 5;
     const items = [
         { label: 'Nombre: ', value: nombrePerro },
+        { label: 'Raza: ', value: raza },
         { label: 'Peso: ', value: `${peso} kg` },
         { label: 'Tipo de dieta: ', value: tipoDieta.charAt(0).toUpperCase() + tipoDieta.slice(1) },
         { label: 'Calorías diarias: ', value: `${Math.round(energiaMetabolica)} kcal` },
@@ -468,7 +499,7 @@ function descargarPDF(nombrePerro, peso, energiaMetabolica, dieta, menuSemanal, 
 
     // Línea horizontal
     doc.setDrawColor(8, 54, 48);
-    doc.setLineWidth(0.3); // Más fina
+    doc.setLineWidth(0.3);
     doc.line(margin, y, pageWidth - margin, y);
     y += 15;
 
@@ -526,7 +557,7 @@ function descargarPDF(nombrePerro, peso, energiaMetabolica, dieta, menuSemanal, 
 
     // Línea horizontal
     doc.setDrawColor(8, 54, 48);
-    doc.setLineWidth(0.3); // Más fina
+    doc.setLineWidth(0.3);
     doc.line(margin, y, pageWidth - margin, y);
     y += 15;
 

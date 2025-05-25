@@ -47,6 +47,7 @@
                                         <p class="pet-card-text">
                                             <strong>Edad:</strong> {{ ucfirst(str_replace('_', ' ', $mascota->categoria_edad)) }}<br>
                                             <strong>Peso:</strong> {{ $mascota->peso }} kg<br>
+                                            <strong>Raza:</strong> {{ $mascota->raza ?: 'No especificada' }}<br>
                                             <strong>Nivel de Actividad:</strong> {{ ucfirst($mascota->nivel_actividad) }}<br>
                                             <strong>Esterilizado:</strong> {{ $mascota->esterilizado ? 'Sí' : 'No' }}<br>
                                             <strong>Dieta Preferida:</strong> {{ ucfirst(str_replace('_', ' ', $mascota->tipo_dieta_preferida)) }}<br>
