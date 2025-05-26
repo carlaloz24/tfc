@@ -3,8 +3,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Dieta extends Model
-{
+class Dieta extends Model{
     use HasFactory;
     protected $fillable = [
         'id_mascota',
@@ -30,8 +29,7 @@ class Dieta extends Model
         'esterilizado' => 'boolean',
     ];
 
-    public function mascota()
-    {
+    public function mascota()    {
         return $this->belongsTo(Mascota::class, 'id_mascota');
     }
 }

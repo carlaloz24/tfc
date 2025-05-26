@@ -18,18 +18,15 @@ class User extends Authenticatable
         'contraseña', 'remember_token',
     ];
 
-    public function getAuthPassword()
-    {
+    public function getAuthPassword() {
         return $this->contraseña;
     }
 
-    public function mascotas()
-    {
+    public function mascotas() {
         return $this->hasMany(Mascota::class, 'id_usuario');
     }
 
-    public function facturas()
-    {
+    public function facturas(){
         return $this->hasMany(Factura::class, 'user_id');
     }
 }

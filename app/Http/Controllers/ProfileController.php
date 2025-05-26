@@ -8,16 +8,14 @@ use Illuminate\Support\Facades\Auth;
 
 class ProfileController extends Controller
 {
-    public function index()
-    {
+    public function index() {
         $mascotas = Mascota::with(['dietas', 'plan'])
             ->where('id_usuario', Auth::id())
             ->get();
         return view('profile', compact('mascotas'));
     }
 
-    public function update(Request $request)
-    {
+    public function update(Request $request) {
         $user = Auth::user();
         $request->validate([
             'name' => 'required|string|max:255',
@@ -29,8 +27,7 @@ class ProfileController extends Controller
         return redirect()->route('profile.index')->with('success', 'Datos actualizados.');
     }
 
-    public function destroy()
-    {
+    public function destroy() {
         Auth::user()->delete();
         return redirect()->route('home')->with('success', 'Cuenta eliminada.');
     }

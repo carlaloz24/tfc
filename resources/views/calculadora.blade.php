@@ -41,6 +41,7 @@
                                 </select>
                             </div>
                         </div>
+
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="esterilizado" class="form-label">¿Esterilizado?</label>
@@ -50,6 +51,7 @@
                                 </select>
                             </div>
                         </div>
+
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="nivelActividad" class="form-label">Nivel de Actividad</label>
@@ -60,6 +62,7 @@
                                 </select>
                             </div>
                         </div>
+
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="tipoDieta" class="form-label">Tipo de Dieta</label>
@@ -71,17 +74,21 @@
                                 </select>
                             </div>
                         </div>
+
                         <div class="col-md-12">
+
                             <div class="mb-3">
                                 <label class="form-label">Condiciones de Salud</label><br>
                                 <div class="form-check">
                                     <input type="checkbox" class="form-check-input" id="obesidad" name="condiciones_salud[]" value="obesidad">
                                     <label class="form-check-label" for="obesidad">Obesidad</label>
                                 </div>
+
                                 <div class="form-check">
                                     <input type="checkbox" class="form-check-input" id="renal" name="condiciones_salud[]" value="renal">
                                     <label class="form-check-label" for="renal">Renal</label>
                                 </div>
+
                                 <div class="form-check">
                                     <input type="checkbox" class="form-check-input" id="artrosis" name="condiciones_salud[]" value="artrosis">
                                     <label class="form-check-label" for="artrosis">Artrosis</label>
@@ -94,6 +101,7 @@
                                     <input type="checkbox" class="form-check-input" id="alergia" name="condiciones_salud[]" value="alergia">
                                     <label class="form-check-label" for="alergia">Alergia / Intolerancia</label>
                                 </div>
+
                                 <select multiple class="form-select mt-2" id="alimentos_alergia" name="alimentos_alergia[]" style="display: none;">
                                     <option value="pollo_pechuga">Pechuga de Pollo</option>
                                     <option value="pollo_muslo">Muslo de Pollo</option>
@@ -113,13 +121,14 @@
                                 </select>
                             </div>
                         </div>
+
                         <div class="col-md-12">
-                            <button id="calcularBtn" type="submit" style="width: 100%; background-color: #fb4d17; height: 50px;">Calcular Dieta</button>
+                            <button id="calcularBtn" type="submit" style="width: 100%; background-color: #fb4d17; height: 50px; border-radius: 25px;">Calcular Dieta</button>
                         </div>
                     </div>
                 </form>
                 <div id="resultados" class="mt-5"></div>
-                <button id="descargarPDF" class="btn btn-success mt-3" style="display: none;">Descargar PDF</button>
+                <button id="descargarPDF" class="btn btn-success mt-3" style="display: none; border-radius: 25px;">Descargar PDF</button>
             </article>
         </section>
     </div>

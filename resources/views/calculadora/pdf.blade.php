@@ -22,6 +22,7 @@
         <h2>Información de la Mascota</h2>
         <p><strong>Nombre:</strong> {{ $mascota ? $mascota->nombre : 'No especificado' }}</p>
         @if ($mascota)
+            <p><strong>Raza:</strong> {{ $mascota->raza }}</p>
             <p><strong>Peso:</strong> {{ $mascota->peso }} kg</p>
             <p><strong>Edad:</strong> {{ ucfirst(str_replace('_', ' ', $mascota->categoria_edad)) }}</p>
             <p><strong>Esterilizado:</strong> {{ $mascota->esterilizado ? 'Sí' : 'No' }}</p>

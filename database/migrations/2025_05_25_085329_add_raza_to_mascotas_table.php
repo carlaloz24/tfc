@@ -11,8 +11,7 @@ class AddRazaToMascotasTable extends Migration
      *
      * @return void
      */
-    public function up()
-    {
+    public function up() {
         Schema::table('mascotas', function (Blueprint $table) {
             $table->string('raza')->nullable()->after('nombre');
         });
@@ -23,8 +22,7 @@ class AddRazaToMascotasTable extends Migration
      *
      * @return void
      */
-    public function down()
-    {
+    public function down(){
         Schema::table('mascotas', function (Blueprint $table) {
             $table->dropColumn('raza');
         });

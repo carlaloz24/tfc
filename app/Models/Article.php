@@ -8,7 +8,7 @@ class Article extends Model
 {
     use HasFactory;
 
-    protected $table = 'articulos'; // Apunta a la tabla 'articulos'
+    protected $table = 'articulos'; //apunta a tabla artículos
 
     protected $fillable = [
         'titulo',

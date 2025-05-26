@@ -4,13 +4,11 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!Cookies.get('cookie_consent')) {
         const banner = document.createElement('div');
         banner.className = 'cookie-consent-banner active';
-        banner.innerHTML = `
-            <p>Usamos cookies para mejorar tu experiencia, personalizar el contenido y analizar cómo se utiliza nuestro sitio. Algunas son esenciales para su funcionamiento. Más información en nuestra <a href="/politica-cookies">Política de Cookies</a>.</p>
+        banner.innerHTML = ` <p>Usamos cookies para mejorar tu experiencia, personalizar el contenido y analizar cómo se utiliza nuestro sitio. Algunas son esenciales para su funcionamiento. Más información en nuestra <a href="/politica-cookies">Política de Cookies</a>.</p>
             <div class="cookie-banner-buttons">
                 <button class="button_cookies">Aceptar</button>
                 <button class="button_cookies">Rechazar</button>
-            </div>
-        `;
+            </div> `;
         document.body.appendChild(banner);
 
         banner.querySelector('.button_cookies:nth-child(1)').addEventListener('click', () => {

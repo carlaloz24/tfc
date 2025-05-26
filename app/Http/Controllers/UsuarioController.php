@@ -6,13 +6,11 @@ use Illuminate\Support\Facades\Hash;
 
 class UsuarioController extends Controller
 {
-    public function create()
-    {
+    public function create() {
         return view('usuarios.create');
     }
 
-    public function store(Request $request)
-    {
+    public function store(Request $request) {
         $request->validate([
             'nombre' => 'required|string|max:255',
             'correo' => 'required|email|unique:usuarios,correo',

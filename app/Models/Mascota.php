@@ -4,12 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Mascota extends Model
-{
+class Mascota extends Model{
     protected $table = 'mascotas';
     protected $fillable = [
         'id_usuario',
         'nombre',
+        'raza',
         'categoria_edad',
         'peso',
         'nivel_actividad',
@@ -24,18 +24,15 @@ class Mascota extends Model
         'alimentos_alergia' => 'array',
     ];
 
-    public function dietas()
-    {
+    public function dietas()    {
         return $this->hasMany(Dieta::class, 'id_mascota');
     }
 
-    public function plan()
-    {
+    public function plan()    {
         return $this->hasOne(Plan::class, 'id_mascota')->where('activo', 1);
     }
 
-    public function usuario()
-    {
+    public function usuario()    {
         return $this->belongsTo(User::class, 'id_usuario');
     }
 }

@@ -109,6 +109,7 @@
                                     <label class="form-check-label" for="alergia">Alergia / Intolerancia</label>
                                 </div>
                                 <select multiple class="form-select mt-2" id="alimentos_alergia" name="alimentos_alergia[]" style="display: {{ isset($mascotaSeleccionada) && in_array('alergia', $mascotaSeleccionada->condiciones_salud ?? []) ? 'block' : 'none' }};">
+
                                     @foreach ([
                                         'pollo_pechuga' => 'Pechuga de Pollo',
                                         'pollo_muslo' => 'Muslo de Pollo',
@@ -126,6 +127,7 @@
                                         'mollejas' => 'Mollejas',
                                         'tripa_verde' => 'Tripa Verde'
                                     ] as $value => $label)
+
                                         <option value="{{ $value }}" {{ isset($mascotaSeleccionada) && in_array($value, $mascotaSeleccionada->alimentos_alergia ?? []) ? 'selected' : '' }}>{{ $label }}</option>
                                     @endforeach
                                 </select>

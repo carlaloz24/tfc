@@ -7,15 +7,13 @@ use Illuminate\Support\Facades\Schema;
 
 class AddRazaToDietasTable extends Migration
 {
-    public function up()
-    {
+    public function up(){
         Schema::table('dietas', function (Blueprint $table) {
             $table->string('raza')->nullable()->after('tipo_dieta');
         });
     }
 
-    public function down()
-    {
+    public function down(){
         Schema::table('dietas', function (Blueprint $table) {
             $table->dropColumn('raza');
         });

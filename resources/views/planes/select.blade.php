@@ -18,7 +18,8 @@
                 @endif
 
                 <div class="plan-columns">
-                    <!-- Columna izquierda: Selección -->
+
+                    <!-- columna izquierda: Selección -->
                     <div class="plan-column">
                         <div class="plan-section">
                             <h3 class="plan-section-title">Detalles del Plan</h3>
@@ -70,11 +71,16 @@
 
                                 <div class="mb-4">
                                     <label for="tipo_plan" class="plan-input-label">Tipo de Plan</label>
-                                    <select name="tipo_plan" id="tipo_plan" class="plan-input" required>
-                                        <option value="basico">Básico</option>
-                                        <option value="premium">Premium</option>
-                                        <option value="personalizado">Personalizado</option>
-                                    </select>
+                                    @if (isset($tipo_plan))
+                                        <input type="hidden" name="tipo_plan" id="tipo_plan" value="{{ $tipo_plan }}">
+                                        <p class="text-[#1e1e1e] font-medium">{{ ucfirst($tipo_plan) }}</p>
+                                    @else
+                                        <select name="tipo_plan" id="tipo_plan" class="plan-input" required>
+                                            <option value="basico">Básico</option>
+                                            <option value="premium">Premium</option>
+                                            <option value="personalizado">Personalizado</option>
+                                        </select>
+                                    @endif
                                     @error('tipo_plan')
                                     <span class="plan-error">{{ $message }}</span>
                                     @enderror
@@ -83,7 +89,7 @@
                         </div>
                     </div>
 
-                    <!-- Columna derecha: Pago y Resumen -->
+                    <!-- columna derecha: pago y Resumen -->
                     <div class="plan-column">
                         <div class="plan-section">
                             <h3 class="plan-section-title">Información de Pago</h3>
@@ -119,7 +125,7 @@
                             <div class="summary-card mb-4">
                                 <div class="summary-row">
                                     <div class="summary-label">Plan:</div>
-                                    <div class="summary-value" id="summary-plan">Básico</div>
+                                    <div class="summary-value" id="summary-plan">{{ ucfirst($tipo_plan ?? 'Básico') }}</div>
                                     <div class="summary-label">Frecuencia:</div>
                                     <div class="summary-value" id="summary-frequency">Mensual</div>
                                     <div class="summary-label">Precio:</div>
@@ -128,9 +134,7 @@
                                     <div class="summary-value" id="summary-next-billing">{{ now()->addMonth()->format('d/m/Y') }}</div>
                                 </div>
                             </div>
-                            <button id="submit-button" class="pay-button">
-                                Pagar Ahora
-                            </button>
+                            <button id="submit-button" class="pay-button">Pagar Ahora</button>
                         </div>
                     </div>
                 </div>
@@ -148,16 +152,12 @@
                     fontFamily: 'Inter, sans-serif',
                     fontSize: '16px',
                     color: '#1e1e1e',
-                    '::placeholder': {
-                        color: '#858585',
-                    },
+                    '::placeholder': { color: '#858585' },
                     backgroundColor: '#d3d3d3',
                     padding: '12px',
                     borderRadius: '10px',
                 },
-                invalid: {
-                    color: '#fb4d17',
-                },
+                invalid: { color: '#fb4d17' },
             },
         });
         cardElement.mount('#card-element');
@@ -169,17 +169,17 @@
         };
 
         function updatePaymentSummary() {
-            const plan = document.getElementById('tipo_plan').value;
+            const plan = @if(isset($tipo_plan)) '{{ $tipo_plan }}' @else document.getElementById('tipo_plan').value @endif;
             const frequency = document.getElementById('frecuencia').value;
             const price = prices[plan][frequency];
             const nextBilling = frequency === 'mensual'
                 ? '{{ now()->addMonth()->format('d/m/Y') }}'
                 : '{{ now()->addYear()->format('d/m/Y') }}';
 
-            document.getElementById('summary-plan').textContent = plan.charAt(0).toUpperCase() + plan.slice(1);
-            document.getElementById('summary-frequency').textContent = frequency.charAt(0).toUpperCase() + frequency.slice(1);
-            document.getElementById('summary-price').textContent = `€${price}/${frequency === 'mensual' ? 'mes' : 'año'}`;
-            document.getElementById('summary-next-billing').textContent = nextBilling;
+               document.getElementById('summary-plan').textContent = plan.charAt(0).toUpperCase() + plan.slice(1);
+              document.getElementById('summary-frequency').textContent = frequency.charAt(0).toUpperCase() + frequency.slice(1);
+              document.getElementById('summary-price').textContent = `€${price}/${frequency === 'mensual' ? 'mes' : 'año'}`;
+                 document.getElementById('summary-next-billing').textContent = nextBilling;
         }
 
         document.getElementById('mascota_id').addEventListener('change', function() {
@@ -209,7 +209,7 @@
         });
 
         document.addEventListener('DOMContentLoaded', function() {
-            const mascotaId = '{{ $mascotaSeleccionada->id }}';
+            const mascotaId = '{{ $mascotaSeleccionada->id ?? '' }}';
             const pdfDiv = document.getElementById('pdf_dieta');
             if (mascotaId) {
                 fetch(`/dietas/${mascotaId}/pdf`, {
@@ -233,7 +233,9 @@
             updatePaymentSummary();
         });
 
+        @if (!isset($tipo_plan))
         document.getElementById('tipo_plan').addEventListener('change', updatePaymentSummary);
+        @endif
         document.getElementById('frecuencia').addEventListener('change', updatePaymentSummary);
 
         document.getElementById('submit-button').addEventListener('click', async function(e) {
@@ -273,8 +275,13 @@
             }
 
             cardErrors.textContent = '';
-            alert('Método de pago creado correctamente (ficticio). Enviar a backend: ' + paymentMethod.id);
-            document.getElementById('plan-form').submit();
+            const form = document.getElementById('plan-form');
+            const paymentMethodInput = document.createElement('input');
+            paymentMethodInput.type = 'hidden';
+            paymentMethodInput.name = 'payment_method';
+            paymentMethodInput.value = paymentMethod.id;
+            form.appendChild(paymentMethodInput);
+            form.submit();
         });
     </script>
 @endsection

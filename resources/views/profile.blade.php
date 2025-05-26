@@ -4,7 +4,8 @@
     <div class="profile-container">
         <div class="profile-block">
             <h1>¡Hola {{ Auth::user()->nombre }}!</h1>
-            <!-- Datos del usuario -->
+
+            <!-- datos del usuario -->
             <div class="profile-panel">
                 <h2 class="profile-title">Datos Personales</h2>
                 <form action="{{ route('profile.update') }}" method="POST" class="profile-data-form">
@@ -47,7 +48,6 @@
                                         <p class="pet-card-text">
                                             <strong>Edad:</strong> {{ ucfirst(str_replace('_', ' ', $mascota->categoria_edad)) }}<br>
                                             <strong>Peso:</strong> {{ $mascota->peso }} kg<br>
-                                            <strong>Raza:</strong> {{ $mascota->raza ?: 'No especificada' }}<br>
                                             <strong>Nivel de Actividad:</strong> {{ ucfirst($mascota->nivel_actividad) }}<br>
                                             <strong>Esterilizado:</strong> {{ $mascota->esterilizado ? 'Sí' : 'No' }}<br>
                                             <strong>Dieta Preferida:</strong> {{ ucfirst(str_replace('_', ' ', $mascota->tipo_dieta_preferida)) }}<br>
@@ -94,12 +94,42 @@
                 @endif
             </div>
 
+
             <!-- Facturas -->
-            <div class="profile-panel">
-                <h2 class="profile-title">Facturas</h2>
-                <p class="profile-description">Descarga las facturas de tus planes contratados.</p>
-                <a href="#" class="profile-btn-secondary" onclick="alert('Funcionalidad en desarrollo')">Descargar Facturas</a>
+            <div class="profile-section">
+                <h2>Mis Facturas</h2>
+                @if (auth()->user()->facturas->isEmpty())
+                    <p>No tienes facturas.</p>
+                @else
+                    <table class="facturas-table">
+                        <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Plan</th>
+                            <th>Mascota</th>
+                            <th>Precio</th>
+                            <th>Descargar</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @foreach (auth()->user()->facturas as $factura)
+                            <tr>
+                                <td>{{ $factura->fecha_emision->format('d/m/Y') }}</td>
+                                <td>{{ ucfirst($factura->tipo_plan) }}</td>
+                                <td>{{ $factura->mascota->nombre }}</td>
+                                <td>€{{ number_format($factura->precio, 2) }}/{{ $factura->frecuencia }}</td>
+                                <td>
+                                    <a href="{{ Storage::url($factura->pdf_path) }}" class="btn btn-orange" download>Descargar PDF</a>
+                                </td>
+                            </tr>
+                        @endforeach
+                        </tbody>
+                    </table>
+                @endif
             </div>
+
+
+
         </div>
     </div>
 @endsection

@@ -82,7 +82,7 @@
         </div>
     </div>
 
-    <!-- Modal de confirmación de eliminación -->
+    <!-- modal de confirmación de eliminación -->
     <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -106,7 +106,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             let articleId = null;
 
-            // Capturar el ID del artículo al hacer clic en eliminar
+            //capturar el ID del artículo al hacer clic en eliminar
             document.querySelectorAll('.action-delete').forEach(button => {
                 button.addEventListener('click', (e) => {
                     e.preventDefault();
@@ -115,7 +115,7 @@
                 });
             });
 
-            // Confirmar eliminación
+            //confirmar eliminación
             document.getElementById('confirm-delete').addEventListener('click', () => {
                 if (articleId) {
                     const form = document.getElementById(`delete-form-${articleId}`);
@@ -127,7 +127,7 @@
                 }
             });
 
-            // Evitar que el clic en editar active el enlace de la card
+            //cvitar que el clic en editar active el enlace de la card
             document.querySelectorAll('.action-icon:not(.action-delete)').forEach(link => {
                 link.addEventListener('click', (e) => {
                     e.stopPropagation();

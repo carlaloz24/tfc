@@ -8,19 +8,16 @@ use Illuminate\Support\Facades\Auth;
 
 class MascotaController extends Controller
 {
-    public function index()
-    {
+    public function index() {
         $mascotas = Mascota::where('id_usuario', Auth::id())->get();
         return view('mascotas.index', compact('mascotas'));
     }
 
-    public function create()
-    {
+    public function create(){
         return view('mascotas.create');
     }
 
-    public function store(Request $request)
-    {
+    public function store(Request $request) {
         $request->validate([
             'nombre' => 'required|string|max:255',
             'raza' => 'required|string|max:255',
@@ -51,24 +48,21 @@ class MascotaController extends Controller
         return redirect()->route('profile.index')->with('success', 'Mascota añadida correctamente.');
     }
 
-    public function show(Mascota $mascota)
-    {
+    public function show(Mascota $mascota) {
         if ($mascota->id_usuario !== Auth::id()) {
             abort(403);
         }
         return view('mascotas.show', compact('mascota'));
     }
 
-    public function edit(Mascota $mascota)
-    {
+    public function edit(Mascota $mascota){
         if ($mascota->id_usuario !== Auth::id()) {
             abort(403);
         }
         return view('mascotas.edit', compact('mascota'));
     }
 
-    public function update(Request $request, Mascota $mascota)
-    {
+    public function update(Request $request, Mascota $mascota) {
         if ($mascota->id_usuario !== Auth::id()) {
             abort(403);
         }
@@ -102,8 +96,7 @@ class MascotaController extends Controller
         return redirect()->route('profile.index')->with('success', 'Mascota actualizada correctamente.');
     }
 
-    public function destroy(Mascota $mascota)
-    {
+    public function destroy(Mascota $mascota) {
         if ($mascota->id_usuario !== Auth::id()) {
             abort(403);
         }
@@ -111,8 +104,7 @@ class MascotaController extends Controller
         return redirect()->route('profile.index')->with('success', 'Mascota eliminada correctamente.');
     }
 
-    public function showData($id)
-    {
+    public function showData($id) {
         $mascota = Mascota::where('id', $id)
             ->where('id_usuario', Auth::id())
             ->firstOrFail();

@@ -7,15 +7,19 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 
-class RegisterController extends Controller
-{
-    public function showRegistrationForm()
-    {
+/** Muestra la vista del formulario de registro
+ *  valida datos, crea el usuario, inicia sesión y redirige.
+ *  */
+
+class RegisterController extends Controller{
+
+
+    public function showRegistrationForm(){
         return view('auth.register');
     }
 
-    public function register(Request $request)
-    {
+    //crear nuevo usuario
+    public function register(Request $request) {
         $request->validate([
             'nombre' => 'required|string|max:255',
             'correo' => 'required|email|unique:usuarios,correo',

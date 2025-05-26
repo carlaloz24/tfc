@@ -21,7 +21,7 @@ class ArticuloController extends Controller
             $query->orderBy('fecha_publicacion', 'asc');
         }
 
-        $articulos = $query->paginate(10); // Aumentado a 10 artículos por página
+        $articulos = $query->paginate(10);
 
         return view('articulos.public_index', compact('articulos'));
     }
@@ -38,20 +38,18 @@ class ArticuloController extends Controller
         }
 
         if ($request->filled('start_date') && $request->filled('end_date')) {
-            $startDate = Carbon::createFromFormat('Y-m-d', $request->input('start_date'))->startOfDay();
+         $startDate = Carbon::createFromFormat('Y-m-d', $request->input('start_date'))->startOfDay();
             $endDate = Carbon::createFromFormat('Y-m-d', $request->input('end_date'))->endOfDay();
             $query->whereBetween('fecha_publicacion', [$startDate, $endDate]);
         }
 
-        $articulos = $query->paginate(10);
+                 $articulos = $query->paginate(10);
 
         return view('articulos.index', compact('articulos'));
     }
 
     public function create()
-    {
-        return view('articulos.create');
-    }
+    { return view('articulos.create');  }
 
     public function store(Request $request)
     {
@@ -111,20 +109,17 @@ class ArticuloController extends Controller
         }
     }
 
-    public function show($slug)
-    {
+    public function show($slug) {
         $articulo = Articulo::where('slug', $slug)->firstOrFail();
         return view('articulos.show', compact('articulo'));
     }
 
-    public function edit($slug)
-    {
+    public function edit($slug) {
         $articulo = Articulo::where('slug', $slug)->firstOrFail();
         return view('articulos.edit', compact('articulo'));
     }
 
-    public function update(Request $request, $slug)
-    {
+    public function update(Request $request, $slug)  {
         $articulo = Articulo::where('slug', $slug)->firstOrFail();
 
         $validated = $request->validate([

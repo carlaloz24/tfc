@@ -5,8 +5,7 @@ use Illuminate\Support\Facades\Schema;
 
 class AddFieldsToDietasTable extends Migration
 {
-    public function up()
-    {
+    public function up(){
         Schema::table('dietas', function (Blueprint $table) {
             $table->string('nombre')->nullable()->after('fecha_generacion');
             $table->decimal('peso', 8, 2)->nullable()->after('nombre');
@@ -18,8 +17,7 @@ class AddFieldsToDietasTable extends Migration
         });
     }
 
-    public function down()
-    {
+    public function down(){
         Schema::table('dietas', function (Blueprint $table) {
             $table->dropColumn([
                 'nombre',

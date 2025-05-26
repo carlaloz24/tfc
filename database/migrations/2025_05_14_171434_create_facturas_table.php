@@ -5,8 +5,7 @@ use Illuminate\Support\Facades\Schema;
 
 class CreateFacturasTable extends Migration
 {
-    public function up()
-    {
+    public function up() {
         Schema::create('facturas', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id');
@@ -23,8 +22,7 @@ class CreateFacturasTable extends Migration
         });
     }
 
-    public function down()
-    {
+    public function down() {
         Schema::dropIfExists('facturas');
     }
 }

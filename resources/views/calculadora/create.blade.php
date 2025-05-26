@@ -3,6 +3,8 @@
 @section('content')
     <div class="main-container">
         <div class="second-background"></div>
+
+        <p><strong>Depuración:</strong> Mascota ID = {{ $mascota->id ?? 'No definido' }}, Nombre = {{ $mascota->nombre ?? 'No definido' }}</p>
         <header class="hero">
             <h1>Calculadora de Dietas Caninas</h1>
             <p style="line-height: 24px">Personaliza la dieta ideal para {{ $mascota->nombre }}</p>
@@ -19,12 +21,18 @@
                             <div class="mb-3">
                                 <label for="peso" class="form-label">Peso (kg)</label>
                                 <input type="number" class="form-control" id="peso" name="peso" min="1" step="0.1" value="{{ $mascota->peso }}" required>
+                                @error('peso')
+                                <div class="text-danger">{{ $message }}</div>
+                                @enderror
                             </div>
                             <div class="mb-3">
-                                <label for="raza" class="form-label">Raza1</label>
-                                <select class="form-select" id="raza" name="raza" required>
+                                <label for="raza" class="form-label">Raza</label>
+                                <select class="form-select" id="raza" name="raza" data-current-raza="{{ $mascota->raza }}" required>
                                     <option value="">Cargando razas...</option>
                                 </select>
+                                @error('raza')
+                                <div class="text-danger">{{ $message }}</div>
+                                @enderror
                             </div>
                         </div>
                         <div class="col-md-6">
@@ -36,6 +44,9 @@
                                     <option value="adulto" {{ $mascota->categoria_edad == 'adulto' ? 'selected' : '' }}>Adulto</option>
                                     <option value="senior" {{ $mascota->categoria_edad == 'senior' ? 'selected' : '' }}>Senior</option>
                                 </select>
+                                @error('categoria_edad')
+                                <div class="text-danger">{{ $message }}</div>
+                                @enderror
                             </div>
                         </div>
                         <div class="col-md-6">
@@ -45,6 +56,9 @@
                                     <option value="1" {{ $mascota->esterilizado ? 'selected' : '' }}>Sí</option>
                                     <option value="0" {{ $mascota->esterilizado ? '' : 'selected' }}>No</option>
                                 </select>
+                                @error('esterilizado')
+                                <div class="text-danger">{{ $message }}</div>
+                                @enderror
                             </div>
                         </div>
                         <div class="col-md-6">
@@ -55,6 +69,9 @@
                                     <option value="moderada" {{ $mascota->nivel_actividad == 'moderada' ? 'selected' : '' }}>Moderada</option>
                                     <option value="alta" {{ $mascota->nivel_actividad == 'alta' ? 'selected' : '' }}>Alta</option>
                                 </select>
+                                @error('nivel_actividad')
+                                <div class="text-danger">{{ $message }}</div>
+                                @enderror
                             </div>
                         </div>
                         <div class="col-md-6">
@@ -66,6 +83,9 @@
                                     <option value="mixta_50" {{ $mascota->tipo_dieta_preferida == 'mixta_50' ? 'selected' : '' }}>Mixta (50% Pienso / 50% Natural)</option>
                                     <option value="mixta_70" {{ $mascota->tipo_dieta_preferida == 'mixta_70' ? 'selected' : '' }}>Mixta (70% Pienso / 30% Natural)</option>
                                 </select>
+                                @error('tipo_dieta')
+                                <div class="text-danger">{{ $message }}</div>
+                                @enderror
                             </div>
                         </div>
                         <div class="col-md-12">
@@ -108,6 +128,12 @@
                                     <option value="mollejas" {{ in_array('mollejas', $mascota->alimentos_alergia ?? []) ? 'selected' : '' }}>Mollejas</option>
                                     <option value="tripa_verde" {{ in_array('tripa_verde', $mascota->alimentos_alergia ?? []) ? 'selected' : '' }}>Tripa Verde</option>
                                 </select>
+                                @error('condiciones_salud')
+                                <div class="text-danger">{{ $message }}</div>
+                                @enderror
+                                @error('alimentos_alergia')
+                                <div class="text-danger">{{ $message }}</div>
+                                @enderror
                             </div>
                         </div>
                         <div class="col-md-12">
@@ -122,6 +148,5 @@
     </div>
 @endsection
 @push('scripts')
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     @vite(['resources/js/calculadora.js'])
 @endpush

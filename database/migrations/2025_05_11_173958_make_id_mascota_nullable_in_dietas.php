@@ -5,15 +5,13 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    public function up()
-    {
+    public function up(){
         Schema::table('dietas', function (Blueprint $table) {
             $table->unsignedBigInteger('id_mascota')->nullable()->change();
         });
     }
 
-    public function down()
-    {
+    public function down(){
         Schema::table('dietas', function (Blueprint $table) {
             $table->unsignedBigInteger('id_mascota')->nullable(false)->change();
         });

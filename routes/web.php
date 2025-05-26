@@ -14,7 +14,6 @@ Route::get('/', fn () => view('home'))->name('home');
 Route::get('/blog', [ArticuloController::class, 'index'])->name('articulos.index');
 Route::get('/articulos/{slug}', [ArticuloController::class, 'show'])->name('articulos.show');
 Route::get('/calculadora', [CalculadoraController::class, 'show'])->name('calculadora.show');
-Route::get('/calculadora/index', [CalculadoraController::class, 'index'])->name('calculadora.index');
 Route::get('/calculadora/create/{mascota}', [CalculadoraController::class, 'create'])->name('calculadora.create');
 Route::post('/calculadora', [CalculadoraController::class, 'store'])->name('calculadora.store');
 Route::get('/planes', fn () => view('planes'))->name('planes');
@@ -34,8 +33,10 @@ Route::post('/register', [RegisterController::class, 'register']);
 
 Route::get('/admin/login', [LoginController::class, 'showAdminLoginForm'])->name('admin.login');
 Route::post('/admin/login', [LoginController::class, 'adminLogin']);
+Route::get('/calculadora/index', [CalculadoraController::class, 'index'])->name('calculadora.index');
 
 Route::middleware('auth')->group(function () {
+
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.delete');

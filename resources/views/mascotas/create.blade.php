@@ -134,14 +134,14 @@
             const razaSelect = document.getElementById('raza');
             const form = document.getElementById('create-mascota-form');
 
-            // Manejar visibilidad del selector de alergias
+
             if (alergiaCheckbox && alimentosAlergiaSelect) {
                 alergiaCheckbox.addEventListener('change', function () {
                     alimentosAlergiaSelect.style.display = this.checked ? 'block' : 'none';
                 });
             }
 
-            // Cargar razas desde Dog CEO's Dog API
+            // cargar razas desde Dog CEO's Dog API
             if (razaSelect) {
                 fetch('https://dog.ceo/api/breeds/list/all')
                     .then(response => {
@@ -174,7 +174,7 @@
                     });
             }
 
-            // Depurar el valor de raza antes de enviar
+
             if (form && razaSelect) {
                 form.addEventListener('submit', function (event) {
                     const razaValue = razaSelect.value;

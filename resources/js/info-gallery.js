@@ -1,3 +1,10 @@
+/*
+* GSAP es una librería de JavaScript para crear animaciones,
+* fácil de usar y compatible con todos los navegadores.
+*
+* En Home, en los 4 cards de dietas, cambia el scroll vertical a horizontal en esa sección
+* */
+
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 

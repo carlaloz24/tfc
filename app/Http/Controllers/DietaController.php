@@ -41,7 +41,7 @@ class DietaController extends Controller
                 return response()->json(['success' => false, 'message' => 'No hay PDF disponible'], 404);
             }
 
-            // Generar URL temporal para el PDF
+            //generar url temporal para el PDF
             $pdfPath = 'temp/dietas/dieta_' . $mascota_id . '_' . now()->format('YmdHis') . '.pdf';
             Storage::put($pdfPath, $dieta->pdf_dieta);
             $pdfUrl = Storage::temporaryUrl($pdfPath, now()->addMinutes(5));
@@ -62,7 +62,7 @@ class DietaController extends Controller
 
         $mascota = Mascota::where('id', $request->mascota_id)->where('id_usuario', Auth::id())->firstOrFail();
 
-        // Calcular calorías
+        //calcular calorías
         $baseCalorias = $request->peso * 30 + 70;
         $calorias = match ($request->categoria_edad) {
             'cachorro_menor_4' => $baseCalorias * 2,
@@ -80,13 +80,12 @@ class DietaController extends Controller
         }
         $calorias = round($calorias);
 
-        // Generar PDF
+        //generar PDF
         $pdf = PDF::loadView('calculadora.pdf', ['mascota' => $mascota, 'calorias' => $calorias, 'tipo_dieta' => $request->tipo_dieta, 'menu' => json_decode($request->menu_json, true), 'condiciones_salud' => $request->condiciones_salud??[], 'alimentos_alergia' => $request->alimentos_alergia??[],]);
 
-        // Guardar PDF como datos binarios
         $pdfData = $pdf->output();
 
-        // Guardar dieta
+        // guardar dieta
         $dieta = new Dieta();
         $dieta->id_mascota = $mascota->id;
         $dieta->id_usuario = Auth::id();

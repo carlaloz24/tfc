@@ -117,17 +117,17 @@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const alergiaCheckbox = document.getElementById('alergia');
-            const alimentosAlergiaSelect = document.getElementById('alimentos_alergia');
-            const razaSelect = document.getElementById('raza');
+             const alimentosAlergiaSelect = document.getElementById('alimentos_alergia');
+             const razaSelect = document.getElementById('raza');
 
-            // Manejar visibilidad del selector de alergias
+
             if (alergiaCheckbox && alimentosAlergiaSelect) {
-                alergiaCheckbox.addEventListener('change', function () {
+        alergiaCheckbox.addEventListener('change', function () {
                     alimentosAlergiaSelect.style.display = this.checked ? 'block' : 'none';
                 });
             }
 
-            // Cargar razas desde Dog CEO's Dog API
+            // cargar razas desde Dog CEO's Dog API
             if (razaSelect) {
                 fetch('https://dog.ceo/api/breeds/list/all')
                     .then(response => {
