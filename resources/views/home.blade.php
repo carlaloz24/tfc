@@ -42,7 +42,7 @@
     <div class="info-gallery-horizontal">
         <section class="info-item">
             <div class="info-box">
-                <img src="{{ asset('images/barf-diet.png') }}" alt="Historia 1" class="info-image">
+                <img src="{{ asset('images/barf-diet.png') }}" alt="Historia 1" class="info-image" style="margin-top:15px;">
                 <h3 class="info-item-title">Dieta Barf</h3>
                 <p class="info-text">Esta dieta cruda, compuesta por carne fresca, vísceras, huesos carnosos y verduras,
                     replica lo que tu perro comería en la naturaleza. Recomendada por veterinarios y expertos en nutrición
@@ -52,19 +52,20 @@
         </section>
         <section class="info-item">
             <div class="info-box">
-                <img src="{{ asset('images/cocida-diet.png') }}" alt="Historia 2" class="info-image">
+                <img src="{{ asset('images/cocida-diet.png') }}" alt="Historia 2" class="info-image" style="margin-top:15px;">
                 <h3 class="info-item-title">Dieta cocida</h3>
-                <p class="info-text">Si buscas una alternativa fresca y fácil de digerir,
-                    nuestra dieta cocida combina carne, verduras y grasas cuidadosamente cocinadas
-                    para preservar nutrientes. Ideal para perros senior, con digestión sensible o en
-                    transición desde pienso, ofrece sabor y salud sin esfuerzo. Confía en nosotros para
-                    nutrir a tu perro con comidas caseras de calidad.</p>
+                <p class="info-text">Si buscas una alternativa fresca y fácil de digerir, la dieta cocida combina carne,
+                    verduras y grasas cuidadosamente cocinadas para preservar todos los nutrientes.
+                    Ideal para perros senior, con digestiones sensibles o en transición desde pienso, ofrece sabor y
+                    salud, adaptándose a las necesidades de cada etapa de vida.
+
+                </p>
             </div>
         </section>
         <section class="info-item">
             <div class="info-box">
-                <img src="{{ asset('images/50_50-diet.png') }}" alt="Historia 3" class="info-image">
-                <h3 class="info-item-title">Mixta (50% Pienso / 50% Natural)</h3>
+                <img src="{{ asset('images/50_50-diet.png') }}" alt="Historia 3" class="info-image"style="margin-top:15px;">
+                <h3 class="info-item-title">Mixta 50%</h3>
                 <p class="info-text">Esta dieta equilibra un 50% de pienso premium con un 50% de comida fresca,
                     perfecta para perros que les gusta la variedad y dueños que buscan conveniencia sin renunciar a la frescura
                     y calidad del alimento.
@@ -74,8 +75,8 @@
 
         <section class="info-item">
             <div class="info-box">
-                <img src="{{ asset('images/70_30-diet.png') }}" alt="Historia 3" class="info-image">
-                <h3 class="info-item-title">Mixta (70% Pienso / 30% Natural)</h3>
+                <img src="{{ asset('images/70_30-diet.png') }}" alt="Historia 3" class="info-image" style="margin-top:15px;">
+                <h3 class="info-item-title">Mixta 70% </h3>
                 <p class="info-text">Para quienes valoran la practicidad con un toque gourmet,
                     esta dieta combina un 70% de pienso de alta calidad, compuesto por ingredientes naturales y sin aditivos,
                     con un 30% de comida fresca.
