@@ -2,34 +2,80 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Dieta para {{ $mascota ? $mascota->nombre : 'Perro' }}</title>
+    <title>Dieta para {{ $mascota ? $mascota->nombre : ($nombre ?? 'Perro') }}</title>
     <style>
-        body { font-family: Arial, sans-serif; font-size: 12px; }
-        .container { max-width: 800px; margin: 0 auto; }
-        h1 { color: #fb4d17; font-size: 18px; text-align: center; }
-        h2 { font-size: 14px; margin-top: 20px; }
-        h3 { font-size: 12px; margin-top: 15px; }
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        th, td { border: 1px solid #000; padding: 5px; text-align: left; }
-        th { background-color: #f2f2f2; }
-        .section { margin-bottom: 20px; }
+        @page {
+            margin: 15px;
+        }
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 12px;
+            color: #505050;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 15px;
+        }
+        h1 {
+            color: #fb4d17;
+            font-size: 18px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        h2 {
+            font-size: 14px;
+            margin-top: 20px;
+            color: #083630;
+        }
+        h3 {
+            font-size: 12px;
+            margin-top: 15px;
+            color: #083630;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            border: 1px solid #000;
+            padding: 5px;
+            text-align: left;
+            font-size: 11px;
+        }
+        th {
+            background-color: #f2f2f2;
+            color: #083630;
+            font-weight: bold;
+        }
+        .section {
+            margin-bottom: 20px;
+        }
+        p {
+            margin: 5px 0;
+            font-size: 12px;
+        }
+        strong {
+            color: #083630;
+        }
     </style>
 </head>
 <body>
 <div class="container">
-    <h1>Dieta para {{ $mascota ? $mascota->nombre : 'Perro' }}</h1>
+    <h1>Dieta para {{ $mascota ? $mascota->nombre : ($nombre ?? 'Perro') }}</h1>
     <div class="section">
-        <h2>Información de la Mascota</h2>
-        <p><strong>Nombre:</strong> {{ $mascota ? $mascota->nombre : 'No especificado' }}</p>
-        @if ($mascota)
-            <p><strong>Raza:</strong> {{ $mascota->raza }}</p>
-            <p><strong>Peso:</strong> {{ $mascota->peso }} kg</p>
-            <p><strong>Edad:</strong> {{ ucfirst(str_replace('_', ' ', $mascota->categoria_edad)) }}</p>
-            <p><strong>Esterilizado:</strong> {{ $mascota->esterilizado ? 'Sí' : 'No' }}</p>
-            <p><strong>Nivel de Actividad:</strong> {{ ucfirst($mascota->nivel_actividad) }}</p>
-        @endif
+        <h2>Información de la Mascota4</h2>
+        <p><strong>Nombre:</strong> {{ $mascota ? $mascota->nombre : ($nombre ?? 'No especificado') }}</p>
+        <p><strong>Raza:</strong> {{ $mascota ? $mascota->raza : ($raza ?? 'No especificada') }}</p>
+        <p><strong>Peso:</strong> {{ $mascota ? $mascota->peso : ($peso ?? 'No especificado') }} {{ isset($peso) ? 'kg' : '' }}</p>
+        <p><strong>Edad:</strong> {{ $mascota ? ucfirst(str_replace('_', ' ', $mascota->categoria_edad)) : ($categoria_edad ? ucfirst(str_replace('_', ' ', $categoria_edad)) : 'No especificada') }}</p>
+        <p><strong>Esterilizado:</strong> {{ $mascota ? ($mascota->esterilizado ? 'Sí' : 'No') : (isset($esterilizado) ? ($esterilizado ? 'Sí' : 'No') : 'No especificado') }}</p>
+        <p><strong>Nivel de Actividad:</strong> {{ $mascota ? ucfirst($mascota->nivel_actividad) : ($nivel_actividad ? ucfirst($nivel_actividad) : 'No especificado') }}</p>
         <p><strong>Condiciones de Salud:</strong> {{ implode(', ', $condiciones_salud ?: ['Ninguna']) }}</p>
-        <p><strong>Alergias:</strong> {{ implode(', ', $alimentos_alergia ?: ['Ninguna']) }}</p>
+        <p><strong>Alergias:</strong> {{ implode(', ', array_map(fn($item) => str_replace('_', ' ', ucfirst($item)), $alimentos_alergia ?: ['Ninguna'])) }}</p>
     </div>
     <div class="section">
         <h2>Detalles de la Dieta</h2>

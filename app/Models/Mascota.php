@@ -35,4 +35,9 @@ class Mascota extends Model{
     public function usuario()    {
         return $this->belongsTo(User::class, 'id_usuario');
     }
+
+    public function facturas()
+    {
+        return $this->hasMany(Factura::class, 'mascota_id');
+    }
 }

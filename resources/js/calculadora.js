@@ -44,6 +44,8 @@ const ajustes = {
 
 // pasar palabras a con tildes
 function capitalizarCategoria(categoria) {
+    console.log('capitalizarCategoria llamado con:', categoria);
+    if (!categoria) return 'Desconocida';
     const map = {
         'carne': 'Carne',
         'visceras': 'Vísceras',
@@ -58,6 +60,8 @@ function capitalizarCategoria(categoria) {
 
 //Formatea nombres de alimentos (por ej: pollo_pechuga a Pechuga de pollo).
 function formatearAlimento(alimento) {
+    console.log('formatearAlimento llamado con:', alimento);
+    if (!alimento) return 'Desconocido';
     const map = {
         'pollo_pechuga': 'Pechuga de pollo',
         'pollo_muslo': 'Muslo de pollo',
@@ -142,6 +146,14 @@ document.addEventListener('DOMContentLoaded', function () {
                     option.textContent = formattedBreed;
                     razaSelect.appendChild(option);
                 });
+
+                if (razaSelect.dataset.currentRaza) {
+                    const option = document.createElement('option');
+                    option.value = razaSelect.dataset.currentRaza;
+                    option.textContent = razaSelect.dataset.currentRaza;
+                    option.selected = true;
+                    razaSelect.appendChild(option);
+                }
             })
             .catch(error => {
                 console.error('Error al cargar razas:', error);
@@ -158,14 +170,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     form.addEventListener('submit', function (e) {
         e.preventDefault();
-
         const formData = new FormData(form);
-        const rawData = {};
-        for (let [key, value] of formData.entries()) {
-            rawData[key] = value;
-        }
-        console.log('Datos crudos del formulario:', rawData);
-
         const data = {
             mascota_id: formData.get('mascota_id') || null,
             nombre: formData.get('nombre')?.trim() || 'Perro',
@@ -178,47 +183,36 @@ document.addEventListener('DOMContentLoaded', function () {
             condiciones_salud: formData.getAll('condiciones_salud[]'),
             alimentos_alergia: formData.getAll('alimentos_alergia[]'),
         };
+        console.log('Datos del formulario:', data);
 
-        console.log('Datos procesados:', data);
 
         try {
-            //calcula calorías necesarias (energía metabólica)
-              if (!formData.get('peso') || isNaN(data.peso) || data.peso <= 0) {
-                 throw new Error(`El peso debe ser un número positivo. Valor recibido: ${formData.get('peso') || 'vacío'}`);
-            }
-
-            if (!data.categoria_edad ||!['cachorro_menor_4', 'cachorro_mayor_4', 'adulto', 'senior'].includes(data.categoria_edad)) {
-                  throw new Error(`Selecciona una categoría de edad válida. Valor recibido: ${data.categoria_edad || 'vacío'}`);
-             }
-
-             if (!data.nivel_actividad ||!['baja', 'moderada', 'alta'].includes(data.nivel_actividad)) {
-                throw new Error(`Selecciona un nivel de actividad válido. Valor recibido: ${data.nivel_actividad || 'vacío'}`);
-            }
+            if (!data.peso || isNaN(data.peso) || data.peso <= 0) throw new Error('Peso inválido.');
+            if (!data.categoria_edad) throw new Error('Selecciona categoría de edad.');
+            if (!data.nivel_actividad) throw new Error('Selecciona nivel de actividad.');
+            if (!data.tipo_dieta) throw new Error('Selecciona tipo de dieta.');
+            if (!data.raza || data.raza.trim() === '') throw new Error('Selecciona una raza válida.');
+            if (!data.tipo_dieta || data.tipo_dieta.trim() === '') throw new Error('Selecciona un tipo de dieta válido.');
 
 
-             if (!data.tipo_dieta || !['barf', 'cocida', 'mixta_50', 'mixta_70'].includes(data.tipo_dieta)) {
-                throw new Error(`Selecciona un tipo de dieta válido. Valor recibido: ${data.tipo_dieta || 'vacío'}`);
-            }
-            if (!data.raza) {
-                throw new Error('Selecciona una raza válida.');
-            }
-
-             let energiaMetabolica = 70* Math.pow(data.peso, 0.75) ;
-             let factorAjuste = data.categoria_edad === 'adulto' ? ajustes[data.categoria_edad][data.nivel_actividad] : ajustes[data.categoria_edad];
+            let energiaMetabolica = 70 * Math.pow(data.peso, 0.75);
+            const ajustes = {
+                cachorro_menor_4: 2,
+                cachorro_mayor_4: 1.5,
+                adulto: { baja: 0.8, moderada: 1, alta: 1.2 },
+                senior: 0.7,
+            };
+            let factorAjuste = data.categoria_edad === 'adulto' ? ajustes[data.categoria_edad][data.nivel_actividad] : ajustes[data.categoria_edad];
             energiaMetabolica *= factorAjuste;
 
-            let ajustesAplicados =[];
+            let ajustesAplicados = [];
             if (data.condiciones_salud.includes('obesidad')) {
                 energiaMetabolica *= 0.8;
-                ajustesAplicados.push('Reducción del 20% por obesidad');
+                ajustesAplicados.push('Reducción por obesidad');
             }
-
             if (data.esterilizado) {
-                const gramosIdeales = data.peso * 20;
-                const gramosActuales = energiaMetabolica / 2;
-                const factorReduccion = gramosIdeales / gramosActuales;
-                energiaMetabolica *= factorReduccion;
-                ajustesAplicados.push(`Reducción al 2% del peso (${gramosIdeales}g) por esterilización`);
+                energiaMetabolica *= 0.8;
+                ajustesAplicados.push('Reducción por esterilización');
             }
 
             let dieta = {};
@@ -228,86 +222,55 @@ document.addEventListener('DOMContentLoaded', function () {
                     visceras: { kcal: energiaMetabolica * 0.10, gramos: 0, proteinas: 0, grasas: 0, carbohidratos: 0 },
                     huesos: { kcal: energiaMetabolica * 0.125, gramos: 0, proteinas: 0, grasas: 0, carbohidratos: 0 },
                     verduras: { kcal: energiaMetabolica * 0.125, gramos: 0, proteinas: 0, grasas: 0, carbohidratos: 0 },
-                    grasas: {
-                        kcal: data.condiciones_salud.includes('obesidad') ? energiaMetabolica * 0.05 : energiaMetabolica * 0.10,
-                        gramos: 0, proteinas: 0, grasas: 0, carbohidratos: 0
-                    }
+                    grasas: { kcal: energiaMetabolica * 0.10, gramos: 0, proteinas: 0, grasas: 0, carbohidratos: 0 },
                 };
-                if (data.condiciones_salud.includes('renal')) {
-                    dieta.carne.kcal = energiaMetabolica * 0.6;
-                    delete dieta.huesos;
-                }
-                if (data.condiciones_salud.includes('diabetes')) {
-                    dieta.verduras.kcal = energiaMetabolica * 0.05;
-                }
             } else if (data.tipo_dieta === 'mixta_50') {
                 dieta = {
                     pienso: { kcal: energiaMetabolica * 0.5, gramos: 0, proteinas: 0, grasas: 0, carbohidratos: 0 },
-                    natural: { kcal: energiaMetabolica * 0.5, gramos: 0, proteinas: 0, grasas: 0, carbohidratos: 0 }
+                    natural: { kcal: energiaMetabolica * 0.5, gramos: 0, proteinas: 0, grasas: 0, carbohidratos: 0 },
                 };
             } else if (data.tipo_dieta === 'mixta_70') {
                 dieta = {
                     pienso: { kcal: energiaMetabolica * 0.7, gramos: 0, proteinas: 0, grasas: 0, carbohidratos: 0 },
-                    natural: { kcal: energiaMetabolica * 0.3, gramos: 0, proteinas: 0, grasas: 0, carbohidratos: 0 }
+                    natural: { kcal: energiaMetabolica * 0.3, gramos: 0, proteinas: 0, grasas: 0, carbohidratos: 0 },
                 };
             }
 
-            //genera el menú semanal y guarda en un campo oculto
             const menuSemanal = generarMenuSemanal(dieta, data.condiciones_salud, data.alimentos_alergia, data.tipo_dieta);
             menuJsonInput.value = JSON.stringify(menuSemanal);
 
-            //lo muestra
-            mostrarResultados(data.nombre, data.peso, energiaMetabolica, dieta, menuSemanal, ajustesAplicados, data.tipo_dieta, data.raza);
-
-            //saca botónpara contratar plan
-            if (descargarPDFBtn) {
-                descargarPDFBtn.style.display = 'block';
-                descargarPDFBtn.onclick = () => descargarPDF(data.nombre, data.peso, energiaMetabolica, dieta, menuSemanal, ajustesAplicados, data.tipo_dieta, data.raza);
-            } else {
-                console.warn('No se puede mostrar el botón de descargar PDF porque no se encontró el elemento');
-            }
-
-            if (contratarPlanBtn) {
-                contratarPlanBtn.style.display = 'block';
-            } else {
-                console.warn('No se puede mostrar el botón de contratar plan porque no se encontró el elemento');
-            }
-
-
-            //pasar datos a servidor
             fetch(form.action, {
                 method: 'POST',
                 body: formData,
-                headers: {
-                    'Accept': 'application/json',
-                },
-
-            }).then(response => {
-                if (!response.ok) {
-                      return response.json().then(error => {
-                        throw new Error(error.message || `Error en la respuesta del servidor: ${response.statusText}`);
-                    });
-                }
-
-                return response.json();
-            }).then(data => {
-                console.log('Respuesta del servidor:', data);
-                if (!data.success) {
-                    throw new Error(data.message || 'Error al guardar la dieta');
-                }
-                console.log('Dieta guardada con éxito:', data.dieta_id);
-            }).catch(error => {
-                console.error('Error en fetch:', error);
-                resultadosDiv.innerHTML += `<p class="result-error mt-3">Advertencia: ${error.message}. Por favor, verifica la asociación de la dieta en el perfil.</p>`;
-            });
-
+                headers: { 'Accept': 'application/json' },
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Respuesta JSON:', data);
+                    if (!data.success) throw new Error(data.error || 'Error al generar dieta.');
+                    if (data.redirect) {
+                        alert(data.message);
+                        window.location.href = data.redirect;
+                    } else {
+                        mostrarResultados(data.nombre, data.peso, energiaMetabolica, dieta, menuSemanal, ajustesAplicados, data.tipo_dieta, data.raza);
+                        descargarPDF(data.nombre, data.peso, energiaMetabolica, dieta, menuSemanal, ajustesAplicados, data.tipo_dieta, data.raza);
+                        if (data.dieta_id && descargarPDFBtn) {
+                            descargarPDFBtn.style.display = 'inline-block';
+                            descargarPDFBtn.onclick = () => window.location.href = `/calculadora/download/${data.dieta_id}`;
+                        }
+                        if (contratarPlanBtn) contratarPlanBtn.style.display = 'inline-block';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    resultadosDiv.innerHTML = `Error: ${error.message}`;
+                });
         } catch (error) {
-            console.error('Error en validación:', error);
-            resultadosDiv.innerHTML = `<p class="result-error">Error: ${error.message}</p>`;
+            console.error('Error:', error);
+            resultadosDiv.innerHTML = `Error: ${error.message}`;
         }
     });
 });
-
 //------------------------------------------------------------------
 //genera menú semanal con alimentos por día, mañana y tarde
 function generarMenuSemanal(dieta, condicionesSalud, alimentosAlergia, tipoDieta) {
@@ -346,7 +309,9 @@ function generarMenuSemanal(dieta, condicionesSalud, alimentosAlergia, tipoDieta
             const etiquetaTarde = tipoDieta === 'cocida' ? `${formatearAlimento(alimentoTarde)} (cocido)` : formatearAlimento(alimentoTarde);
             menu[dia].manana[categoria] = `${Math.round(gramosManana)}g ${etiquetaManana}`;
             menu[dia].tarde[categoria] = `${Math.round(gramosTarde)}g ${etiquetaTarde}`;
+
         }
+
     });
     return menu;
 }
@@ -363,7 +328,7 @@ function mostrarResultados(nombrePerro, peso, energiaMetabolica, dieta, menuSema
                     <li><strong>Nombre:</strong> ${nombrePerro}</li>
                     <li><strong>Raza:</strong> ${raza}</li>
                     <li><strong>Peso:</strong> ${peso} kg</li>
-                    <li><strong>Tipo de dieta: </strong> ${tipoDieta.charAt(0).toUpperCase() + tipoDieta.slice(1)}</li>
+<li><strong>Tipo de dieta: </strong> ${tipoDieta }</li>
                     <li><strong>Calorías diarias: </strong> ${Math.round(energiaMetabolica)} kcal</li>
                     ${ajustesAplicados.length > 0 ? `<li><strong>Ajustes aplicados:</strong> ${ajustesAplicados.join(', ')}</li>` : ''}
                 </ul>
@@ -487,7 +452,7 @@ function descargarPDF(nombrePerro, peso, energiaMetabolica, dieta, menuSemanal, 
         { label: 'Nombre: ', value: nombrePerro },
         { label: 'Raza: ', value: raza },
         { label: 'Peso: ', value: `${peso} kg` },
-        { label: 'Tipo de dieta: ', value: tipoDieta.charAt(0).toUpperCase() + tipoDieta.slice(1) },
+        { label: 'Tipo de dieta: ', value: tipoDieta },
         { label: 'Calorías diarias: ', value: `${Math.round(energiaMetabolica)} kcal` },
     ];
     if (ajustesAplicados.length > 0) {

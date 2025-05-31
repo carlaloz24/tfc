@@ -47,6 +47,7 @@
                                         <h3 class="pet-card-title">{{ $mascota->nombre }}</h3>
                                         <p class="pet-card-text">
                                             <strong>Edad:</strong> {{ ucfirst(str_replace('_', ' ', $mascota->categoria_edad)) }}<br>
+                                            <strong>Raza:</strong> {{ $mascota->raza }} <br>
                                             <strong>Peso:</strong> {{ $mascota->peso }} kg<br>
                                             <strong>Nivel de Actividad:</strong> {{ ucfirst($mascota->nivel_actividad) }}<br>
                                             <strong>Esterilizado:</strong> {{ $mascota->esterilizado ? 'Sí' : 'No' }}<br>
@@ -82,7 +83,7 @@
                                                 @method('DELETE')
                                                 <button type="submit" class="pet-btn-action pet-btn-delete" onclick="return confirm('¿Eliminar esta mascota?')"><i class="bi bi-trash"></i></button>
                                             </form>
-                                            @if(!$mascota->plan)
+                                            @if($mascota->facturas->isEmpty())
                                                 <a href="{{ route('planes.select', $mascota->id) }}" class="pet-btn-primary">Contratar Plan</a>
                                             @endif
                                         </div>

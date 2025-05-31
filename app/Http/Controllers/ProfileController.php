@@ -8,12 +8,16 @@ use Illuminate\Support\Facades\Auth;
 
 class ProfileController extends Controller
 {
-    public function index() {
-        $mascotas = Mascota::with(['dietas', 'plan'])
+
+    public function index()
+    {
+        $mascotas = Mascota::with(['dietas', 'plan', 'facturas'])
             ->where('id_usuario', Auth::id())
             ->get();
         return view('profile', compact('mascotas'));
     }
+
+
 
     public function update(Request $request) {
         $user = Auth::user();

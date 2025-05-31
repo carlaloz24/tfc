@@ -33,10 +33,10 @@ Route::post('/register', [RegisterController::class, 'register']);
 
 Route::get('/admin/login', [LoginController::class, 'showAdminLoginForm'])->name('admin.login');
 Route::post('/admin/login', [LoginController::class, 'adminLogin']);
-Route::get('/calculadora/index', [CalculadoraController::class, 'index'])->name('calculadora.index');
+//Route::get('/calculadora/index', [CalculadoraController::class, 'index'])->name('calculadora.index');
 
 Route::middleware('auth')->group(function () {
-
+    Route::get('/calculadora/index', [CalculadoraController::class, 'index'])->name('calculadora.index');
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.delete');

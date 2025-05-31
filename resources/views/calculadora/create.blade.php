@@ -27,8 +27,11 @@
                             </div>
                             <div class="mb-3">
                                 <label for="raza" class="form-label">Raza</label>
-                                <select class="form-select" id="raza" name="raza" data-current-raza="{{ $mascota->raza }}" required>
-                                    <option value="">Cargando razas...</option>
+                                <select class="form-select" id="raza" name="raza" data-current-raza="{{ $mascota->raza ?? '' }}" required>
+                                    <option value="" {{ empty($mascota->raza) ? 'selected' : '' }} disabled>Selecciona una raza</option>
+                                    @if ($mascota->raza)
+                                        <option value="{{ $mascota->raza }}" selected>{{ $mascota->raza }}</option>
+                                    @endif
                                 </select>
                                 @error('raza')
                                 <div class="text-danger">{{ $message }}</div>

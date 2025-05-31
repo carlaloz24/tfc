@@ -5,6 +5,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Dieta extends Model{
     use HasFactory;
+    protected $dates = ['fecha_generacion'];
     protected $fillable = [
         'id_mascota',
         'id_usuario',
