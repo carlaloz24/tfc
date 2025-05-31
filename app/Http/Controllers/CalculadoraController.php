@@ -90,12 +90,42 @@ class CalculadoraController extends Controller
             }
             $calorias = round($calorias);
 
-            // Generar PDF solo si no es actualización
+//            // Generar PDF solo si no es actualización
+//            $pdf = PDF::loadView('calculadora.pdf', [
+//                'mascota' => $mascota,
+//                'calorias' => $calorias,
+//                'tipo_dieta' => $request->tipo_dieta,
+//                'menu' => json_decode($request->menu_json, true),
+//                'condiciones_salud' => $request->condiciones_salud ?? [],
+//                'alimentos_alergia' => $request->alimentos_alergia ?? [],
+//                'nombre' => $request->nombre,
+//                'peso' => $request->peso,
+//                'raza' => $request->raza,
+//                'categoria_edad' => $request->categoria_edad,
+//                'esterilizado' => $request->esterilizado,
+//                'nivel_actividad' => $request->nivel_actividad,
+//            ]);
+//            $pdfData = $pdf->output();
+//            $filename = 'Dieta_' . ($mascota ? $mascota->nombre : $request->nombre) . '_' . now()->format('Y-m-d') . '.pdf';
+//            $pdfPath = 'public/dietas/' . $filename;
+//            Storage::put($pdfPath, $pdfData); // esto guarda el PDF siempre
+
+            $menu = json_decode($request->menu_json, true) ?? [];
+            Log::info('Generando PDF con menu_json:', ['menu' => $menu, 'raw_menu_json' => $request->menu_json]);
+            if (empty($menu)) {
+                Log::warning('Menú vacío en store, regenerando menú semanal');
+                $menu = $this->generarMenuSemanal($calorias, $request->tipo_dieta, $request->condiciones_salud ?? [], $request->alimentos_alergia ?? []);
+                $request->merge(['menu_json' => json_encode($menu)]);
+                Log::info('Menú regenerado:', ['menu' => $menu]);
+            }
+            $dietaData = $this->generateDietaData($menu, $calorias, $request->tipo_dieta);
+            $ajustesAplicados = $this->getAjustesAplicados($request->condiciones_salud ?? [], $request->esterilizado);
             $pdf = PDF::loadView('calculadora.pdf', [
                 'mascota' => $mascota,
                 'calorias' => $calorias,
                 'tipo_dieta' => $request->tipo_dieta,
-                'menu' => json_decode($request->menu_json, true),
+                'menu' => $menu,
+                'dieta' => $dietaData,
                 'condiciones_salud' => $request->condiciones_salud ?? [],
                 'alimentos_alergia' => $request->alimentos_alergia ?? [],
                 'nombre' => $request->nombre,
@@ -104,13 +134,12 @@ class CalculadoraController extends Controller
                 'categoria_edad' => $request->categoria_edad,
                 'esterilizado' => $request->esterilizado,
                 'nivel_actividad' => $request->nivel_actividad,
-            ]);
+                'ajustes_aplicados' => $ajustesAplicados,
+            ])->setPaper('a4')->setOptions(['defaultFont' => 'Arial', 'dpi' => 150]);
             $pdfData = $pdf->output();
             $filename = 'Dieta_' . ($mascota ? $mascota->nombre : $request->nombre) . '_' . now()->format('Y-m-d') . '.pdf';
             $pdfPath = 'public/dietas/' . $filename;
-            Storage::put($pdfPath, $pdfData); // esto guarda el PDF siempre
-
-
+            Storage::put($pdfPath, $pdfData);
 
             // Guardar/actualizar la dieta si hay mascota
             if ($mascota) {
@@ -171,14 +200,172 @@ class CalculadoraController extends Controller
                 })
                 ->firstOrFail();
 
-            if (!$dieta->pdf_dieta || !Storage::exists($dieta->pdf_dieta)) {
-                Log::error('PDF no encontrado para dieta ID: ' . $id);
-                return redirect()->back()->with('error', 'No hay PDF disponible.');
+            $mascota = $dieta->mascota;
+            $menu = json_decode($dieta->menu_json, true) ?? [];
+            Log::info('Descargando PDF con menu_json:', ['menu' => $menu, 'raw_menu_json' => $dieta->menu_json]);
+
+            // Si $menu está vacío, regenera el menú
+            if (empty($menu)) {
+                Log::warning('Menú vacío, regenerando menú semanal', ['dieta_id' => $dieta->id]);
+                $menu = $this->generarMenuSemanal($dieta->calorias, $dieta->tipo_dieta, $mascota->condiciones_salud ?? [], $mascota->alimentos_alergia ?? []);
+                $dieta->menu_json = json_encode($menu);
+                $dieta->save();
+                Log::info('Menú regenerado y guardado:', ['menu' => $menu]);
             }
 
-            return Storage::download($dieta->pdf_dieta, 'Dieta_' . $dieta->mascota->nombre . '_' . $dieta->fecha_generacion . '.pdf');        } catch (\Exception $e) {
+            $dietaData = $this->generateDietaData($menu, $dieta->calorias, $dieta->tipo_dieta);
+            $ajustesAplicados = $this->getAjustesAplicados($mascota->condiciones_salud ?? [], $mascota->esterilizado);
+
+            $pdf = PDF::loadView('calculadora.pdf', [
+                'mascota' => $mascota,
+                'calorias' => $dieta->calorias,
+                'tipo_dieta' => $dieta->tipo_dieta,
+                'menu' => $menu,
+                'dieta' => $dietaData,
+                'condiciones_salud' => $mascota->condiciones_salud ?? [],
+                'alimentos_alergia' => $mascota->alimentos_alergia ?? [],
+                'nombre' => $mascota->nombre,
+                'peso' => $mascota->peso,
+                'raza' => $mascota->raza,
+                'categoria_edad' => $mascota->categoria_edad,
+                'esterilizado' => $mascota->esterilizado,
+                'nivel_actividad' => $mascota->nivel_actividad,
+                'ajustes_aplicados' => $ajustesAplicados,
+            ])->setPaper('a4')->setOptions(['defaultFont' => 'Arial', 'dpi' => 150]);
+
+            $filename = 'Dieta_' . $mascota->nombre . '_' . $dieta->fecha_generacion . '.pdf';
+            return $pdf->download($filename);
+        } catch (\Exception $e) {
             Log::error('Error al descargar dieta: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Ocurrió un error al descargar la dieta.');
         }
+    }
+
+    private function generarMenuSemanal($calorias, $tipoDieta, $condicionesSalud, $alimentosAlergia)
+    {
+        $dias = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
+        $menu = [];
+        $opcionesAlimentos = [
+            'carne' => array_diff(['pollo_pechuga', 'pollo_muslo', 'pavo', 'ternera', 'cordero', 'conejo', 'sardina', 'caballa', 'salmon'], $alimentosAlergia),
+            'visceras' => array_diff(['higado_pollo', 'higado_res', 'rinon_res', 'corazon_pollo', 'mollejas', 'tripa_verde'], $alimentosAlergia),
+            'huesos' => ['alitas_pollo', 'cuellos_pavo', 'costillas_cordero', 'carcasa_pollo', 'patas_pollo'],
+            'verduras' => ['calabaza', 'zanahoria', 'esparragos', 'pepino', 'espinaca', 'brocoli', 'manzana', 'pera', 'arandanos'],
+            'grasas' => ['aceite_oliva', 'aceite_pescado', 'grasa_pato'],
+            'pienso' => ['pienso'],
+            'natural' => ['natural'],
+        ];
+
+        // Definir distribución de calorías por categoría
+        $dietaBase = [];
+        if (in_array($tipoDieta, ['barf', 'cocida'])) {
+            $dietaBase = [
+                'carne' => ['kcal' => $calorias * 0.55],
+                'visceras' => ['kcal' => $calorias * 0.10],
+                'huesos' => ['kcal' => $calorias * 0.125],
+                'verduras' => ['kcal' => $calorias * 0.125],
+                'grasas' => ['kcal' => $calorias * 0.10],
+            ];
+        } elseif ($tipoDieta === 'mixta_50') {
+            $dietaBase = [
+                'pienso' => ['kcal' => $calorias * 0.5],
+                'natural' => ['kcal' => $calorias * 0.5],
+            ];
+        } elseif ($tipoDieta === 'mixta_70') {
+            $dietaBase = [
+                'pienso' => ['kcal' => $calorias * 0.7],
+                'natural' => ['kcal' => $calorias * 0.3],
+            ];
+        }
+
+        // Simulación de datos nutricionales (basado en calculadora.js 'alimentos')
+        $alimentosNutricion = [
+            'pollo_pechuga' => ['kcal' => 1.65, 'proteinas' => 0.31, 'grasas' => 0.035, 'carbohidratos' => 0],
+            'pollo_muslo' => ['kcal' => 2.09, 'proteinas' => 0.26, 'grasas' => 0.115, 'carbohidratos' => 0],
+            'pavo' => ['kcal' => 1.89, 'proteinas' => 0.29, 'grasas' => 0.075, 'carbohidratos' => 0],
+            'ternera' => ['kcal' => 2.50, 'proteinas' => 0.26, 'grasas' => 0.15, 'carbohidratos' => 0],
+            // Agrega más alimentos según calculadora.js
+            'calabaza' => ['kcal' => 0.26, 'proteinas' => 0.01, 'grasas' => 0.001, 'carbohidratos' => 0.065],
+            'aceite_oliva' => ['kcal' => 8.84, 'proteinas' => 0, 'grasas' => 1, 'carbohidratos' => 0],
+            'pienso' => ['kcal' => 3.5, 'proteinas' => 0.25, 'grasas' => 0.10, 'carbohidratos' => 0.50],
+            'natural' => ['kcal' => 1.5, 'proteinas' => 0.15, 'grasas' => 0.05, 'carbohidratos' => 0.20],
+        ];
+
+        foreach ($dias as $dia) {
+            $menu[$dia] = ['manana' => [], 'tarde' => []];
+            foreach ($dietaBase as $categoria => $datos) {
+                $listaAlimentos = $opcionesAlimentos[$categoria] ?? [];
+                if (empty($listaAlimentos)) {
+                    continue;
+                }
+
+                $alimentoManana = $listaAlimentos[array_rand($listaAlimentos)];
+                $alimentoTarde = $listaAlimentos[array_rand($listaAlimentos)];
+                $datosManana = $alimentosNutricion[$alimentoManana] ?? ['kcal' => 1, 'proteinas' => 0.1, 'grasas' => 0.05, 'carbohidratos' => 0.1];
+                $datosTarde = $alimentosNutricion[$alimentoTarde] ?? ['kcal' => 1, 'proteinas' => 0.1, 'grasas' => 0.05, 'carbohidratos' => 0.1];
+
+                $gramosTotales = $datos['kcal'] / (($datosManana['kcal'] + $datosTarde['kcal']) / 2);
+                $gramosManana = $gramosTotales / 2;
+                $gramosTarde = $gramosTotales / 2;
+
+                $etiquetaManana = $tipoDieta === 'cocida' ? str_replace('_', ' ', ucfirst($alimentoManana)) . ' (cocido)' : str_replace('_', ' ', ucfirst($alimentoManana));
+                $etiquetaTarde = $tipoDieta === 'cocida' ? str_replace('_', ' ', ucfirst($alimentoTarde)) . ' (cocido)' : str_replace('_', ' ', ucfirst($alimentoTarde));
+
+                $menu[$dia]['manana'][$categoria] = round($gramosManana) . 'g ' . $etiquetaManana;
+                $menu[$dia]['tarde'][$categoria] = round($gramosTarde) . 'g ' . $etiquetaTarde;
+            }
+        }
+
+        return $menu;
+    }
+    private function generateDietaData($menu, $calorias, $tipoDieta)
+    {
+        $dietaData = [];
+        if (in_array($tipoDieta, ['barf', 'cocida'])) {
+            $dietaData = [
+                'carne' => ['kcal' => $calorias * 0.55, 'gramos' => 0, 'proteinas' => 0, 'grasas' => 0, 'carbohidratos' => 0],
+                'visceras' => ['kcal' => $calorias * 0.10, 'gramos' => 0, 'proteinas' => 0, 'grasas' => 0, 'carbohidratos' => 0],
+                'huesos' => ['kcal' => $calorias * 0.125, 'gramos' => 0, 'proteinas' => 0, 'grasas' => 0, 'carbohidratos' => 0],
+                'verduras' => ['kcal' => $calorias * 0.125, 'gramos' => 0, 'proteinas' => 0, 'grasas' => 0, 'carbohidratos' => 0],
+                'grasas' => ['kcal' => $calorias * 0.10, 'gramos' => 0, 'proteinas' => 0, 'grasas' => 0, 'carbohidratos' => 0],
+            ];
+        } elseif ($tipoDieta === 'mixta_50') {
+            $dietaData = [
+                'pienso' => ['kcal' => $calorias * 0.5, 'gramos' => 0, 'proteinas' => 0, 'grasas' => 0, 'carbohidratos' => 0],
+                'natural' => ['kcal' => $calorias * 0.5, 'gramos' => 0, 'proteinas' => 0, 'grasas' => 0, 'carbohidratos' => 0],
+            ];
+        } elseif ($tipoDieta === 'mixta_70') {
+            $dietaData = [
+                'pienso' => ['kcal' => $calorias * 0.7, 'gramos' => 0, 'proteinas' => 0, 'grasas' => 0, 'carbohidratos' => 0],
+                'natural' => ['kcal' => $calorias * 0.3, 'gramos' => 0, 'proteinas' => 0, 'grasas' => 0, 'carbohidratos' => 0],
+            ];
+        }
+
+        foreach ($menu as $dia => $comidas) {
+            foreach (['manana', 'tarde'] as $periodo) {
+                foreach ($comidas[$periodo] ?? [] as $cat => $item) {
+                    if (isset($dietaData[$cat])) {
+                        $gramos = (float)preg_replace('/[^0-9.]/', '', $item);
+                        $dietaData[$cat]['gramos'] += $gramos / 14; // Promedio diario
+                        $dietaData[$cat]['proteinas'] += $gramos * 0.1 / 14;
+                        $dietaData[$cat]['grasas'] += $gramos * 0.05 / 14;
+                        $dietaData[$cat]['carbohidratos'] += $gramos * 0.1 / 14;
+                    }
+                }
+            }
+        }
+
+        return $dietaData;
+    }
+
+    private function getAjustesAplicados($condicionesSalud, $esterilizado)
+    {
+        $ajustes = [];
+        if ($condicionesSalud && in_array('obesidad', $condicionesSalud)) {
+            $ajustes[] = 'Reducción por obesidad';
+        }
+        if ($esterilizado) {
+            $ajustes[] = 'Reducción por esterilización';
+        }
+        return $ajustes;
     }
 }

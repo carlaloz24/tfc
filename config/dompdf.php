@@ -243,7 +243,7 @@ return [
          * @var bool
          */
         'enable_php' => false,
-
+        'enable_local_file_access' => true,
         /**
          * Rnable inline JavaScript
          *
@@ -276,7 +276,7 @@ return [
          *
          * @var bool
          */
-        'enable_remote' => false,
+        'enable_remote' => true,
 
         /**
          * List of allowed remote hosts

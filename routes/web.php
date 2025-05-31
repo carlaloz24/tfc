@@ -48,7 +48,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/planes/select/{mascota_id}', [PlanController::class, 'select'])->name('planes.select');
     Route::post('/planes/checkout', [PlanController::class, 'checkout'])->name('planes.checkout');
     Route::get('/dietas/{mascota_id}/pdf', [DietaController::class, 'getPdf'])->name('dietas.pdf');
-
+    Route::get('/dietas/{mascota}/pdf', [DietaController::class, 'getPdf'])->name('dietas.pdf');
 });
 
 Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {

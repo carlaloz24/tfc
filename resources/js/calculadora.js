@@ -112,6 +112,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const alimentosAlergiaSelect = document.getElementById('alimentos_alergia');
     const menuJsonInput = document.getElementById('menu_json');
     const razaSelect = document.getElementById('raza');
+    console.log('menu_json enviado:', menuJsonInput.value);
 
     if (!form) {
         console.error('Formulario con ID "formularioDieta" no encontrado');
@@ -236,8 +237,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 };
             }
 
+      /*      const menuSemanal = generarMenuSemanal(dieta, data.condiciones_salud, data.alimentos_alergia, data.tipo_dieta);
+            menuJsonInput.value = JSON.stringify(menuSemanal); */
             const menuSemanal = generarMenuSemanal(dieta, data.condiciones_salud, data.alimentos_alergia, data.tipo_dieta);
             menuJsonInput.value = JSON.stringify(menuSemanal);
+            console.log('menu_json enviado:', menuJsonInput.value);
 
             fetch(form.action, {
                 method: 'POST',
@@ -407,205 +411,257 @@ function mostrarResultados(nombrePerro, peso, energiaMetabolica, dieta, menuSema
 //genera y descarga el PDF con la dieta personalizada (html en este js)
 function descargarPDF(nombrePerro, peso, energiaMetabolica, dieta, menuSemanal, ajustesAplicados, tipoDieta, raza) {
     const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
+    const doc = new jsPDF({
+        unit: 'px',
+        format: 'a4'
+    });
 
     const pageWidth = doc.internal.pageSize.getWidth();
     const pageHeight = doc.internal.pageSize.getHeight();
-    const margin = 15;
+    const margin = 50; // Reduced from 100px
     let y = margin;
 
-    //fondo blanco
+    // Background
     doc.setFillColor(255, 255, 255);
     doc.rect(0, 0, pageWidth, pageHeight, 'F');
 
-    // loggo
     const logoUrl = '/images/logo-barfco.png';
     const logoWidth = 30;
     const logoHeight = 30;
     doc.addImage(logoUrl, 'PNG', margin, margin, logoWidth, logoHeight, undefined, 'NONE');
 
-    //Fecha
-    doc.setFontSize(10);
-    doc.setTextColor(80, 80, 80);
+
+    // Title
+    doc.setFontSize(30); // Reduced from 45
+    doc.setTextColor(224, 67, 18); // #e04312
+    doc.setFont('Helvetica', 'bold');
+    const titleText = `Dieta para ${nombrePerro}`;
+    doc.text(titleText, margin, y, { maxWidth: 250 }); // Reduced maxWidth
+    y += 40; // Reduced from 60
+
+    // Date
+    doc.setFontSize(12); // Reduced from 18
+    doc.setTextColor(80, 80, 80); // #505050
     doc.setFont('Helvetica', 'normal');
-    doc.text(`Generado el ${new Date().toLocaleDateString('es-ES')}`, pageWidth - margin, margin + 7, { align: 'right' });
+    doc.text(new Date().toLocaleDateString('es-ES'), margin, y);
+    y += 20; // Reduced from 40
 
-    //título (debajo del logo)
-    doc.setFontSize(22);
-    doc.setTextColor(8, 54, 48);
+    // Datos de la mascota
+    doc.setFontSize(18); // Reduced from 28
+    doc.setTextColor(8, 54, 48); // #083630
     doc.setFont('Helvetica', 'bold');
-    doc.text(`Dieta para ${nombrePerro}`, pageWidth / 2, margin + logoHeight + 15, { align: 'center' });
-    y = margin + logoHeight + 25;
+    doc.text('Datos de la mascota', margin, y);
+    y += 15; // Reduced from 20
 
-    //resumen
-    doc.setFontSize(16);
-    doc.setTextColor(8, 54, 48);
-    doc.setFont('Helvetica', 'bold');
-    doc.text('Resumen', margin, y);
-    y += 10;
-    doc.setFontSize(12);
-    doc.setTextColor(80, 80, 80);
-    const bulletColor = [8, 54, 48];
-    const bullet = '•';
-    const bulletOffset = 5;
+    doc.setFontSize(12); // Reduced from 18
+    doc.setTextColor(26, 29, 32); // #1a1d20
     const items = [
-        { label: 'Nombre: ', value: nombrePerro },
-        { label: 'Raza: ', value: raza },
-        { label: 'Peso: ', value: `${peso} kg` },
-        { label: 'Tipo de dieta: ', value: tipoDieta },
-        { label: 'Calorías diarias: ', value: `${Math.round(energiaMetabolica)} kcal` },
+        { label: 'Nombre: ', value: nombrePerro || 'No especificado' },
+        { label: 'Raza: ', value: raza || 'No especificada' },
+        { label: 'Peso: ', value: `${peso || 'No especificado'} kg` }
+    ];
+    items.forEach(item => {
+        doc.setTextColor(8, 54, 48); // #083630
+        doc.setFont('Helvetica', 'bold');
+        doc.text(item.label, margin, y);
+        doc.setTextColor(26, 29, 32); // #1a1d20
+        doc.setFont('Helvetica', 'normal');
+        const labelWidth = doc.getTextWidth(item.label) + 3;
+        doc.text(item.value, margin + labelWidth, y);
+        y += 10; // Reduced from 15
+    });
+    y += 8; // Reduced from 10
+
+    // Line
+    doc.setDrawColor(8, 54, 48); // #083630
+    doc.setLineWidth(0.5);
+    doc.line(margin, y, pageWidth - margin, y);
+    y += 15; // Reduced from 20
+
+    // Detalles de la dieta
+    doc.setFontSize(18); // Reduced from 28
+    doc.setTextColor(8, 54, 48); // #083630
+    doc.setFont('Helvetica', 'bold');
+    doc.text('Detalles de la dieta', margin, y);
+    y += 15; // Reduced from 20
+
+    const dietaItems = [
+        { label: 'Tipo de dieta: ', value: tipoDieta.charAt(0).toUpperCase() + tipoDieta.slice(1) },
+        { label: 'Calorías diarias: ', value: `${Math.round(energiaMetabolica)} kcal` }
     ];
     if (ajustesAplicados.length > 0) {
-        items.push({ label: 'Ajustes aplicados: ', value: ajustesAplicados.join(', ') });
+        dietaItems.push({ label: 'Ajustes aplicados: ', value: ajustesAplicados.join(', ') });
     }
-    items.forEach(item => {
-        doc.setTextColor(...bulletColor);
-        doc.text(bullet, margin, y);
-        doc.setTextColor(8, 54, 48);
+    dietaItems.forEach(item => {
+        doc.setTextColor(8, 54, 48); // #083630
         doc.setFont('Helvetica', 'bold');
-        doc.text(item.label, margin + bulletOffset, y);
-        doc.setTextColor(80, 80, 80);
+        doc.text(item.label, margin, y);
+        doc.setTextColor(26, 29, 32); // #1a1d20
         doc.setFont('Helvetica', 'normal');
-        const labelWidth = doc.getTextWidth(item.label) + 2;
-        const lines = doc.splitTextToSize(item.value, pageWidth - margin - labelWidth - bulletOffset - 10);
-        lines.forEach((line, index) => {
-            doc.text(line, margin + bulletOffset + labelWidth, y);
-            y += 8;
-        });
+        const labelWidth = doc.getTextWidth(item.label) + 3;
+        doc.text(item.value, margin + labelWidth, y);
+        y += 10; // Reduced from 15
     });
-    y += 10;
+    y += 20; // Reduced from 30
 
-    // línea
-    doc.setDrawColor(8, 54, 48);
-    doc.setLineWidth(0.3);
-    doc.line(margin, y, pageWidth - margin, y);
-    y += 15;
-
-    //tabla de macronutrientes
-    doc.setFontSize(16);
-    doc.setTextColor(8, 54, 48);
+    // Distribución de Macronutrientes
+    doc.setFontSize(30); // Reduced from 45
+    doc.setTextColor(41, 44, 43); // #292c2b
     doc.setFont('Helvetica', 'bold');
     doc.text('Distribución de Macronutrientes', margin, y);
-    y += 10;
+    y += 25; // Reduced from 40
 
-    // tabla
-    const tableHeight = 10 + 10 * Object.keys(dieta).length;
-    doc.setFillColor(255, 255, 255);
-    doc.roundedRect(margin, y, pageWidth - 2 * margin, tableHeight, 8, 8, 'F');
+    // Macronutrients Table
+    const headers = ['Categoría', 'kcal', 'g', 'Prot.', 'Grasas', 'CH'];
+    const tableWidth = pageWidth - 2 * margin;
+    const colWidths = [tableWidth * 0.35, tableWidth * 0.13, tableWidth * 0.13, tableWidth * 0.13, tableWidth * 0.13, tableWidth * 0.13]; // Adjusted
+    const rowHeight = 18; // Reduced from 25
 
-    // cabecera
-    doc.setFillColor(224, 67, 18);
-    doc.rect(margin, y, pageWidth - 2 * margin, 10, 'F');
-    doc.setFontSize(10);
+    // Header
+    doc.setFillColor(224, 67, 18); // #e04312
+    doc.rect(margin, y, tableWidth, rowHeight, 'F');
+    doc.setFontSize(12); // Reduced from 18
     doc.setTextColor(255, 255, 255);
     doc.setFont('Helvetica', 'bold');
-    doc.text('Categoría', margin + 5, y + 7);
-    doc.text('kcal', margin + 50, y + 7);
-    doc.text('g', margin + 70, y + 7);
-    doc.text('Prot.', margin + 90, y + 7);
-    doc.text('Grasas', margin + 110, y + 7);
-    doc.text('CH', margin + 130, y + 7);
-    y += 10;
+    headers.forEach((header, i) => {
+        doc.text(header, margin + 3 + colWidths.slice(0, i).reduce((a, b) => a + b, 0), y + 13);
+    });
+    y += rowHeight;
 
-    //filas
-    doc.setFont('Helvetica', 'normal');
-    doc.setTextColor(80, 80, 80);
+    // Rows
     let rowIndex = 0;
     for (let categoria in dieta) {
-        if (rowIndex % 2 === 0) {
-            doc.setFillColor(240, 240, 240);
-            doc.rect(margin, y, pageWidth - 2 * margin, 10, 'F');
-        }
-        doc.text(capitalizarCategoria(categoria), margin + 5, y + 7);
-        doc.text(Math.round(dieta[categoria].kcal).toString(), margin + 50, y + 7);
-        doc.text(Math.round(dieta[categoria].gramos).toString(), margin + 70, y + 7);
-        doc.text(Math.round(dieta[categoria].proteinas).toString(), margin + 90, y + 7);
-        doc.text(Math.round(dieta[categoria].grasas).toString(), margin + 110, y + 7);
-        doc.text(Math.round(dieta[categoria].carbohidratos).toString(), margin + 130, y + 7);
-        y += 10;
-        rowIndex++;
-        if (y > pageHeight - margin - 20) {
+        if (y > pageHeight - margin - 40) {
             doc.addPage();
             doc.setFillColor(255, 255, 255);
             doc.rect(0, 0, pageWidth, pageHeight, 'F');
             y = margin;
         }
+        if (rowIndex % 2 === 0) {
+            doc.setFillColor(240, 240, 240); // #f0f0f0
+            doc.rect(margin, y, tableWidth, rowHeight, 'F');
+        }
+        doc.setFontSize(12); // Reduced from 18
+        doc.setTextColor(80, 80, 80); // #505050
+        doc.setFont('Helvetica', 'normal');
+        const rowData = [
+            capitalizarCategoria(categoria),
+            Math.round(dieta[categoria].kcal).toString(),
+            Math.round(dieta[categoria].gramos).toString(),
+            Math.round(dieta[categoria].proteinas).toString(),
+            Math.round(dieta[categoria].grasas).toString(),
+            Math.round(dieta[categoria].carbohidratos).toString()
+        ];
+        rowData.forEach((cell, i) => {
+            doc.text(cell, margin + 3 + colWidths.slice(0, i).reduce((a, b) => a + b, 0), y + 13);
+        });
+        // Borders
+        doc.setDrawColor(0, 0, 0);
+        doc.setLineWidth(1);
+        doc.rect(margin, y, tableWidth, rowHeight);
+        colWidths.reduce((x, w) => {
+            doc.line(x, y, x, y + rowHeight);
+            return x + w;
+        }, margin);
+        y += rowHeight;
+        rowIndex++;
     }
-    y += 10;
+    y += 15; // Reduced from 20
 
-//linea
-doc.setDrawColor(8, 54, 48);
-    doc.setLineWidth(0.3);
+    // Line
+    doc.setDrawColor(8, 54, 48); // #083630
+    doc.setLineWidth(0.5);
     doc.line(margin, y, pageWidth - margin, y);
-    y += 15;
+    y += 15; // Reduced from 20
 
-    // menú semanal
-    doc.setFontSize(16);
-    doc.setTextColor(8, 54, 48);
+    // Menú Semanal
+    doc.setFontSize(30); // Reduced from 45
+    doc.setTextColor(41, 44, 43); // #292c2b
     doc.setFont('Helvetica', 'bold');
     doc.text('Menú Semanal', margin, y);
-    y += 10;
+    y += 25; // Reduced from 40
 
     for (let dia in menuSemanal) {
-        if (y > pageHeight - margin - 60) {
+        if (y > pageHeight - margin - 80) {
             doc.addPage();
             doc.setFillColor(255, 255, 255);
             doc.rect(0, 0, pageWidth, pageHeight, 'F');
             y = margin;
         }
-        doc.setFontSize(12);
-        doc.setTextColor(8, 54, 48);
+        doc.setFontSize(14); // Reduced from 20
+        doc.setTextColor(8, 54, 48); // #083630
         doc.setFont('Helvetica', 'bold');
         doc.text(dia, margin, y);
-        y += 10;
+        y += 15; // Reduced from 20
 
-        // tabla con bordes redondeados
         const categorias = [...new Set([
             ...Object.keys(menuSemanal[dia].manana),
             ...Object.keys(menuSemanal[dia].tarde)
         ])];
-        const tableHeightMenu = 10 + 10 * categorias.length;
-        doc.setFillColor(255, 255, 255);
-        doc.roundedRect(margin, y, pageWidth - 2 * margin, tableHeightMenu, 8, 8, 'F');
+        const menuTableHeight = rowHeight * (categorias.length + 1);
 
-        // cabecera (verde )
-        doc.setFillColor(8, 54, 48);
-        doc.rect(margin, y, pageWidth - 2 * margin, 10, 'F');
-        doc.setFontSize(10);
+        // Menu Table Header
+        doc.setFillColor(224, 67, 18); // #e04312
+        doc.rect(margin, y, tableWidth, rowHeight, 'F');
+        doc.setFontSize(12); // Reduced from 18
         doc.setTextColor(255, 255, 255);
         doc.setFont('Helvetica', 'bold');
-        doc.text('Categoría', margin + 5, y + 7);
-        doc.text('Mañana', margin + 60, y + 7);
-        doc.text('Tarde', margin + 115, y + 7);
-        y += 10;
+        const menuHeaders = ['Categoría', 'Mañana', 'Tarde'];
+        const menuColWidths = [tableWidth * 0.3, tableWidth * 0.35, tableWidth * 0.35];
+        menuHeaders.forEach((header, i) => {
+            doc.text(header, margin + 3 + menuColWidths.slice(0, i).reduce((a, b) => a + b, 0), y + 13);
+        });
+        y += rowHeight;
 
-        // filas
-        doc.setFont('Helvetica', 'normal');
-        doc.setTextColor(80, 80, 80);
+        // Menu Table Rows
         categorias.forEach((cat, index) => {
-            if (index % 2 === 0) {
-                doc.setFillColor(240, 240, 240);
-                doc.rect(margin, y, pageWidth - 2 * margin, 10, 'F');
-            }
-            doc.text(capitalizarCategoria(cat), margin + 5, y + 7);
-            doc.text(menuSemanal[dia].manana[cat] || '-', margin + 60, y + 7);
-            doc.text(menuSemanal[dia].tarde[cat] || '-', margin + 115, y + 7);
-            y += 10;
-            if (y > pageHeight - margin - 20) {
+            if (y > pageHeight - margin - 40) {
                 doc.addPage();
                 doc.setFillColor(255, 255, 255);
                 doc.rect(0, 0, pageWidth, pageHeight, 'F');
                 y = margin;
             }
+            if (index % 2 === 0) {
+                doc.setFillColor(240, 240, 240); // #f0f0f0
+                doc.rect(margin, y, tableWidth, rowHeight, 'F');
+            }
+            doc.setFontSize(12); // Reduced from 18
+            doc.setTextColor(80, 80, 80); // #505050
+            doc.setFont('Helvetica', 'normal');
+            const rowData = [
+                capitalizarCategoria(cat),
+                menuSemanal[dia].manana[cat] || '-',
+                menuSemanal[dia].tarde[cat] || '-'
+            ];
+            rowData.forEach((cell, i) => {
+                doc.text(cell, margin + 3 + menuColWidths.slice(0, i).reduce((a, b) => a + b, 0), y + 13, { maxWidth: menuColWidths[i] - 6 });
+            });
+            // Borders
+            doc.setDrawColor(0, 0, 0);
+            doc.setLineWidth(1);
+            doc.rect(margin, y, tableWidth, rowHeight);
+            menuColWidths.reduce((x, w) => {
+                doc.line(x, y, x, y + rowHeight);
+                return x + w;
+            }, margin);
+            y += rowHeight;
         });
-        y += 25;
+        y += 20; // Reduced from 25
     }
 
-    // footer
-    doc.setFontSize(8);
-    doc.setTextColor(80, 80, 80);
+    // Footer
+    doc.setFontSize(10); // Reduced from 16
+    doc.setTextColor(80, 80, 80); // #505050
     doc.setFont('Helvetica', 'normal');
-    doc.text('Calculadora de Dietas Caninas - Todos los derechos reservados', pageWidth / 2, pageHeight - margin, { align: 'center' });
+    doc.text('Barf&Co - Todos los derechos reservados ©', pageWidth / 2, pageHeight - 10, { align: 'center' });
 
     doc.save(`Dieta_${nombrePerro}_${new Date().toISOString().split('T')[0]}.pdf`);
 }
+
+/* loggo
+const logoUrl = '/images/logo-barfco.png';
+const logoWidth = 30;
+const logoHeight = 30;
+doc.addImage(logoUrl, 'PNG', margin, margin, logoWidth, logoHeight, undefined, 'NONE'); */
+
+

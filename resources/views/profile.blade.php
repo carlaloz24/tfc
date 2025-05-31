@@ -120,7 +120,8 @@
                                 <td>{{ $factura->mascota->nombre }}</td>
                                 <td>€{{ number_format($factura->precio, 2) }}/{{ $factura->frecuencia }}</td>
                                 <td>
-                                    <a href="{{ Storage::url($factura->pdf_path) }}" class="btn btn-orange" download>Descargar PDF</a>
+                                    <!-- <a href="{{ Storage::url($factura->pdf_path) }}" class="btn btn-orange" download>Descargar PDF</a> -->
+                                    <a href="{{ route('calculadora.download', $dieta->id) }}" class="pet-btn-download">Descargar PDF</a>
                                 </td>
                             </tr>
                         @endforeach
