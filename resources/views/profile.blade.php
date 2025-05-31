@@ -83,7 +83,7 @@
                                                 @method('DELETE')
                                                 <button type="submit" class="pet-btn-action pet-btn-delete" onclick="return confirm('¿Eliminar esta mascota?')"><i class="bi bi-trash"></i></button>
                                             </form>
-                                            @if($mascota->facturas->isEmpty())
+                                            @if (!$mascota->plan && $mascota->facturas->isEmpty())
                                                 <a href="{{ route('planes.select', $mascota->id) }}" class="pet-btn-primary">Contratar Plan</a>
                                             @endif
                                         </div>
