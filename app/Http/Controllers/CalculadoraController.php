@@ -91,39 +91,33 @@ class CalculadoraController extends Controller
             $calorias = round($calorias);
 
             // Generar PDF solo si no es actualización
-            $pdfData = null;
-            $pdfPath = null;
-            if (!$isUpdate) {
-                $pdf = PDF::loadView('calculadora.pdf', [
-                    'mascota' => $mascota,
-                    'calorias' => $calorias,
-                    'tipo_dieta' => $request->tipo_dieta,
-                    'menu' => json_decode($request->menu_json, true),
-                    'condiciones_salud' => $request->condiciones_salud ?? [],
-                    'alimentos_alergia' => $request->alimentos_alergia ?? [],
-                    'nombre' => $request->nombre,
-                    'peso' => $request->peso,
-                    'raza' => $request->raza,
-                    'categoria_edad' => $request->categoria_edad,
-                    'esterilizado' => $request->esterilizado,
-                    'nivel_actividad' => $request->nivel_actividad,
-                ]);
-                $pdfData = $pdf->output();
-                $filename = 'Dieta_' . ($mascota ? $mascota->nombre : $request->nombre) . '_' . now()->format('Y-m-d') . '.pdf';
-                $pdfPath = 'public/dietas/' . $filename;
-            }
+            $pdf = PDF::loadView('calculadora.pdf', [
+                'mascota' => $mascota,
+                'calorias' => $calorias,
+                'tipo_dieta' => $request->tipo_dieta,
+                'menu' => json_decode($request->menu_json, true),
+                'condiciones_salud' => $request->condiciones_salud ?? [],
+                'alimentos_alergia' => $request->alimentos_alergia ?? [],
+                'nombre' => $request->nombre,
+                'peso' => $request->peso,
+                'raza' => $request->raza,
+                'categoria_edad' => $request->categoria_edad,
+                'esterilizado' => $request->esterilizado,
+                'nivel_actividad' => $request->nivel_actividad,
+            ]);
+            $pdfData = $pdf->output();
+            $filename = 'Dieta_' . ($mascota ? $mascota->nombre : $request->nombre) . '_' . now()->format('Y-m-d') . '.pdf';
+            $pdfPath = 'public/dietas/' . $filename;
+            Storage::put($pdfPath, $pdfData); // esto guarda el PDF siempre
+
+
 
             // Guardar/actualizar la dieta si hay mascota
             if ($mascota) {
-                $dieta = Dieta::where('id_mascota', $mascota->id)->first();
-                if (!$dieta) {
-                    $dieta = new Dieta();
-                    Storage::put($pdfPath, $pdfData); // Guardar PDF solo para nueva dieta
-                    $dieta->pdf_dieta = $pdfPath;
-                } else {
-                    // Mantener el pdf_dieta existente para actualizaciones
-                    $pdfPath = $dieta->pdf_dieta;
-                }
+                $dieta = Dieta::where('id_mascota', $mascota->id)->first() ?? new Dieta();
+                $dieta->pdf_dieta = $pdfPath; // Actualiza siempre la ruta del PDF
+
+
                 $dieta->id_mascota = $mascota->id;
                 $dieta->id_usuario = Auth::id();
                 $dieta->calorias = $calorias;
