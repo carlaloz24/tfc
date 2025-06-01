@@ -9,8 +9,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\MascotaController;
 use App\Http\Controllers\CalculadoraController;
 use App\Http\Controllers\PlanController;
-use App\Http\Controllers\Auth\ForgotPasswordController;
-use App\Http\Controllers\Auth\ResetPasswordController;
+use App\Http\Controllers\Auth\CustomPasswordResetController;
 
 Route::get('/', fn () => view('home'))->name('home');
 Route::get('/blog', [ArticuloController::class, 'index'])->name('articulos.index');
@@ -37,11 +36,12 @@ Route::get('/admin/login', [LoginController::class, 'showAdminLoginForm'])->name
 Route::post('/admin/login', [LoginController::class, 'adminLogin']);
 //Route::get('/calculadora/index', [CalculadoraController::class, 'index'])->name('calculadora.index');
 
+
 // Rutas para restablecimiento de contraseña
-Route::get('password/reset', [ForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request');
-Route::post('password/email', [ForgotPasswordController::class, 'sendResetLinkEmail'])->name('password.email');
-Route::get('password/reset/{token}', [ResetPasswordController::class, 'showResetForm'])->name('password.reset');
-Route::post('password/reset', [ResetPasswordController::class, 'reset'])->name('password.update');
+Route::get('password/reset', [CustomPasswordResetController::class, 'showLinkRequestForm'])->name('password.request');
+Route::post('password/email', [CustomPasswordResetController::class, 'sendResetLinkEmail'])->name('password.email');
+Route::get('password/reset/{token}', [CustomPasswordResetController::class, 'showResetForm'])->name('password.reset');
+Route::post('password/reset', [CustomPasswordResetController::class, 'reset'])->name('password.update');
 
 
 Route::middleware('auth')->group(function () {
