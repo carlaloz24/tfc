@@ -34,8 +34,9 @@ class PlanController extends Controller
             $dietaSeleccionada = $mascotaSeleccionada->dietas()->latest()->first();
             if (!$dietaSeleccionada || !$dietaSeleccionada->pdf_dieta) {
                 Log::warning('PlanController@select: No hay dieta o pdf_dieta para la mascota', ['mascota_id' => $mascota_id]);
-                return redirect()->back()->with('error', 'La mascota seleccionada no tiene una dieta asociada ');
+                return redirect()->route('profile.index')->with('error', 'Debes generar antes una dieta para contratar un plan');
             }
+
             Log::info('PlanController@select: Dieta encontrada', [
                 'dieta_id' => $dietaSeleccionada->id,
                 'has_pdf_dieta' => !empty($dietaSeleccionada->pdf_dieta),
@@ -146,5 +147,18 @@ class PlanController extends Controller
             ]);
             return back()->with('error', 'Error al procesar el pago: ' . $e->getMessage());
         }
+    }
+
+    public function downloadFactura($facturaId)
+    {
+        $factura = Factura::findOrFail($facturaId);
+        $path = $factura->pdf_path;
+
+        if (!Storage::exists($path)) {
+            Log::error('PDF de factura no encontrado', ['factura_id' => $facturaId, 'path' => $path]);
+            return redirect()->back()->with('error', 'El PDF de la factura no está disponible.');
+        }
+
+        return Storage::download($path, 'factura_' . $facturaId . '.pdf');
     }
 }

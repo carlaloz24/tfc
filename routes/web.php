@@ -49,6 +49,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/planes/checkout', [PlanController::class, 'checkout'])->name('planes.checkout');
     Route::get('/dietas/{mascota_id}/pdf', [DietaController::class, 'getPdf'])->name('dietas.pdf');
     Route::get('/dietas/{mascota}/pdf', [DietaController::class, 'getPdf'])->name('dietas.pdf');
+    Route::get('/facturas/{factura}/download', [App\Http\Controllers\PlanController::class, 'downloadFactura'])->name('facturas.download')->middleware('auth');
 });
 
 Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
@@ -64,3 +65,11 @@ Route::get('/politica-cookies', function () {
     return view('cookies');
 })->name('cookies');
 
+
+Route::prefix('admin/users')->middleware(['auth', 'admin'])->group(function () {
+    Route::get('/', [App\Http\Controllers\AdminUserController::class, 'index'])->name('admin.users.index');
+    Route::get('/{id}/edit', [App\Http\Controllers\AdminUserController::class, 'edit'])->name('admin.users.edit');
+    Route::patch('/{id}', [App\Http\Controllers\AdminUserController::class, 'update'])->name('admin.users.update');
+    Route::get('/{id}/password', [App\Http\Controllers\AdminUserController::class, 'showPasswordForm'])->name('admin.users.password');
+    Route::patch('/{id}/password', [App\Http\Controllers\AdminUserController::class, 'updatePassword'])->name('admin.users.password.update');
+});

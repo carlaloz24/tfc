@@ -1,6 +1,21 @@
 @extends('layouts.app')
 @section('title', 'Mi Perfil')
 @section('content')
+
+<!-- mensajes flash -->
+@if (session('error'))
+            <div class="alert alert-danger">
+                {{ session('error') }}
+            </div>
+        @endif
+        @if (session('success'))
+            <div class="alert alert-success">
+                {{ session('success') }}
+            </div>
+        @endif
+        <div class="profile-container">
+
+
     <div class="profile-container">
         <div class="profile-block">
             <h1>¡Hola {{ Auth::user()->nombre }}!</h1>
@@ -119,9 +134,12 @@
                                 <td>{{ ucfirst($factura->tipo_plan) }}</td>
                                 <td>{{ $factura->mascota->nombre }}</td>
                                 <td>€{{ number_format($factura->precio, 2) }}/{{ $factura->frecuencia }}</td>
-                                <td>
-                                    <!-- <a href="{{ Storage::url($factura->pdf_path) }}" class="btn btn-orange" download>Descargar PDF</a> -->
+                                <!--   <td>
+                                    <a href="{{ Storage::url($factura->pdf_path) }}" class="btn btn-orange" download>Descargar PDF</a>
                                     <a href="{{ route('calculadora.download', $dieta->id) }}" class="pet-btn-download">Descargar PDF</a>
+                                </td> -->
+                                <td>
+                                    <a href="{{ route('facturas.download', $factura->id) }}" class="pet-btn-download">Descargar PDF</a>
                                 </td>
                             </tr>
                         @endforeach
