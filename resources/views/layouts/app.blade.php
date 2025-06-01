@@ -9,7 +9,6 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @yield('styles')
 </head>
@@ -24,24 +23,38 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav mx-auto">
-                <li class="nav-item"><a class="nav-link" href="{{ route('home') }}">Inicio</a></li>
-                <li class="nav-item"><a class="nav-link" href="{{ route('calculadora.index') }}">Calculadora</a></li>                <li class="nav-item"><a class="nav-link" href="{{ route('planes') }}">Planes</a></li>
-                <li class="nav-item"><a class="nav-link" href="{{ route('articulos.index') }}">Blog</a></li>
-                @auth
-                    @if (Auth::user()->is_admin)
-                        <li class="nav-item"><a class="nav-link" href="{{ route('admin.dashboard') }}">Admin</a></li>
-                    @endif
-                @endauth
+                @if (Auth::check() && Auth::user()->is_admin && request()->is('admin*'))
+                    <!-- Menú para administradores en rutas /admin/* -->
+                    <li class="nav-item"><a class="nav-link" href="{{ route('admin.users.index') }}">Gestión de Contraseñas</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('admin.articulos.index') }}">Gestión de Artículos</a></li>
+                @else
+                    <!-- Menú para usuarios no admin o vistas públicas -->
+                    <li class="nav-item"><a class="nav-link" href="{{ route('home') }}">Inicio</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('calculadora.index') }}">Calculadora</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('planes') }}">Planes</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('articulos.index') }}">Blog</a></li>
+                @endif
             </ul>
             <ul class="navbar-nav ms-auto">
                 @auth
-                    <li class="nav-item"><a class="nav-link btn-home-secondary" href="{{ route('profile.index') }}">Cuenta</a></li>
-                    <li class="nav-item">
-                        <form action="{{ route('logout') }}" method="POST" style="display:inline;">
-                            @csrf
-                            <button type="submit" class="nav-link btn-home-primary">Cerrar Sesión</button>
-                        </form>
-                    </li>
+                    @if (Auth::user()->is_admin && request()->is('admin*'))
+                        <!-- Solo Cerrar Sesión para admins en rutas /admin/* -->
+                        <li class="nav-item">
+                            <form action="{{ route('logout') }}" method="POST" style="display:inline;">
+                                @csrf
+                                <button type="submit" class="nav-link btn-home-primary">Cerrar Sesión</button>
+                            </form>
+                        </li>
+                    @else
+                        <!-- Menú estándar para usuarios no admin -->
+                        <li class="nav-item"><a class="nav-link btn-home-secondary" href="{{ route('profile.index') }}">Cuenta</a></li>
+                        <li class="nav-item">
+                            <form action="{{ route('logout') }}" method="POST" style="display:inline;">
+                                @csrf
+                                <button type="submit" class="nav-link btn-home-primary">Cerrar Sesión</button>
+                            </form>
+                        </li>
+                    @endif
                 @else
                     <li class="nav-item"><a class="nav-link btn-home-secondary" href="{{ route('login') }}">Iniciar Sesión</a></li>
                     <li class="nav-item"><a class="nav-link btn-home-primary" href="{{ route('register') }}">Registrarse</a></li>

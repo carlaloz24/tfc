@@ -23,6 +23,10 @@
                         @error('contraseña') <span class="error-message">{{ $message }}</span> @enderror
                     </div>
                     <button type="submit" class="btn-login">Iniciar Sesión</button>
+                    <div class="login-links">
+                        <a href="{{ route('register') }}" class="link-secondary"><strong>Crear una cuenta</strong></a>
+                        <a href="{{ route('password.request') }}" class="link-secondary">¿Has olvidado tu contraseña?</a>
+                    </div>
                 </form>
             </div>
         </div>

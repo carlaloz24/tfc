@@ -21,16 +21,23 @@ class AdminUserController extends Controller
 
     public function update(Request $request, $id)
     {
-        $user = User::findOrFail($id);
         $request->validate([
-            'is_admin' => 'boolean',
-            'is_disabled' => 'boolean',
+            'is_admin' => 'nullable|in:0,1',
+            'is_disabled' => 'nullable|in:0,1',
+        ], [
+            'is_admin.in' => 'El campo administrador debe ser un valor booleano.',
+            'is_disabled.in' => 'El campo cuenta deshabilitada debe ser un valor booleano.',
         ]);
 
-        $user->update([
-            'is_admin' => $request->is_admin ?? false,
-            'is_disabled' => $request->is_disabled ?? false,
-        ]);
+        /* si una cuenta está deshabilitada:
+        -Impide que el usuario inicie sesión o acceda a funciones de la plataforma
+        -No elimina la cuenta, solo la desactiva temporalmente.
+        -y al desmarcarlo (is_disabled = 0), la cuenta se reactiva.*/
+
+        $user = User::findOrFail($id);
+        $user->is_admin = $request->has('is_admin') ? 1 : 0;
+        $user->is_disabled = $request->has('is_disabled') ? 1 : 0;
+        $user->save();
 
         return redirect()->route('admin.users.index')->with('success', 'Usuario actualizado correctamente.');
     }
@@ -55,3 +62,7 @@ class AdminUserController extends Controller
         return redirect()->route('admin.users.index')->with('success', 'Contraseña actualizada correctamente.');
     }
 }
+
+
+
+

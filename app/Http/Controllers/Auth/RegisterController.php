@@ -24,6 +24,15 @@ class RegisterController extends Controller{
             'nombre' => 'required|string|max:255',
             'correo' => 'required|email|unique:usuarios,correo',
             'contraseña' => 'required|string|min:8|confirmed',
+        ], [
+            'nombre.required' => 'El nombre es obligatorio.',
+            'nombre.max' => 'El nombre no puede tener más de 255 caracteres.',
+            'correo.required' => 'El correo es obligatorio.',
+            'correo.email' => 'El correo debe ser una dirección válida.',
+            'correo.unique' => 'El correo ya está registrado.',
+            'contraseña.required' => 'La contraseña es obligatoria.',
+            'contraseña.min' => 'La contraseña debe tener al menos 8 caracteres.',
+            'contraseña.confirmed' => 'La confirmación de la contraseña no coincide.',
         ]);
 
         $user = new User();

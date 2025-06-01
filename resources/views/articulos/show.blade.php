@@ -30,7 +30,7 @@
                        class="btn btn-custom">Volver</a>
                     @auth
                         @if (Auth::user()->is_admin)
-                            <a href="{{ route('articulos.edit', $articulo) }}"
+                            <a href="{{ route('articulos.edit', $articulo->slug) }}"
                                class="btn btn-custom">Editar</a>
                         @endif
                     @endauth
@@ -39,7 +39,9 @@
         @else
             <p class="error-message">No se encontró el artículo.</p>
         @endif
+            <br>
     </div>
     </div>
+
 
 @endsection

@@ -486,7 +486,7 @@ ul li {
     background: #fb4d17;
     color: #fff;
     border: none;
-    padding: clamp(8px, 2vw, 10px) clamp(15px, 3vw, 20px);
+    padding: 10px;
     border-radius: 30px;
     font-size: clamp(0.8rem, 2vw, 0.9rem);
     font-weight: 500;
@@ -497,6 +497,7 @@ ul li {
 .btn-home-primary:hover {
     background: #e04312;
     text-decoration: none;
+    color:white;
 }
 
 .btn-home-secondary {
@@ -731,7 +732,9 @@ ul li {
     z-index: 2;
     box-shadow: none;
     text-align: left;
+
 }
+
 .btn-admin-create {
     display: inline-block;
     background: #fb4d17;
@@ -744,12 +747,12 @@ ul li {
     text-decoration: none;
     line-height: 1.5;
     transition: background-color 0.3s;
-    margin-bottom: 30px;
+    margin-bottom: 20px;
     margin-top: 10px;
+    margin-left: calc(50% - 450px);
     max-width: 300px;
-
-
 }
+
 .btn-admin-create:hover {
     background: #e04312;
     text-decoration: none;
@@ -758,7 +761,8 @@ ul li {
 .article-list {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    align-items: center;
+    gap: 15px;
 }
 
 .article-card {
@@ -770,7 +774,8 @@ ul li {
     border-radius: 15px;
     padding: 15px 20px;
     transition: background-color 0.3s;
-    width: 700px !important;
+    width: 900px !important;
+    max-width: 100%;
 }
 
 .article-card:hover {
@@ -831,7 +836,6 @@ ul li {
     margin-top: 20px;
 }
 
-
 .admin-form {
     display: flex;
     flex-direction: column;
@@ -880,7 +884,6 @@ ul li {
     align-items: center;
 }
 
-
 .btn-admin-cancel {
     display: inline-block;
     background: #858585;
@@ -926,6 +929,86 @@ ul li {
     cursor: pointer;
 }
 
+.filter-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 20px;
+    width: 100%;
+    max-width: 500px;
+
+}
+.filter-form {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    width: 100%;
+    gap: 5px;
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+.content-wrapper {
+    max-width: 500px;
+    margin: 0 auto;
+    width: 100%;
+}
+/*filtros de fecha */
+.filter-left {
+    margin-left: 240px;
+    display: flex;
+    align-items: flex-end;
+    gap: 15px;
+}
+/*sólo el filtro de ordenar por de la derecha*/
+.filter-right {
+    display: flex;
+    align-items: flex-end;
+}
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.filter-label {
+    font-size: 0.85rem;
+    color: #1e1e1e;
+    margin-bottom: 5px;
+}
+
+
+
+.filter-input, .filter-select {
+    background: #f3f3f3;
+    border: none;
+    border-radius: 10px;
+    padding: 8px 12px;
+    font-size: 0.85rem;
+    color: #1e1e1e;
+    height: 36px;
+    width: 140px;
+}
+
+.filter-select {
+    width: 160px;
+}
+
+.btn-admin-filter {
+    background: #fb4d17;
+    color: #fff;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 10px;
+    font-size: 0.85rem;
+    height: 36px;
+    transition: background-color 0.3s;
+    margin-bottom: 2px;
+}
+
+.btn-admin-filter:hover {
+    background: #e04312;
+}
 /*Estilos para la home                 */
 
 .home-content {
@@ -2458,11 +2541,12 @@ ul li {
     padding: 10px 20px;
     text-decoration: none;
     transition: background-color 0.3s;
-    font-size: 1rem;
+    font-size: 0.9rem;
 }
 
 .btn-custom:hover {
     background-color: #5a6268;
+    color:white;
 }
 
 .card-container, .card-link, .card-articulos, .card-img, .subtitle, .card-articulos small,
@@ -2544,22 +2628,25 @@ ul li {
 
 /* Filtros panel de admin*/
 .filter-container {
-    display: flex;
-    align-items: center;
-    gap: 20px;
+    margin-left: 0;
+    justify-content: space-between;
+    align-items: flex-end;
     margin-bottom: 20px;
+    width: 100%;
 }
 
 .filter-form {
-    display: flex;
-    align-items: center;
-    gap: 15px;
+    gap: 30px;
+    justify-content: space-between;
+    align-items: flex-end;
+    width: 100%;
+    margin-left: 0;
+    margin-right: 20px;
 }
-
 .filter-group {
     display: flex;
-    align-items: center;
     gap: 10px;
+    align-items: start;
 }
 
 .filter-label {
@@ -2585,7 +2672,7 @@ ul li {
 }
 
 .btn-admin-filter {
-    background-color: #6c757d;
+    background-color: #fb4d17;
     color: white;
     border-radius: 20px;
     padding: 6px 15px;
@@ -2593,10 +2680,26 @@ ul li {
     transition: background-color 0.3s;
 }
 
+.btn-admin-filter-limpiar {
+    background-color: #6c757d;
+    color: white;
+    border-radius: 20px;
+    padding: 6px 15px;
+    font-size: 0.9rem;
+    transition: background-color 0.3s;
+    max-width: 160px;
+}
+
+.btn-admin-filter-limpiar:hover {
+    background-color: #454849;
+}
+
+
 .btn-admin-filter:hover {
     background-color: #5a6268;
 }
 
+/* ------------------------------------------------------------------------------ */
 .pagination-container {
     margin-top: 20px;
     display: flex;
@@ -2655,7 +2758,7 @@ ul li {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 10px;
+    padding: 25px;
     border-radius: 10px;
     background: white;
     transition: box-shadow 0.3s;
@@ -4296,4 +4399,476 @@ ul li {
     background-color: #d4edda;
     color: #155724;
     border: 1px solid #c3e6cb;
+}
+
+/* -----------------------------------------------------------------------------  */
+/* estilos Gestión contraseñas admin */
+.user-table-container {
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+    background: #ffffff;
+    border-radius: 15px;
+    padding: 15px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    overflow-x: auto;
+}
+
+.user-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 0.9rem;
+    color: #333;
+}
+
+.user-table thead th {
+    background: #f5f5f5;
+    padding: 12px 15px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: #333;
+    border-bottom: 2px solid #d3d3d3;
+}
+
+.user-table tbody td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #d3d3d3;
+    vertical-align: middle;
+    word-break: break-word;
+}
+
+.user-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.user-table tbody tr:hover {
+    background: #f3f3f3;
+}
+
+.user-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.btn-user-edit {
+    display: inline-block;
+    background: #fb4d17;
+    color: #fff;
+    border: none;
+    padding: 6px 15px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: background-color 0.3s;
+}
+
+.btn-user-edit:hover {
+    background: #e04312;
+}
+
+.btn-user-password {
+    display: inline-block;
+    background: #6c757d;
+    color: #fff;
+    border: none;
+    padding: 6px 15px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: background-color 0.3s;
+}
+
+.btn-user-password:hover {
+    background: #5a6268;
+}
+
+.no-users {
+    text-align: center;
+    font-size: 1rem;
+    color: #858585;
+    padding: 20px;
+}
+
+@media (max-width: 768px) {
+    .user-table-container {
+        padding: 10px;
+    }
+
+    .user-table {
+        font-size: 0.85rem;
+    }
+
+    .user-table thead th {
+        font-size: 0.9rem;
+        padding: 10px;
+    }
+
+    .user-table tbody td {
+        padding: 10px;
+    }
+
+    .user-actions {
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .btn-user-edit, .btn-user-password {
+        width: 100%;
+        text-align: center;
+        padding: 8px;
+        font-size: 0.8rem;
+    }
+}
+
+@media (max-width: 425px) {
+    .user-table-container {
+        padding: 5px;
+    }
+
+    .user-table {
+        display: block;
+        font-size: 0.8rem;
+    }
+
+    .user-table thead {
+        display: none;
+    }
+
+    .user-table tbody {
+        display: block;
+    }
+
+    .user-table tbody tr {
+        display: flex;
+        flex-wrap: wrap;
+        margin-bottom: 10px;
+        border: 1px solid #d3d3d3;
+        border-radius: 10px;
+        padding: 8px;
+        background: #fff;
+    }
+
+    .user-table tbody td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        padding: 5px 8px;
+        border: none;
+        font-size: 0.85rem;
+        word-break: break-word;
+    }
+
+    .user-table tbody td:before {
+        content: attr(data-label);
+        font-weight: 600;
+        color: #333;
+        width: 40%;
+        flex-shrink: 0;
+    }
+
+    .user-table tbody td.user-actions {
+        flex-direction: column;
+        gap: 5px;
+        align-items: stretch;
+    }
+
+    .btn-user-edit, .btn-user-password {
+        font-size: 0.8rem;
+        padding: 6px;
+    }
+
+    .no-users {
+        font-size: 0.85rem;
+        padding: 15px;
+    }
+}
+
+/* estilos cambiar contraseña - dashboard admin */
+.password-form-container {
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+    background: #ffffff;
+    border-radius: 15px;
+    padding: 40px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.password-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-label {
+    font-size: 0.9rem;
+    color: #333;
+    font-weight: 500;
+    margin-bottom: 5px;
+}
+
+.form-control {
+    background: #f5f5f5;
+    border: 1px solid #6c757d;
+    border-radius: 20px;
+    padding: 8px 12px;
+    font-size: 0.9rem;
+    color: #333;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: #fb4d17;
+    box-shadow: 0 0 5px rgba(242, 140, 56, 0.3);
+}
+
+.form-control::placeholder {
+    color: #858585;
+}
+
+.form-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+.btn-admin-primary {
+    background: #fb4d17;
+    color: #fff;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: background-color 0.3s;
+}
+
+.btn-admin-primary:hover {
+    background: #e04312;
+}
+
+.btn-admin-secondary {
+    background: #6c757d;
+    color: #fff;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: background-color 0.3s;
+}
+
+.btn-admin-secondary:hover {
+    background: #5a6268;
+}
+
+@media (max-width: 768px) {
+    .password-form-container {
+        padding: 15px;
+    }
+
+    .form-label {
+        font-size: 0.85rem;
+    }
+
+    .form-control {
+        font-size: 0.85rem;
+        padding: 6px 10px;
+    }
+
+    .btn-admin-primary, .btn-admin-secondary {
+        font-size: 0.85rem;
+        padding: 6px 15px;
+    }
+
+    .form-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .btn-admin-primary, .btn-admin-secondary {
+        width: 100%;
+        text-align: center;
+    }
+}
+
+@media (max-width: 425px) {
+    .password-form-container {
+        padding: 10px;
+    }
+
+    .admin-content h1 {
+        font-size: 1.5rem;
+    }
+
+    .admin-content p {
+        font-size: 0.9rem;
+    }
+
+    .form-group {
+        margin-bottom: 10px;
+    }
+
+    .form-control {
+        font-size: 0.8rem;
+    }
+
+    .btn-admin-primary, .btn-admin-secondary {
+        font-size: 0.8rem;
+        padding: 6px;
+    }
+}
+
+/* estilos para editar contraseña en dashboard Admin*/
+
+.edit-user-form-container {
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+    background: #ffffff;
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.edit-user-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-label {
+    font-size: 0.9rem;
+    color: #333;
+    font-weight: 500;
+    margin-bottom: 5px;
+}
+
+.form-check-input {
+    background-color: #f5f5f5;
+    border: 1px solid #6c757d;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 18px;
+    height: 18px;
+    margin-top: 4px;
+}
+
+.form-check-input:checked {
+    background-color: #fb4d17;
+    border-color: #fb4d17;
+}
+
+.form-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+.btn-admin-primary {
+    background: #fb4d17;
+    color: #fff;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: background-color 0.3s;
+}
+
+.btn-admin-primary:hover {
+    background: #e04312;
+}
+
+.btn-admin-secondary {
+    background: #6c757d;
+    color: #fff;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: background-color 0.3s;
+}
+
+.btn-admin-secondary:hover {
+    background: #5a6268;
+}
+
+@media (max-width: 768px) {
+    .edit-user-form-container {
+        padding: 15px;
+    }
+
+    .form-label {
+        font-size: 0.85rem;
+    }
+
+    .btn-admin-primary, .btn-admin-secondary {
+        font-size: 0.85rem;
+        padding: 6px 15px;
+    }
+
+    .form-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .btn-admin-primary, .btn-admin-secondary {
+        width: 100%;
+        text-align: center;
+    }
+}
+
+@media (max-width: 425px) {
+    .edit-user-form-container {
+        padding: 10px;
+    }
+
+    .admin-content h1 {
+        font-size: 1.5rem;
+    }
+
+    .admin-content p {
+        font-size: 0.9rem;
+    }
+
+    .form-group {
+        margin-bottom: 10px;
+    }
+
+    .form-label {
+        font-size: 0.8rem;
+    }
+
+    .form-check-input {
+        width: 16px;
+        height: 16px;
+    }
+
+    .btn-admin-primary, .btn-admin-secondary {
+        font-size: 0.8rem;
+        padding: 6px;
+    }
 }

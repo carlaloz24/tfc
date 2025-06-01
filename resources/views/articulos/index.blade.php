@@ -5,42 +5,32 @@
         <div class="second-background"></div>
         <div class="admin-content">
             <h1>Panel de Administración - Artículos</h1>
-            <p>Gestiona los artículos del blog</p>
-            <div class="admin-container">
-                @if (session('success'))
-                    <div class="alert alert-success">{{ session('success') }}</div>
-                @endif
-                <div class="filter-container">
-                    <form method="GET" action="{{ route('admin.dashboard') }}" class="filter-form">
-                        <div class="filter-left">
-                            <div class="filter-group">
-                                <label for="start_date" class="filter-label">Desde:</label>
-                                <input type="date" name="start_date" id="start_date" class="filter-input"
-                                       value="{{ request('start_date') }}">
-                            </div>
-                            <div class="filter-group">
-                                <label for="end_date" class="filter-label">Hasta:</label>
-                                <input type="date" name="end_date" id="end_date" class="filter-input"
-                                       value="{{ request('end_date') }}">
-                            </div>
-                            <button type="submit" class="btn btn-admin-filter">Filtrar</button>
+            <p>Gestiona los artículos del blog</p><br>
+            <div class="filter-container">
+                <form method="GET" action="{{ route('admin.articulos.index') }}" class="filter-form" id="filter-form">
+                    <div class="filter-left">
+                        <div class="filter-group">
+                            <label for="start_date" class="filter-label">Desde:</label>
+                            <input type="date" name="start_date" id="start_date" class="filter-input" value="{{ request('start_date') }}">
                         </div>
-                        <div class="filter-right">
-                            <div class="filter-group">
-                                <label for="order_by" class="filter-label">Ordenar por:</label>
-                                <select name="order_by" id="order_by" class="filter-select filter-select-wide" onchange="this.form.submit()">
-                                    <option value="recent" {{ request('order_by') == 'recent' ? 'selected' : '' }}>
-                                        Más recientes
-                                    </option>
-                                    <option value="oldest" {{ request('order_by') == 'oldest' ? 'selected' : '' }}>
-                                        Más antiguos
-                                    </option>
-                                </select>
-                            </div>
+                        <div class="filter-group">
+                            <label for="end_date" class="filter-label">Hasta:</label>
+                            <input type="date" name="end_date" id="end_date" class="filter-input" value="{{ request('end_date') }}">
                         </div>
-                    </form>
-                </div>
-                <a href="{{ route('articulos.create') }}" class="btn-admin-create">Crear Artículo</a>
+                        <button type="submit" class="btn-admin-filter">Filtrar</button>
+                    </div>
+                    <div class="filter-right">
+                        <div class="filter-group">
+                            <label for="order_by" class="filter-label">Ordenar por:</label>
+                            <select name="order_by" id="order_by" class="filter-select" onchange="this.form.submit()">
+                                <option value="recent" {{ request('order_by') == 'recent' ? 'selected' : '' }}>Más recientes</option>
+                                <option value="oldest" {{ request('order_by') == 'oldest' ? 'selected' : '' }}>Más antiguos</option>
+                            </select>
+                        </div>
+                    </div>
+                </form>
+            </div><br><br>
+            <a href="{{ route('articulos.create') }}" class="btn-admin-create">Crear Artículo</a>
                 <div class="article-list">
                     @forelse ($articulos as $articulo)
                         <a href="{{ route('articulos.show', $articulo->slug) }}" class="article-card-link">
@@ -58,27 +48,33 @@
                                     </div>
                                 </div>
                                 <div class="article-actions">
-                                    <a href="{{ route('articulos.edit', $articulo->slug) }}" class="action-icon" title="Editar">
+                                    <a href="{{ route('articulos.edit', $articulo->slug) }}"   class="btn-user-edit" title="Editar">
                                         <i class="bi bi-pen"></i>
                                     </a>
-                                    <button type="button" class="action-icon action-delete" title="Eliminar" data-id="{{ $articulo->id }}" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                                    <button type="button"  class="btn-user-edit"      title="Eliminar" data-id="{{ $articulo->id }}" data-bs-toggle="modal" data-bs-target="#deleteModal">
                                         <i class="bi bi-trash"></i>
                                     </button>
                                     <form action="{{ route('admin.articulos.destroy', $articulo->slug) }}" method="POST" style="display:none;" id="delete-form-{{ $articulo->id }}">
                                         @csrf
                                         @method('DELETE')
                                     </form>
+
                                 </div>
                             </div>
                         </a>
                     @empty
                         <p class="no-articles">No hay artículos disponibles.</p>
+                        <button type="button" class="btn-admin-filter-limpiar" onclick="clearFilters()">Limpiar filtros</button>
+
                     @endforelse
                 </div>
+
                 <div class="pagination-container">
                     {{ $articulos->appends(request()->query())->links('vendor.pagination.custom') }}
                 </div>
+
             </div>
+
         </div>
     </div>
 
@@ -134,5 +130,17 @@
                 });
             });
         });
+    </script>
+
+    <!-- botón limpiar filtros -->
+    <script>
+        function clearFilters() {
+            const form = document.getElementById('filter-form');
+            form.querySelectorAll('input, select').forEach(input => {
+                if (input.type === 'date') input.value = '';
+                if (input.tagName === 'SELECT') input.value = 'recent';
+            });
+            window.location = '{{ route('admin.articulos.index') }}';
+        }
     </script>
 @endpush
