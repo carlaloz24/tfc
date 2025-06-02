@@ -153,9 +153,10 @@
                 <div class="footer-column">
                     <ul class="footer-links">
                         <li><strong><a>Secciones</a></strong></li>
-                        <li><a href="#">Sección 1</a></li>
-                        <li><a href="#">Sección 2</a></li>
-                        <li><a href="#">Sección 3</a></li>
+                        <li><a href="#">Sobre Barf&Co</a></li>
+                        <li><a href="#">Qué hacemos</a></li>
+                        <li><a href="#">Dietas disponibles </a></li>
+                        <li><a href="#">Contacto</a></li>
                     </ul>
                 </div>
                 <div class="footer-column">

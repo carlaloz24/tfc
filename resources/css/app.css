@@ -419,7 +419,10 @@ ul li {
     width: calc(100% - 20px);
     max-width: none;
 }
-
+.navbar-nav.ms-auto {
+    display: flex;
+    align-items: center;
+}
 
 
 .navbar-container {
@@ -475,8 +478,8 @@ ul li {
 
 .navbar-nav.ms-auto .nav-link.btn-home-primary,
 .navbar-nav.ms-auto .nav-link.btn-home-secondary {
-    margin-left: 10px;
-    padding: clamp(8px, 2vw, 10px) clamp(15px, 3vw, 20px);
+    margin-left: 1px; /* Mínimo espacio entre botones */
+    padding: clamp(8px, 2vw, 10px) clamp(10px, 2vw, 15px); /* Reducir padding horizontal */
     font-size: clamp(0.8rem, 2vw, 0.9rem);
 }
 
@@ -506,7 +509,7 @@ ul li {
     background: transparent;
     color: #fb4d17;
     border: 2px solid #fb4d17;
-    padding: clamp(8px, 2vw, 10px) clamp(15px, 3vw, 20px);
+    padding: clamp(8px, 2vw, 8px) clamp(15px, 3vw, 15px);
     border-radius: 35px;
     font-size: clamp(0.8rem, 2vw, 0.9rem);
     font-weight: 500;
@@ -1466,7 +1469,7 @@ ul li {
 .profile-form-input {
     background: #efeeeb;
     border: none;
-    border-radius: 30px;
+    border-radius: 35px;
     padding: 12px 15px;
     font-size: 1rem;
     color: #858585;
@@ -1521,7 +1524,7 @@ ul li {
 }
 
 .profile-btn-danger {
-    background: #d32f2f;
+    background: #ec0e23;
     color: #fff;
     border: none;
     padding: 10px 20px;
@@ -1533,7 +1536,7 @@ ul li {
 }
 
 .profile-btn-danger:hover {
-    background: #b71c1c;
+    background: #ec0e23;
 }
 
 .profile-pets-table {
@@ -2324,6 +2327,7 @@ ul li {
     text-align-last: center;
     margin-bottom: 20px;
 
+
     }
 
 
@@ -2331,10 +2335,14 @@ ul li {
 .scroll-text {
     font-size: 1.7rem;
     font-weight: 600;
-    max-width: 900px;
-    margin: 50px;
+    margin: 50px auto;
     text-align: center;
     line-height: 35px;
+    max-width: 1200px;
+    word-wrap: break-word;
+    white-space: normal;
+    /*display: block;*/
+
 
 }
 
@@ -2874,7 +2882,7 @@ ul li {
     width: 100%;
     padding: 0.5rem;
     border: 1px solid #6c757d;
-    border-radius: 5px;
+    border-radius: 35px;
     font-size: 1rem;
 }
 
@@ -2900,7 +2908,7 @@ ul li {
 }
 
 .profile-btn-danger {
-    background-color: #dc3545;
+    background-color: #ec0e23;
     color: #fff;
     padding: 0.5rem 1rem;
     border: none;
@@ -2911,7 +2919,7 @@ ul li {
 }
 
 .profile-btn-danger:hover {
-    background-color: #c82333;
+    background-color: #ec0e23;
 }
 
 .profile-btn-secondary {
@@ -3304,7 +3312,7 @@ ul li {
     width: 100%;
     padding: 0.5rem;
     border: 1px solid #6c757d;
-    border-radius: 5px;
+    border-radius: 35px;
     font-size: 1rem;
 }
 
@@ -3319,7 +3327,7 @@ ul li {
     color: #fff;
     padding: 0.5rem 1rem;
     border: none;
-    border-radius: 5px;
+    border-radius: 35px;
     font-size: 1rem;
     cursor: pointer;
     transition: background-color 0.3s;
@@ -3330,7 +3338,7 @@ ul li {
 }
 
 .profile-btn-danger {
-    background-color: #dc3545;
+    background-color: #ec0e23;
     color: #fff;
     padding: 0.5rem 1rem;
     border: none;
@@ -3341,7 +3349,7 @@ ul li {
 }
 
 .profile-btn-danger:hover {
-    background-color: #c82333;
+    background-color: #ec0e23;
 }
 
 .profile-btn-secondary {
@@ -3408,7 +3416,7 @@ ul li {
     background-color: #fb4d17;
     color: #fff;
     padding: 0.25rem 0.75rem;
-    border-radius: 5px;
+    border-radius: 35px;
     font-size: 0.875rem;
     text-decoration: none;
     transition: background-color 0.3s;
@@ -4620,7 +4628,7 @@ ul li {
 
 .form-control {
     background: #f5f5f5;
-    border: 1px solid #6c757d;
+    border: 1px solid #dedfe1;
     border-radius: 20px;
     padding: 8px 12px;
     font-size: 0.9rem;
