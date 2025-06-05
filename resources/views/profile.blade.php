@@ -13,11 +13,9 @@
             {{ session('success') }}
         </div>
     @endif
-    <div class="profile-container">
 
 
-        <div class="profile-container">
-            <div class="profile-block">
+        <div class="profile-container" style="background-color: #dad6c9">
                 <h1>¡Hola {{ Auth::user()->nombre }}!</h1>
 
                 <!-- datos del usuario -->
@@ -42,7 +40,7 @@
                         </div>
                         <div class="profile-form-actions">
                             <button type="submit" class="pet-btn-download" style="border-radius: 35px; max-width: 300px; ">Actualizar Datos</button>
-                            <a href="{{ route('profile.delete') }}" class="profile-btn-danger"  style="border-radius: 35px; max-width: 250px;" onclick="return confirm('¿Estás seguro de querer eliminar tu cuenta? Esta acción no se puede deshacer.')">Eliminar Cuenta</a>
+                            <a href="{{ route('profile.delete') }}" class="profile-btn-danger" onclick="return confirm('¿Estás seguro de querer eliminar tu cuenta? Esta acción no se puede deshacer.')">Eliminar Cuenta</a>
                         </div>
                     </form>
                 </div>
@@ -59,7 +57,7 @@
                                 <div class="col-md-6">
                                     <div class="pet-card">
                                         <div class="pet-card-body">
-                                            <h3 class="pet-card-title">{{ $mascota->nombre }}</h3>
+                                            <h3 class="pet-card-title" style="margin-bottom:15px;">{{ $mascota->nombre }}</h3>
                                             <p class="pet-card-text">
                                                 <strong>Edad:</strong> {{ ucfirst(str_replace('_', ' ', $mascota->categoria_edad)) }}<br>
                                                 <strong>Raza:</strong> {{ $mascota->raza }} <br>
@@ -88,18 +86,19 @@
                                                     Dieta {{ ucfirst($dieta->tipo_dieta) }} - {{ $dieta->created_at->format('Y-m-d') }}
                                                     <a href="{{ route('calculadora.download', $dieta->id) }}" class="pet-btn-download" >Descargar PDF</a>
                                                 </p>
-                                                <a href="{{ route('calculadora.create', $mascota->id) }}" class="pet-btn-download">Actualizar Dieta</a>
                                             @endif
                                             <div class="pet-card-actions">
-                                                <a href="{{ route('mascotas.show', $mascota->id) }}" class="pet-btn-action"><i class="bi bi-eye"></i></a>
+{{--                                                <a href="{{ route('mascotas.show', $mascota->id) }}" class="pet-btn-action"><i class="bi bi-eye"></i></a>--}}
                                                 <a href="{{ route('mascotas.edit', $mascota->id) }}" class="pet-btn-action"><i class="bi bi-pencil"></i></a>
+
                                                 <form action="{{ route('mascotas.destroy', $mascota->id) }}" method="POST" style="display:inline;">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit" class="pet-btn-action pet-btn-delete" onclick="return confirm('¿Eliminar esta mascota?')"><i class="bi bi-trash"></i></button>
                                                 </form>
-                                                @if (!$mascota->plan && $mascota->facturas->isEmpty())
-                                                    <a href="{{ route('planes.select', $mascota->id) }}" class="pet-btn-download">Contratar Plan</a>
+                                                <a href="{{ route('calculadora.create', $mascota->id) }}" class="boton-accion" style="margin-bottom:5px;">Actualizar Dieta</a>
+                                            @if (!$mascota->plan && $mascota->facturas->isEmpty())
+                                                    <a href="{{ route('planes.select', $mascota->id) }}" class="boton-accion">Contratar Plan</a>
                                                 @endif
                                             </div>
                                         </div>
@@ -117,7 +116,7 @@
                     @if (auth()->user()->facturas->isEmpty())
                         <p>No tienes facturas.</p>
                     @else
-                        <table class="facturas-table">
+                        <table class="facturas-table" style="background-color: white;">
                             <thead>
                             <tr>
                                 <th>Fecha</th>
@@ -146,10 +145,9 @@
                             </tbody>
                         </table>
                     @endif
-                </div>
 
 
 
-            </div>
+
         </div>
 @endsection

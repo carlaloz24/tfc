@@ -3,7 +3,7 @@
 @section('content')
     <div class="main-container">
         <div class="second-background"></div>
-        <div class="container-fluid home-content">
+        <div class="container-fluid home-content" id="home-info">
             <div class="row align-items-center">
                 <div class="col-md-6">
                     <div class="home-text">
@@ -25,21 +25,31 @@
         </div>
     </div>
 
-
-    <div id="scroll-text" class="scroll-text">
-        En BARFCo, somos un equipo de nutricionistas y veterinarios apasionados por la salud canina,
-        creando dietas personalizadas que transforman la vida de tu perro. Con ingredientes frescos y
-        planes adaptados (BARF, cocida o mixta), nuestro servicio combina ciencia, calidad y amor para
-        garantizar una nutrición óptima.
-        ¡Únete a miles de dueños felices y dale a tu compañero lo mejor con nosotros!
+    <div class="main-container">
+        <div class="main-container" id="sobre-barfco"></div>
+        <div class="container-fluid home-content">
+            <div class="row align-items-end">
+                <div class="col-md-6 text-center">
+                    <img src="{{ asset('images/entrega.png') }}" alt="Entrega" class="home-image-entrega">
+                </div>
+                <div class="col-md-6">
+                    <div class="home-text">
+                        <div id="scroll-text" class="scroll-text">Somos un equipo apasionado por elevar la salud y
+                            el bienestar de los perros mediante dietas personalizadas diseñadas para optimizar su
+                            calidad de vida. En Barf&Co, utilizamos ingredientes frescos, orgánicos y libres de
+                            aditivos innecesarios, garantizando un compromiso inquebrantable con la excelencia y
+                            pureza de cada producto. Ofrecemos entregas recurrentes con alimentos refrigerados para
+                            preservar su frescura, junto con un servicio de envío a domicilio que puedes programar
+                            para simplificar el proceso.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
 
-
-
-
-
-    <div class="info-gallery-horizontal">
+    <div class="info-gallery-horizontal" id="que-hacemos">
         <section class="info-item">
             <div class="info-box">
                 <img src="{{ asset('images/barf-diet.png') }}" alt="Historia 1" class="info-image" style="margin-top:15px;">
@@ -88,7 +98,7 @@
 
 
     <!--sección de contacto -->
-    <div class="contact-container" id="contacto" style=" margin-top: 100px;">
+    <div class="contact-container" id="contacto" style="margin-top: 100px;">
         <div class="contact-background"></div>
         <div class="container-fluid contact-content">
             <div class="row align-items-start">
@@ -104,11 +114,11 @@
                         <div class="contact-social">
                             <p class="social-title"></p>
                             <div class="social-icons">
-                                <a href="#" class="social-link"><i class="bi bi-facebook"></i></a>
-                                <a href="#" class="social-link"><i class="bi bi-instagram"></i></a>
-                                <a href="#" class="social-link"><i class="bi bi-twitter"></i></a>
+                                <a href="https://www.facebook.com/?locale=es_ES" class="social-link"><i class="bi bi-facebook"></i></a>
+                                <a href="https://www.instagram.com " class="social-link"><i class="bi bi-instagram"></i></a>
+                                <a href="https://x.com/?lang=es" class="social-link"><i class="bi bi-twitter"></i></a>
                             </div>
-                        </div>
+                    </div>
                     </div>
                 </div>
                 <div class="col-md-6">
@@ -153,10 +163,10 @@
                 <div class="footer-column">
                     <ul class="footer-links">
                         <li><strong><a>Secciones</a></strong></li>
-                        <li><a href="#">Sobre Barf&Co</a></li>
-                        <li><a href="#">Qué hacemos</a></li>
-                        <li><a href="#">Dietas disponibles </a></li>
-                        <li><a href="#">Contacto</a></li>
+                        <li><a href="#home-info">Sobre Barf&Co</a></li>
+                        <li><a href="#sobre-barfco">Qué hacemos</a></li>
+                        <li><a href="#que-hacemos">Dietas disponibles</a></li> <!-- Ajusta si creas un ID separado -->
+                        <li><a href="#contacto">Contacto</a></li>
                     </ul>
                 </div>
                 <div class="footer-column">

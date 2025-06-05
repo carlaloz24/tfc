@@ -19,7 +19,7 @@
                         </ul>
                     </div>
                 @endif
-                <form method="POST" action="{{ route('articulos.store') }}" enctype="multipart/form-data" class="admin-form" onsubmit="tinymce.triggerSave(); console.log('Formulario enviado');">
+                <form method="POST" action="{{ route('articulos.store') }}" enctype="multipart/form-data" class="admin-form" onsubmit="tinymce.triggerSave(); console.log('Contenido:', tinymce.get('contenido').getContent());">
                     @csrf
                     <div class="form-group">
                         <label for="titulo" class="form-label">Título</label>

@@ -4,7 +4,7 @@
     <div class="main-container">
         <div class="second-background"></div>
         <div class="admin-content">
-            <h1>Panel de Administración - Artículos</h1>
+            <h1>Gestión de Artículos</h1>
             <p>Gestiona los artículos del blog</p><br>
             <div class="filter-container">
                 <form method="GET" action="{{ route('admin.articulos.index') }}" class="filter-form" id="filter-form">
@@ -102,16 +102,19 @@
         document.addEventListener('DOMContentLoaded', () => {
             let articleId = null;
 
-            //capturar el ID del artículo al hacer clic en eliminar
-            document.querySelectorAll('.action-delete').forEach(button => {
-                button.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    articleId = button.getAttribute('data-id');
-                    e.stopPropagation();
-                });
+            // Capturar el ID del artículo al abrir el modal
+            const deleteModal = document.getElementById('deleteModal');
+            deleteModal.addEventListener('show.bs.modal', (event) => {
+                const button = event.relatedTarget; // Botón que abrió el modal
+                articleId = button.getAttribute('data-id'); // Obtener el ID
+                document.getElementById('delete-form-' + articleId).style.display = 'block'; // Mostrar el formulario
             });
 
-            //confirmar eliminación
+            deleteModal.addEventListener('hide.bs.modal', () => {
+                document.getElementById('delete-form-' + articleId).style.display = 'none'; // Ocultar el formulario al cerrar
+            });
+
+            // Confirmar eliminación
             document.getElementById('confirm-delete').addEventListener('click', () => {
                 if (articleId) {
                     const form = document.getElementById(`delete-form-${articleId}`);
@@ -123,8 +126,8 @@
                 }
             });
 
-            //cvitar que el clic en editar active el enlace de la card
-            document.querySelectorAll('.action-icon:not(.action-delete)').forEach(link => {
+            // Evitar que el clic en editar active el enlace de la card
+            document.querySelectorAll('.btn-user-edit:not(.action-delete)').forEach(link => {
                 link.addEventListener('click', (e) => {
                     e.stopPropagation();
                 });
@@ -132,7 +135,7 @@
         });
     </script>
 
-    <!-- botón limpiar filtros -->
+    <!-- Botón limpiar filtros -->
     <script>
         function clearFilters() {
             const form = document.getElementById('filter-form');
@@ -143,4 +146,5 @@
             window.location = '{{ route('admin.articulos.index') }}';
         }
     </script>
+
 @endpush

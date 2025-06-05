@@ -15,7 +15,7 @@
                         Sin fecha
                     @endif
                 </p>
-                <div class="article-content">
+                <div class="article-content" >
                     {!! $articulo->contenido ?: 'Sin contenido disponible' !!}
                 </div>
                 @if ($articulo->imagen)

@@ -4,20 +4,8 @@
     <div class="main-container">
         <div class="second-background"></div>
         <div class="content">
-            <h1>Blog</h1>
-            <p>Explora nuestros artículos sobre dietas y alimentación canina</p>
+
             <div class="filter-container">
-                <form method="GET" action="{{ route('articulos.index') }}" class="filter-form">
-                    <label for="order_by" class="filter-label">Ordenar por:</label>
-                    <select name="order_by" id="order_by" class="filter-select" onchange="this.form.submit()">
-                        <option value="recent" {{ request('order_by') == 'recent' ? 'selected' : '' }}>
-                            Más recientes
-                        </option>
-                        <option value="oldest" {{ request('order_by') == 'oldest' ? 'selected' : '' }}>
-                            Más antiguos
-                        </option>
-                    </select>
-                </form>
             </div>
         </div>
         <div class="card-container">

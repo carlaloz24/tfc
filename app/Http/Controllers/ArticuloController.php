@@ -53,61 +53,58 @@ class ArticuloController extends Controller
 
     public function store(Request $request)
     {
-        try {
-            Log::info('Iniciando creación de artículo', ['request' => $request->all()]);
+        Log::info('Iniciando creación de artículo', ['request' => $request->all()]);
 
-            $validated = $request->validate([
-                'titulo' => 'required|string|max:255',
-                'contenido' => 'required|string',
-                'fecha_publicacion' => 'nullable|date',
-                'imagen' => 'nullable|image|max:2048',
-            ]);
+        // Validación
+        $validated = $request->validate([
+            'titulo' => 'required|string|max:255',
+            'contenido' => 'required|string',
+            'imagen' => 'nullable|image|max:5120', // Aumentar a 5 MB
+        ]);
 
-            Log::info('Validación correcta', ['validated' => $validated]);
+        Log::info('Validación correcta', ['validated' => $validated]);
 
-            $slug = Str::slug($request->input('titulo'));
-            $originalSlug = $slug;
-            $count = 1;
-            while (Articulo::where('slug', $slug)->exists()) {
-                $slug = $originalSlug . '-' . $count++;
-            }
-
-            Log::info('Slug generado', ['slug' => $slug]);
-
-            if (!auth()->check()) {
-                Log::error('Usuario no autenticado');
-                return redirect()->route('login')->with('error', 'Debes iniciar sesión');
-            }
-
-            $userId = auth()->id();
-            Log::info('ID de usuario', ['id_usuario' => $userId]);
-
-            $data = $validated;
-            $data['slug'] = $slug;
-            $data['id_usuario'] = $userId;
-            $data['fecha_publicacion'] = $validated['fecha_publicacion'] ?? now()->toDateTimeString();
-
-            if ($request->hasFile('imagen')) {
-                Log::info('Subiendo imagen');
-                $data['imagen'] = $request->file('imagen')->store('articulos', 'public'); // Cambiado a 'articulos', 'public'
-                Log::info('Imagen guardada', ['imagen' => $data['imagen']]);
-            }
-
-            Log::info('Creando artículo', ['data' => $data]);
-            Articulo::create($data);
-
-            Log::info('Artículo creado con éxito');
-
-            return redirect()->route('admin.dashboard')
-                ->with('success', 'Artículo creado con éxito');
-        } catch (\Exception $e) {
-            Log::error('Error al crear artículo', [
-                'message' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
-            ]);
-            return back()->with('error', 'Error al crear el artículo: ' . $e->getMessage());
+        // Generar slug
+        $slug = Str::slug($request->input('titulo'));
+        $originalSlug = $slug;
+        $count = 1;
+        while (Articulo::where('slug', $slug)->exists()) {
+            $slug = $originalSlug . '-' . $count++;
         }
+
+        Log::info('Slug generado', ['slug' => $slug]);
+
+        // Verificar autenticación
+        if (!auth()->check()) {
+            Log::error('Usuario no autenticado');
+            return redirect()->route('login')->with('error', 'Debes iniciar sesión');
+        }
+
+        $userId = auth()->id();
+        Log::info('ID de usuario', ['id_usuario' => $userId]);
+
+        // Preparar datos
+        $data = $validated;
+        $data['slug'] = $slug;
+        $data['id_usuario'] = $userId;
+        $data['fecha_publicacion'] = now()->toDateTimeString();
+
+        if ($request->hasFile('imagen')) {
+            Log::info('Subiendo imagen');
+            $data['imagen'] = $request->file('imagen')->store('articulos', 'public');
+            Log::info('Imagen guardada', ['imagen' => $data['imagen']]);
+        }
+
+        Log::info('Creando artículo', ['data' => $data]);
+        Articulo::create($data);
+
+        Log::info('Artículo creado con éxito');
+
+        return redirect()->route('admin.dashboard')
+            ->with('success', 'Artículo creado con éxito');
     }
+
+
 
     public function show($slug) {
         $articulo = Articulo::where('slug', $slug)->firstOrFail();
