@@ -1,26 +1,41 @@
-# Usa una imagen oficial PHP con Apache
-FROM php:8.2-apache
+FROM php:8.2-fpm
 
-# Instala extensiones necesarias
-RUN docker-php-ext-install pdo pdo_mysql mbstring
+# Instala dependencias del sistema necesarias
+RUN apt-get update && apt-get install -y \
+    libpng-dev \
+    libjpeg-dev \
+    libfreetype6-dev \
+    libonig-dev \
+    libxml2-dev \
+    zip \
+    unzip \
+    git \
+    curl \
+    libzip-dev \
+    libpq-dev \
+    mariadb-client \
+    && docker-php-ext-configure gd \
+    --with-freetype \
+    --with-jpeg \
+    && docker-php-ext-install pdo pdo_mysql mbstring zip exif pcntl gd
 
-# Instala composer
+# Instala Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Copia el código al contenedor
-COPY . /var/www/html/
+# Copia tu aplicación
+COPY . /var/www
 
-# Cambia permisos (puedes ajustar según tu proyecto)
-RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+# Establece el directorio de trabajo
+WORKDIR /var/www
 
-# Instala dependencias composer
-RUN composer install --no-dev --optimize-autoloader
+# Instala dependencias de Laravel
+RUN composer install --optimize-autoloader --no-dev
 
-# Habilita mod_rewrite para Laravel
-RUN a2enmod rewrite
+# Asigna permisos
+RUN chown -R www-data:www-data /var/www && chmod -R 755 /var/www
 
-# Expone el puerto 80
-EXPOSE 80
+# Expone el puerto
+EXPOSE 9000
 
-# Comando para iniciar apache en foreground
-CMD ["apache2-foreground"]
+# Inicia PHP-FPM
+CMD ["php-fpm"]
