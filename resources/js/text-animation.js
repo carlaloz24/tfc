@@ -1,35 +1,26 @@
-
-
-/* En Home, sección de texto grande. Al hacer scroll, se cambia el color de las letras
-* una por una, efecto dominó */
-
 document.addEventListener('DOMContentLoaded', () => {
     const scrollText = document.getElementById('scroll-text');
-    const text = scrollText.textContent;
+    let text = scrollText.textContent;
+
+    // Limpiar saltos de línea y espacios extras
+    text = text.replace(/\s+/g, ' ').trim();
 
     const words = text.split(' ').map(word => {
-        const letters = word.split('').map(l => `<span class="letter">${l}</span>`).join('');
-        return `<span class="word">${letters}&nbsp;</span>`;
+        return `<span class="word">${[...word].map(l => `<span class="letter">${l}</span>`).join('')}</span>`;
     });
 
-    scrollText.innerHTML = words.join('');
+    scrollText.innerHTML = words.join('<span class="space">&nbsp;</span>');
 
     const letters = scrollText.querySelectorAll('.letter');
-    const scrollStep = 5; // cada 5px de scroll activa una letra
-    const maxActive = letters.length;
+    const scrollStep = 3; //esto hace que cada 3px de scroll cambie una letra
 
     function update() {
         const scrollTop = window.scrollY || window.pageYOffset;
         let activeCount = Math.floor(scrollTop / scrollStep);
-        if (activeCount > maxActive) activeCount = maxActive;
-        if (activeCount < 0) activeCount = 0;
+        if (activeCount > letters.length) activeCount = letters.length;
 
         letters.forEach((letter, i) => {
-            if (i < activeCount) {
-                letter.classList.add('active');
-            } else {
-                letter.classList.remove('active');
-            }
+            letter.classList.toggle('active', i < activeCount);
         });
     }
 

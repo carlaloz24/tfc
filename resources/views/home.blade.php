@@ -35,7 +35,7 @@
                 <div class="col-md-6">
                     <div class="home-text">
                         <div id="scroll-text" class="scroll-text">Somos un equipo apasionado por elevar la salud y
-                            el bienestar de los perros mediante dietas personalizadas diseñadas para optimizar su
+                            el bienestar de nuestros perros mediante dietas personalizadas diseñadas para optimizar su
                             calidad de vida. En Barf&Co, utilizamos ingredientes frescos, orgánicos y libres de
                             aditivos innecesarios, garantizando un compromiso inquebrantable con la excelencia y
                             pureza de cada producto. Ofrecemos entregas recurrentes con alimentos refrigerados para
@@ -44,6 +44,9 @@
                         </div>
                     </div>
                 </div>
+
+
+
             </div>
         </div>
     </div>

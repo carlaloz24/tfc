@@ -417,7 +417,9 @@ ul li {
     z-index: 1000;
     width: calc(100% - 20px);
 }
-
+.navbar-brand {
+    margin-bottom: -90px;
+}
 .navbar-container {
     display: flex;
     align-items: center;
@@ -427,6 +429,7 @@ ul li {
     max-width: 1200px;
     margin: 0 auto;
     padding: 10px 20px;
+    margin-left:25px;
 }
 
 .navbar-logo {
@@ -448,6 +451,7 @@ ul li {
     display: flex;
     align-items: center;
     flex-wrap: wrap;
+
 }
 
 .navbar-nav.mx-auto {
@@ -523,7 +527,27 @@ ul li {
     }
 }
 
+@media (max-width: 1024px) {
+    .navbar {
+        margin: 5px;
+        width: calc(100% - 10px);
+    }
 
+    .navbar-container {
+        flex-direction: column;
+        align-items: stretch;
+        text-align: center;
+        padding: 15px;
+    }
+
+    .navbar-brand {
+        margin-bottom: 10px;
+    }
+
+
+
+
+}
 
 @media (min-width: 1400px) {
     .navbar-container {
@@ -1057,11 +1081,7 @@ ul li {
 
 /*Estilos Home ------------------------------------------------*/
 
-
-
-/*Estilos para la home                 */
-
-
+/*Estilos para la home   */
 
 
 .home-image {
@@ -1081,8 +1101,8 @@ ul li {
 
 .navbar-nav.ms-auto .nav-link.btn-home-primary,
 .navbar-nav.ms-auto .nav-link.btn-home-secondary {
-    margin-left: 1px; /* Mínimo espacio entre botones */
-    padding: clamp(8px, 2vw, 10px) clamp(10px, 2vw, 15px); /* Reducir padding horizontal */
+    margin-left: 1px;
+    padding: clamp(8px, 2vw, 10px) clamp(10px, 2vw, 15px);
     font-size: clamp(0.8rem, 2vw, 0.9rem);
 }
 
@@ -1210,7 +1230,7 @@ ul li {
 }
 
 .home-content .row {
-    margin: 0; /* esto elimina márgenes de bootstrap */
+    margin: 0;
 }
 
 .home-content .col-md-6 {
@@ -2183,30 +2203,90 @@ ul li {
 }
 
 
-.scroll-text {
-    font-size: 1.5rem;
-    font-weight: 600;
-    margin: 50px auto;
-    text-align: center;
-    line-height: 35px;
-    max-width: 1200px;
-    white-space: normal; /* Permite saltos de línea normales */
-    overflow-wrap: break-word; /* Fuerza el salto si es necesario */
-    word-break: normal; /* Usa el valor por defecto, que es más natural para español */
+
+
+
+/*animación de sroll párrafo de Home*/
+.home-content {
+    padding: 20px;
 }
 
+.home-image-entrega {
+    max-width: 100%;
+    height: auto;
+    object-fit: contain;
+    display: block;
+    margin: 0 auto;
+}
 
+.scroll-text {
+    font-weight: 600;
+    margin: 50px auto;
+    text-align: justify;
+    line-height: 1.6;
+    max-width: 600px;
+    white-space: normal;
+    word-break: normal;
+    overflow-wrap: break-word;
+    font-size: clamp(1rem, 1.5vw, 2.5rem);
+}
+
+.scroll-text .word {
+    display: inline;
+    white-space: nowrap;
+}
 
 .scroll-text .letter {
+    display: inline;
     color: rgba(8, 54, 48, 0.37);
-    user-select: none;
-    transition: none;
+    transition: color 0.3s;
 }
 
 .scroll-text .letter.active {
     color: #333;
 }
 
+.home-content .row {
+    align-items: flex-end;
+}
+
+@media (max-width: 1200px) {
+    .scroll-text {
+        max-width: 90%;
+        margin: 30px auto;
+        line-height: 1.5;
+    }
+}
+
+@media (max-width: 992px) {
+    .scroll-text {
+        max-width: 95%;
+        margin: 25px auto;
+        line-height: 1.4;
+    }
+}
+
+@media (max-width: 768px) {
+    .home-content .row {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+    .home-content .col-md-6 {
+        max-width: 100%;
+        flex: 0 0 100%;
+    }
+    .home-image-entrega {
+        margin-bottom: 20px;
+    }
+}
+
+@media (min-width: 2560px) {
+    .scroll-text {
+        font-size: clamp(2rem, 2vw, 4rem);
+        max-width: 900px;
+    }
+}
 
 
 
@@ -3465,7 +3545,6 @@ ul li {
     gap: 10px;
     align-items: center;
     flex-wrap: wrap;
-
 }
 
 /*.pet-btn-action {*/
