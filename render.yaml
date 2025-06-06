@@ -54,10 +54,10 @@ services:
         value: debug
       - key: VITE_APP_NAME
         value: "Barf&Co"
-      - key: STRIPE_KEY
-        value: pk_test_51RNEqeGdEWPbMrhRlfAFcfjjwWVbG7c3J0WD21qhYmRbhgqpWbHSW3QSyoSlBO7lprpmHPc3HPhkzUdIMs8XLjeh00DEON1Zic
-      - key: STRIPE_SECRET
-        value: sk_test_51RNEqeGdEWPbMrhRUv1Cs1l5VnlFDGjPbI3EmZq9A7NJLYiJAl9K34LXYvtKQFkZs5RBsnj7xMsrcFYZEBJ0EzER00jscpWTXu
+#      - key: STRIPE_KEY
+#        value: pk_test_51RNEqeGdEWPbMrhRlfAFcfjjwWVbG7c3J0WD21qhYmRbhgqpWbHSW3QSyoSlBO7lprpmHPc3HPhkzUdIMs8XLjeh00DEON1Zic
+#      - key: STRIPE_SECRET
+#        value: sk_test_51RNEqeGdEWPbMrhRUv1Cs1l5VnlFDGjPbI3EmZq9A7NJLYiJAl9K34LXYvtKQFkZs5RBsnj7xMsrcFYZEBJ0EzER00jscpWTXu
       - key: MAIL_MAILER
         value: log
     healthCheckPath: /
