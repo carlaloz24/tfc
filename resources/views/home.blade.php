@@ -8,7 +8,9 @@
                 <div class="col-md-6">
                     <div class="home-text">
                         <h1 class="home-title">Transforma la calidad de vida de tu mascota</h1>
-                        <p class="home-description">Optimiza la salud de tu perro con planes de alimentación personalizados, diseñados para adaptarse perfectamente a sus características y necesidades, garantizando su bienestar y vitalidad.</p>
+                        <p class="home-description">
+                            Optimiza la salud de tu perro con planes de alimentación personalizados, diseñados para adaptarse perfectamente a sus características y necesidades, garantizando su bienestar y vitalidad.
+                        </p>
                         <div class="home-actions">
                             <a href="{{ route('calculadora.index') }}" class="btn-home-primary">
                                 Generar dieta gratis
@@ -24,6 +26,8 @@
             </div>
         </div>
     </div>
+
+
 
     <div class="main-container">
         <div class="main-container" id="sobre-barfco"></div>

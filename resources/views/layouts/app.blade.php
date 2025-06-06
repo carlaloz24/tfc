@@ -30,8 +30,6 @@
                     <li class="nav-item"><a class="nav-link" href="{{ route('admin.articulos.index') }}">Gestión de Artículos</a></li>
                 @else
                     <li class="nav-item"><a class="nav-link" href="{{ route('home') }}">Inicio</a></li>
-
-                    <li class="nav-item"><a class="nav-link" href="{{ route('home') }}">Inicio</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ route('calculadora.index') }}">Calculadora</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ route('planes') }}">Planes</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ route('articulos.index') }}">Blog</a></li>
@@ -70,6 +68,19 @@
     </div>
 </footer>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const toggle = document.querySelector('.navbar-toggler');
+        const collapse = document.querySelector('.navbar-collapse');
+
+        if (toggle && collapse) {
+            toggle.addEventListener('click', function () {
+                collapse.classList.toggle('active');
+            });
+        }
+    });
+</script>
+
 @stack('scripts')
 </body>
 </html>

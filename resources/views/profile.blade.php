@@ -116,6 +116,8 @@
                     @if (auth()->user()->facturas->isEmpty())
                         <p>No tienes facturas.</p>
                     @else
+
+                        <div class="facturas-table-container">
                         <table class="facturas-table" style="background-color: white;">
                             <thead>
                             <tr>
@@ -148,6 +150,6 @@
 
 
 
-
+                        </div>
         </div>
 @endsection
