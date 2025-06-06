@@ -1,41 +1,44 @@
+# Utilizar una imagen base de PHP con dependencias necesarias
 FROM php:8.2-fpm
 
-# Instala dependencias del sistema necesarias
+# Instalar dependencias del sistema
 RUN apt-get update && apt-get install -y \
+    git \
+    curl \
     libpng-dev \
-    libjpeg-dev \
-    libfreetype6-dev \
     libonig-dev \
     libxml2-dev \
     zip \
     unzip \
-    git \
-    curl \
-    libzip-dev \
-    libpq-dev \
-    mariadb-client \
-    && docker-php-ext-configure gd \
-    --with-freetype \
-    --with-jpeg \
-    && docker-php-ext-install pdo pdo_mysql mbstring zip exif pcntl gd
+    libpq-dev
 
-# Instala Composer
+# Instalar extensiones de PHP necesarias
+RUN docker-php-ext-install pdo_pgsql pgsql mbstring exif pcntl bcmath gd
+
+# Instalar Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Copia tu aplicación
-COPY . /var/www
-
-# Establece el directorio de trabajo
+# Establecer el directorio de trabajo
 WORKDIR /var/www
 
-# Instala dependencias de Laravel
+# Copiar el código de la aplicación
+COPY . .
+
+# Instalar las dependencias de Composer
 RUN composer install --optimize-autoloader --no-dev
 
-# Asigna permisos
-RUN chown -R www-data:www-data /var/www && chmod -R 755 /var/www
+# Copiar el archivo .env.example a .env
+COPY .env.example .env
 
-# Expone el puerto
+# Generar la clave de la aplicación
+RUN php artisan key:generate
+
+# Configurar permisos
+RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
+RUN chmod -R 775 /var/www/storage /var/www/bootstrap/cache
+
+# Exponer el puerto 9000 para PHP-FPM
 EXPOSE 9000
 
-# Inicia PHP-FPM
+# Iniciar PHP-FPM
 CMD ["php-fpm"]

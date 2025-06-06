@@ -1,0 +1,67 @@
+services:
+  - type: web
+    name: barfco
+    env: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: APP_NAME
+        value: "Barf&Co"
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: false
+      - key: APP_URL
+        value: https://barfco.com
+      - key: APP_KEY
+        sync: false # Render generará la clave automáticamente
+      - key: DB_CONNECTION
+        value: pgsql
+      - key: DB_HOST
+        fromService:
+          type: pgsql
+          name: barfco-db
+          property: host
+      - key: DB_PORT
+        fromService:
+          type: pgsql
+          name: barfco-db
+          property: port
+      - key: DB_DATABASE
+        fromService:
+          type: pgsql
+          name: barfco-db
+          property: database
+      - key: DB_USERNAME
+        fromService:
+          type: pgsql
+          name: barfco-db
+          property: user
+      - key: DB_PASSWORD
+        fromService:
+          type: pgsql
+          name: barfco-db
+          property: password
+      - key: SESSION_DRIVER
+        value: file
+      - key: CACHE_STORE
+        value: file
+      - key: QUEUE_CONNECTION
+        value: sync
+      - key: LOG_CHANNEL
+        value: stack
+      - key: LOG_LEVEL
+        value: debug
+      - key: VITE_APP_NAME
+        value: "Barf&Co"
+      - key: STRIPE_KEY
+        value: pk_test_51RNEqeGdEWPbMrhRlfAFcfjjwWVbG7c3J0WD21qhYmRbhgqpWbHSW3QSyoSlBO7lprpmHPc3HPhkzUdIMs8XLjeh00DEON1Zic
+      - key: STRIPE_SECRET
+        value: sk_test_51RNEqeGdEWPbMrhRUv1Cs1l5VnlFDGjPbI3EmZq9A7NJLYiJAl9K34LXYvtKQFkZs5RBsnj7xMsrcFYZEBJ0EzER00jscpWTXu
+      - key: MAIL_MAILER
+        value: log
+    healthCheckPath: /
+
+  - type: pgsql
+    name: barfco-db
+    plan: free
