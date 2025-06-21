@@ -1,52 +1,73 @@
-# Proyecto Barf&Co
+# 🐾 Proyecto Barf&Co
 
-## Descripción General
-Este repositorio contiene el proyecto web "Barf&Co", desarrollado con Laravel 12.8.1 y PHP 8.3.20. Incluye un diseño para una página inicial, una calculadora de dietas, planes contratables, un blog, un perfil donde añadir perfiles a las mascotas y asociarles una dieta y plan, un sistema de autenticación para administrador y usuario y un dashboard de administrador con gestión de artículos y usuarios. El proyecto es completamente funcional y viene con una base de datos así como inserts.
+**Web App desarrollada con Laravel para la gestión de dietas naturales para mascotas.**  
+Incluye funcionalidades completas para usuarios y administradores, con un diseño responsive y estructura modular.
 
+---
 
-## Tecnologías Usadas
-- **Backend**: Laravel 12.8.1, PHP 8.3.20
-- **Frontend**: Bootstrap 5.3.3, CSS personalizado, JavaScript
-- **Base de Datos**: MySQL
-- **Herramientas**: Composer, Node.js/NPM, Vite (para compilación de assets)
-- **Librerías Externas**: jQuery 3.6.0, Bootstrap Icons 1.11.3, jsPDF 2.5.1, Google Fonts (Inter)
+## 📚 Índice
 
+- [🧠 Descripción General](#-descripción-general)
+- [⚙️ Tecnologías Usadas](#-tecnologías-usadas)
+- [🧪 Funcionalidades](#-funcionalidades)
+- [📷 Capturas de Pantalla](#-capturas-de-pantalla)
+- [🚀 Instalación](#-instalación)
+- [🧩 Estructura del Proyecto](#-estructura-del-proyecto)
+- [📎 Recursos Relevantes](#-recursos-relevantes)
+- [📄 Licencia](#-licencia)
 
-## Instalación
+---
 
-### Requisitos Previos
-- PHP 8.3.20
-- Composer
-- Node.js y NPM
-- MySQL(por ejemplo, Laragon o XAMPP)
+## 🧠 Descripción General
 
+Proyecto educativo desarrollado con Laravel 12.8.1 y PHP 8.3.20.  
+Incluye autenticación, gestión de usuarios y mascotas, cálculo de dietas y administración de contenido.
 
-### Pasos
-1. Descarga la carpeta completa desde GitLab.
-2. Importa la base de datos usando el archivo `barfco.sql`. 
-3. Configura el proyecto:
-   - Coloca la carpeta en tu entorno local (por ejemplo, `C:\laragon\www\barfco_new`).
-   - Ejecuta `composer install` y `npm install` para instalar dependencias.
-   - Copia el `.env` y ajusta las credenciales de la base de datos (DB_DATABASE, DB_USERNAME, DB_PASSWORD).
-   - Genera la clave de la aplicación con `php artisan key:generate`.
-4. Compila los assets con `npm run dev`.
-5. Inicia el servidor local con `php artisan serve` y accede a `http://localhost:8000`.
+---
 
-## Uso
-- El diseño es responsive y sigue un diseño corporativo.
-- Usa los datos de usuarios y mascotas de la base de datos para probar.
-- Navega por la página principal, las páginas de autenticación y las funciones de administración si aplica.
+## ⚙️ Tecnologías Usadas
 
+| 🛠 Backend       | 🎨 Frontend       | 🗃 Base de Datos | 🔧 Herramientas         | 📦 Librerías externas          |
+|-----------------|------------------|------------------|--------------------------|--------------------------------|
+| Laravel 12.8.1  | Bootstrap 5.3.3  | MySQL            | Composer, Node.js, Vite | jQuery, Bootstrap Icons, jsPDF |
+| PHP 8.3.20      | CSS personalizado|                  |                          | Google Fonts (Inter)           |
 
-## Estructura del Proyecto
-- `app/`: Controladores y modelos.
-- `database/`: Migraciones y archivo `barfco.sql`.
-- `resources/`: Vistas, CSS y JavaScript.
-- `public/`: Assets estáticos.
+<div align="center">
+  <img src="https://img.shields.io/badge/Framework-Laravel-red?style=for-the-badge&logo=laravel" />
+  <img src="https://img.shields.io/badge/Database-MySQL-blue?style=for-the-badge&logo=mysql" />
+  <img src="https://img.shields.io/badge/Frontend-Bootstrap-purple?style=for-the-badge&logo=bootstrap" />
+</div>
 
+---
 
-## Licencia
-Se trata de un proyecto educativo para evaluación.
+## 🧪 Funcionalidades
 
+- Registro y login para usuarios y administradores
+- Calculadora de dietas BARF (en base a peso, actividad, etc.)
+- Creación y edición de perfiles de mascotas
+- Asociación de dietas y planes contratables
+- Panel de administración con gestión de usuarios y artículos
+- Blog informativo con categorías y artículos
+- Sistema de roles básicos
+- Diseño responsive y adaptable
+- Dashboard con estadísticas básicas
 
-Autor: Carla Lozano Corona. 2025. 
+---
+
+## 📷 Capturas de Pantalla
+
+> Añade tus propias imágenes aquí (puedes usar `/public/screenshots/`)
+
+| Página principal | Calculadora de dietas | Panel admin |
+|------------------|------------------------|--------------|
+| ![](screenshots/home.png) | ![](screenshots/calculator.png) | ![](screenshots/admin.png) |
+
+---
+
+## 🚀 Instalación
+
+### 🧱 Clona el repositorio
+
+```bash
+git clone https://github.com/carlaloz24/barfco.git
+cd barfco
